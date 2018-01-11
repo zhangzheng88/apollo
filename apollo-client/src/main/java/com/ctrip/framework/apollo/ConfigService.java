@@ -58,7 +58,7 @@ public class ConfigService {
    * @return config instance
    */
   public static Config getConfig(String namespace) {
-    return s_instance.getManager().getConfig(namespace);
+     return s_instance.getManager().getConfig(namespace);
   }
 
   public static ConfigFile getConfigFile(String namespace, ConfigFileFormat configFileFormat) {

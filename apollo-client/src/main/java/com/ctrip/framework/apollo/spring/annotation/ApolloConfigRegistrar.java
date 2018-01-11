@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.spring.annotation;
 
+import com.ctrip.framework.apollo.Apollo;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
