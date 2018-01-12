@@ -25,7 +25,7 @@ public class ReleaseMessage {
   @Column(name = "Message", nullable = false)
   private String message;
 
-  @Column(name = "DataChange_LastTime")
+  @Column(name = "updated_at")
   private Date dataChangeLastModifiedTime;
 
   @PrePersist

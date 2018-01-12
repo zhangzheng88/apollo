@@ -34,11 +34,11 @@ public interface InstanceConfigRepository extends PagingAndSortingRepository<Ins
   @Query(
       value = "select b.Id from `InstanceConfig` a inner join `Instance` b on b.Id =" +
           " a.`InstanceId` where a.`ConfigAppId` = :configAppId and a.`ConfigClusterName` = " +
-          ":clusterName and a.`ConfigNamespaceName` = :namespaceName and a.`DataChange_LastTime` " +
+          ":clusterName and a.`ConfigNamespaceName` = :namespaceName and a.`updated_at` " +
           "> :validDate and b.`AppId` = :instanceAppId and ?#{#pageable.pageSize} > 0",
       countQuery = "select count(1) from `InstanceConfig` a inner join `Instance` b on b.id =" +
           " a.`InstanceId` where a.`ConfigAppId` = :configAppId and a.`ConfigClusterName` = " +
-          ":clusterName and a.`ConfigNamespaceName` = :namespaceName and a.`DataChange_LastTime` " +
+          ":clusterName and a.`ConfigNamespaceName` = :namespaceName and a.`updated_at` " +
           "> :validDate and b.`AppId` = :instanceAppId",
       nativeQuery = true)
   Page<Object[]> findInstanceIdsByNamespaceAndInstanceAppId(

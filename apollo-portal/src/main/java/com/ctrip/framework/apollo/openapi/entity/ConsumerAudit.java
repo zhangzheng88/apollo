@@ -31,10 +31,10 @@ public class ConsumerAudit {
   @Column(name = "Method", nullable = false)
   private String method;
 
-  @Column(name = "DataChange_CreatedTime")
+  @Column(name = "created_at")
   private Date dataChangeCreatedTime;
 
-  @Column(name = "DataChange_LastTime")
+  @Column(name = "updated_at")
   private Date dataChangeLastModifiedTime;
 
   @PrePersist

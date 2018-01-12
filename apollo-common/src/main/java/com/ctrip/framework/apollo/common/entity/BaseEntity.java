@@ -30,13 +30,13 @@ public abstract class BaseEntity {
   @Column(name = "DataChange_CreatedBy", nullable = false)
   private String dataChangeCreatedBy;
 
-  @Column(name = "DataChange_CreatedTime", nullable = false)
+  @Column(name = "created_at", nullable = false)
   private Date dataChangeCreatedTime;
 
   @Column(name = "DataChange_LastModifiedBy")
   private String dataChangeLastModifiedBy;
 
-  @Column(name = "DataChange_LastTime")
+  @Column(name = "updated_at")
   private Date dataChangeLastModifiedTime;
 
   public String getDataChangeCreatedBy() {

@@ -41,10 +41,10 @@ public class InstanceConfig {
   @Column(name = "ReleaseDeliveryTime", nullable = false)
   private Date releaseDeliveryTime;
 
-  @Column(name = "DataChange_CreatedTime", nullable = false)
+  @Column(name = "created_at", nullable = false)
   private Date dataChangeCreatedTime;
 
-  @Column(name = "DataChange_LastTime")
+  @Column(name = "updated_at")
   private Date dataChangeLastModifiedTime;
 
   @PrePersist

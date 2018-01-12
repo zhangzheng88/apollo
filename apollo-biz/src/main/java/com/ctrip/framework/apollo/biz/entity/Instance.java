@@ -34,10 +34,10 @@ public class Instance {
   @Column(name = "Ip", nullable = false)
   private String ip;
 
-  @Column(name = "DataChange_CreatedTime", nullable = false)
+  @Column(name = "created_at", nullable = false)
   private Date dataChangeCreatedTime;
 
-  @Column(name = "DataChange_LastTime")
+  @Column(name = "updated_at")
   private Date dataChangeLastModifiedTime;
 
   @PrePersist
