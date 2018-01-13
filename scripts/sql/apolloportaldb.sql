@@ -95,7 +95,7 @@ DROP TABLE IF EXISTS `ConsumerAudit`;
 
 CREATE TABLE `ConsumerAudit` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
-  `ConsumerId` int(11) unsigned DEFAULT NULL COMMENT 'Consumer Id',
+  `ConsumerId` int(11) unsigned DEFAULT 0 COMMENT 'Consumer Id',
   `Uri` varchar(1024) NOT NULL DEFAULT '' COMMENT '访问的Uri',
   `Method` varchar(16) NOT NULL DEFAULT '' COMMENT '访问的Method',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -114,8 +114,8 @@ DROP TABLE IF EXISTS `ConsumerRole`;
 
 CREATE TABLE `ConsumerRole` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
-  `ConsumerId` int(11) unsigned DEFAULT NULL COMMENT 'Consumer Id',
-  `RoleId` int(10) unsigned DEFAULT NULL COMMENT 'Role Id',
+  `ConsumerId` int(11) unsigned DEFAULT 0 COMMENT 'Consumer Id',
+  `RoleId` int(10) unsigned DEFAULT 0 COMMENT 'Role Id',
   `IsDeleted` TINYINT NOT NULL DEFAULT 0 COMMENT '1: deleted, 0: normal',
   `DataChange_CreatedBy` varchar(32) DEFAULT '' COMMENT '创建人邮箱前缀',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -136,7 +136,7 @@ DROP TABLE IF EXISTS `ConsumerToken`;
 
 CREATE TABLE `ConsumerToken` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
-  `ConsumerId` int(11) unsigned DEFAULT NULL COMMENT 'ConsumerId',
+  `ConsumerId` int(11) unsigned DEFAULT 0 COMMENT 'ConsumerId',
   `Token` varchar(128) NOT NULL DEFAULT '' COMMENT 'token',
   `Expires` datetime NOT NULL DEFAULT '2099-01-01 00:00:00' COMMENT 'token失效时间',
   `IsDeleted` TINYINT NOT NULL DEFAULT 0 COMMENT '1: deleted, 0: normal',
@@ -218,8 +218,8 @@ DROP TABLE IF EXISTS `RolePermission`;
 
 CREATE TABLE `RolePermission` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
-  `RoleId` int(10) unsigned DEFAULT NULL COMMENT 'Role Id',
-  `PermissionId` int(10) unsigned DEFAULT NULL COMMENT 'Permission Id',
+  `RoleId` int(10) unsigned DEFAULT 0 COMMENT 'Role Id',
+  `PermissionId` int(10) unsigned DEFAULT 0 COMMENT 'Permission Id',
   `IsDeleted` TINYINT NOT NULL DEFAULT 0 COMMENT '1: deleted, 0: normal',
   `DataChange_CreatedBy` varchar(32) DEFAULT '' COMMENT '创建人邮箱前缀',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -263,7 +263,7 @@ DROP TABLE IF EXISTS `UserRole`;
 CREATE TABLE `UserRole` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
   `UserId` varchar(128) DEFAULT '' COMMENT '用户身份标识',
-  `RoleId` int(10) unsigned DEFAULT NULL COMMENT 'Role Id',
+  `RoleId` int(10) unsigned DEFAULT 0 COMMENT 'Role Id',
   `IsDeleted` TINYINT NOT NULL DEFAULT 0 COMMENT '1: deleted, 0: normal',
   `DataChange_CreatedBy` varchar(32) DEFAULT '' COMMENT '创建人邮箱前缀',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -285,7 +285,9 @@ CREATE TABLE `Users` (
   `Username` varchar(64) NOT NULL DEFAULT 'default' COMMENT '用户名',
   `Password` varchar(64) NOT NULL DEFAULT 'default' COMMENT '密码',
   `Email` varchar(64) NOT NULL DEFAULT 'default' COMMENT '邮箱地址',
-  `Enabled` tinyint(4) DEFAULT NULL COMMENT '是否有效',
+  `Enabled` tinyint(4) DEFAULT 0 COMMENT '是否有效',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间',
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
@@ -297,10 +299,12 @@ DROP TABLE IF EXISTS `Authorities`;
 
 CREATE TABLE `Authorities` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
-  `Username` varchar(50) NOT NULL,
-  `Authority` varchar(50) NOT NULL,
+  `Username` varchar(50) NOT NULL DEFAULT '' COMMENT '用户名',
+  `Authority` varchar(50) NOT NULL DEFAULT '' COMMENT 'authority',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间',
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='authorities表';
 
 
 # Config
