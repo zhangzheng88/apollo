@@ -590,9 +590,9 @@
 			<properties>
 				<package.environment>github</package.environment>
 			</properties>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
+			<!--<activation>-->
+				<!--<activeByDefault>true</activeByDefault>-->
+			<!--</activation>-->
 		</profile>
 		<profile>
       <!-- for ctrip development -->
@@ -804,7 +804,54 @@
 				</dependency>
 			</dependencies>
 		</profile>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<package.environment>dev</package.environment>
+				<apollo_profile>dev</apollo_profile>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>daily</id>
+			<properties>
+				<package.environment>daily</package.environment>
+				<apollo_profile>daily</apollo_profile>
+			</properties>
+		</profile>
+		<profile>
+			<id>qa</id>
+			<properties>
+				<package.environment>qa</package.environment>
+				<apollo_profile>qa</apollo_profile>
+			</properties>
+		</profile>
+		<profile>
+			<id>perf</id>
+			<properties>
+				<package.environment>perf</package.environment>
+				<apollo_profile>perf</apollo_profile>
+			</properties>
+		</profile>
+		<profile>
+			<id>pre</id>
+			<properties>
+				<package.environment>pre</package.environment>
+				<apollo_profile>pre</apollo_profile>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<package.environment>prod</package.environment>
+				<apollo_profile>prod</apollo_profile>
+			</properties>
+		</profile>
+
 	</profiles>
+
 
 	<reporting>
 		<plugins>
@@ -859,15 +906,15 @@
 			</plugin>
 		</plugins>
 	</reporting>
-	<distributionManagement>
-		<repository>
-			<id>releases</id>
-			<url>${releases.repo}</url>
-		</repository>
-		<snapshotRepository>
-			<id>snapshots</id>
-			<url>${snapshots.repo}</url>
-		</snapshotRepository>
-	</distributionManagement>
+	<!--<distributionManagement>-->
+		<!--<repository>-->
+			<!--<id>releases</id>-->
+			<!--<url>${releases.repo}</url>-->
+		<!--</repository>-->
+		<!--<snapshotRepository>-->
+			<!--<id>snapshots</id>-->
+			<!--<url>${snapshots.repo}</url>-->
+		<!--</snapshotRepository>-->
+	<!--</distributionManagement>-->
 </project>
 
