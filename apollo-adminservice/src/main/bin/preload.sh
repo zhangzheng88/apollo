@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVER_MANAGE_PORT=8090
+SERVER_MANAGE_PORT=7001
 
 i=0
 max_retry=100

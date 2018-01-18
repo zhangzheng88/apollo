@@ -5,5 +5,4 @@ spring:
     active: ${apollo_profile}
 
 server:
-  port: 8090
-
+  port: 7001

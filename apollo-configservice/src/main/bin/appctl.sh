@@ -24,7 +24,7 @@
 #
 
 APP_NAME=apollo-configservice
-APP_PORT=8080
+APP_PORT=7001
 
 
 ROOT_PATH=`dirname "$0"`
