@@ -1,12 +1,12 @@
 #!/bin/bash
 
-SERVER_MANAGE_PORT=7001
+SERVER_MANAGE_PORT=8080
 
 i=0
 max_retry=100
 while [ 1 ]
 do
-    count=`curl -Ss "http://127.0.0.1:$SERVER_MANAGE_PORT/health" | awk -F, '{print $1}' | awk -F: '{print $2}' | grep UP | wc -l`
+    count=`curl -Ss "http://127.0.0.1:$SERVER_MANAGE_PORT/health" | awk -F, '{print $1}' | awk -F: '{print $3}' | grep UP | wc -l`
     if [ $count -eq 1 ];then
         echo "healthCheck ok"
         exit 0
