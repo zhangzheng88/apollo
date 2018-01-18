@@ -1,5 +1,8 @@
 package com.ctrip.framework.apollo.portal.spi.configuration;
 
+import com.ctrip.framework.apollo.portal.spi.youzan.YouzanUserInfoHolder;
+import com.ctrip.framework.apollo.portal.spi.youzan.YouzanUserService;
+import com.ctrip.framework.apollo.portal.spi.youzan.filters.LoginFilter;
 import com.google.common.collect.Maps;
 
 import com.ctrip.framework.apollo.common.condition.ConditionalOnMissingProfile;
@@ -257,11 +260,52 @@ public class AuthConfiguration {
 
   }
 
+  @Configuration
+  @Profile("youzan")
+  static class YouzanAuthAutoConfiguration{
+    @Autowired
+    PortalConfig portalConfig;
+    @Autowired
+    UserInfoHolder userInfoHolder;
+    @Bean
+    public UserInfoHolder youzanUserInfoHolder(){
+      return new YouzanUserInfoHolder();
+    }
+    @Bean
+    public YouzanUserService youzanUserService(){
+      return new YouzanUserService(portalConfig);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(LogoutHandler.class)
+    public LogoutHandler logoutHandler() {
+      return new DefaultLogoutHandler();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(SsoHeartbeatHandler.class)
+    public SsoHeartbeatHandler defaultSsoHeartbeatHandler() {
+      return new DefaultSsoHeartbeatHandler();
+    }
+
+
+    @Bean
+    public FilterRegistrationBean loginFilter() {
+      FilterRegistrationBean filter = new FilterRegistrationBean();
+      filter.setFilter(new LoginFilter(portalConfig,userInfoHolder));
+      filter.addUrlPatterns("/*");
+      return filter;
+    }
+
+  }
+
+
+
   /**
    * default profile
    */
   @Configuration
-  @ConditionalOnMissingProfile({"ctrip", "auth"})
+  @ConditionalOnMissingProfile({"ctrip", "auth","youzan"})
   static class DefaultAuthAutoConfiguration {
 
     @Bean
@@ -289,7 +333,7 @@ public class AuthConfiguration {
     }
   }
 
-  @ConditionalOnMissingProfile("auth")
+  @ConditionalOnMissingProfile({"auth"})
   @Configuration
   @EnableWebSecurity
   @EnableGlobalMethodSecurity(prePostEnabled = true)

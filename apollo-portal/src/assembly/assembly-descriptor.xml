@@ -10,8 +10,8 @@
 	<fileSets>
 		<!--scripts -->
 		<fileSet>
-			<directory>src/main/scripts</directory>
-			<outputDirectory>scripts</outputDirectory>
+			<directory>src/main/bin</directory>
+			<outputDirectory>bin</outputDirectory>
 			<includes>
 				<include>*.sh</include>
 			</includes>
@@ -41,6 +41,9 @@
 			<includes>
 				<include>${project.artifactId}-*.jar</include>
 			</includes>
+			<excludes>
+				<exclude>${project.artifactId}-*sources.jar</exclude>
+			</excludes>
 			<fileMode>0755</fileMode>
 		</fileSet>
 	</fileSets>
