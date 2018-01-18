@@ -1,4 +1,4 @@
 #!/bin/bash
 sleep 10s
-curl -s "http://127.0.0.1/_HB_?service=online"
+curl -s -X POST "http://127.0.0.1/eW91emFuCg==/hc"
 sleep 1s

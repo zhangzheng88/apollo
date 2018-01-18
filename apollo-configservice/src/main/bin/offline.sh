@@ -1,3 +1,3 @@
 #!/bin/bash
-curl -s "http://127.0.0.1/_HB_?service=offline"
+curl -s -X DELETE "http://127.0.0.1/eW91emFuCg==/hc"
 sleep 10s
