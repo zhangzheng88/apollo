@@ -18,13 +18,21 @@ public final class EnvUtils {
         return Env.UAT;
       case "PRO":
       case "PROD": //just in case
-        return Env.PRO;
+        return Env.PROD;
       case "DEV":
         return Env.DEV;
       case "LOCAL":
         return Env.LOCAL;
       case "TOOLS":
         return Env.TOOLS;
+      case "PERF":
+        return Env.PERF;
+      case "DAILY":
+        return Env.DAILY;
+      case "QA":
+        return Env.QA;
+      case "PRE":
+        return Env.PRE;
       default:
         return null;
     }

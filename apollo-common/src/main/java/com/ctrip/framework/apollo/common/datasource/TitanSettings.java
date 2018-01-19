@@ -40,7 +40,7 @@ public class TitanSettings {
       case UAT:
         return uatTitanUrl;
       case TOOLS:
-      case PRO:
+      case PROD:
         return proTitanUrl;
       default:
         return "";
@@ -59,7 +59,7 @@ public class TitanSettings {
       case UAT:
         return uatTitanDbname;
       case TOOLS:
-      case PRO:
+      case PROD:
         return proTitanDbname;
       default:
         return "";

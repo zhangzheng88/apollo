@@ -33,8 +33,12 @@ public class MetaDomainConsts {
         env.getProperty("uat_meta", prop.getProperty("uat.meta", DEFAULT_META_URL)));
     domains.put(Env.LPT,
         env.getProperty("lpt_meta", prop.getProperty("lpt.meta", DEFAULT_META_URL)));
-    domains.put(Env.PRO,
+    domains.put(Env.PROD,
         env.getProperty("pro_meta", prop.getProperty("pro.meta", DEFAULT_META_URL)));
+    domains.put(Env.QA,
+        env.getProperty("qa_meta", prop.getProperty("qa.meta", DEFAULT_META_URL)));
+    domains.put(Env.DAILY,
+        env.getProperty("daily_meta", prop.getProperty("daily.meta", DEFAULT_META_URL)));
   }
 
   public static String getDomain(Env env) {
