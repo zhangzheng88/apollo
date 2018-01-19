@@ -2,7 +2,7 @@ spring:
   application:
     name: apollo-portal
   profiles:
-    active: ${apollo_profile},auth
+    active: ${apollo_profile},youzan
     include:
 
 server:
@@ -25,5 +25,6 @@ cas:
   projectName: apollo-portal
   secret: be42efc6-f01f-4acc-84a2-021e6bc49101
 
-#security:
-#  ignored: /**
+#开放平台接入参数
+openapi:
+  appsecret: d40a15b5-024c-410e-bb6f-97cadda77148

@@ -273,7 +273,7 @@ public class AuthConfiguration {
     }
     @Bean
     public YouzanUserService youzanUserService(){
-      return new YouzanUserService(portalConfig);
+      return new YouzanUserService();
     }
 
     @Bean
