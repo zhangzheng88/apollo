@@ -290,7 +290,7 @@ public class AuthConfiguration {
     @Bean
     public FilterRegistrationBean loginFilter() {
       FilterRegistrationBean filter = new FilterRegistrationBean();
-      filter.setFilter(new LoginFilter(portalConfig,new YouzanUserInfoHolder()));
+      filter.setFilter(new LoginFilter(portalConfig,youzanUserInfoHolder()));
       filter.addUrlPatterns("/*");
       return filter;
     }

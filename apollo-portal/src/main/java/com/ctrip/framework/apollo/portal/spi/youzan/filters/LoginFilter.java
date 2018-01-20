@@ -7,6 +7,7 @@ import com.ctrip.framework.apollo.portal.spi.youzan.YouzanUserInfoHolder;
 import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +45,8 @@ public class LoginFilter implements Filter{
         String requestUri = ((HttpServletRequest) request).getRequestURI();
         HttpSession httpSession = ((HttpServletRequest) request).getSession();
         try {
-            if (!isOpenAPIRequest(requestUri) && !isStaticResource(requestUri) && !isCasCallBackRequest(requestUri)) {
+            if (!isOpenAPIRequest(requestUri) && !isStaticResource(requestUri) && !isCasCallBackRequest(requestUri)
+                    && !isHealthCheck(requestUri)) {
                 UserInfo userInfo = (UserInfo)httpSession.getAttribute("loginUserInfo");
                 if (userInfo == null) {
                     logger.info("没有从上下文获取到用户的登录信息，跳转到cas系统进行认证");
@@ -76,5 +78,9 @@ public class LoginFilter implements Filter{
     }
     private boolean isCasCallBackRequest(String uri){
         return !Strings.isNullOrEmpty(uri) && uri.startsWith("/oauth/cas/callback");
+    }
+
+    private boolean isHealthCheck(String uri){
+        return !Strings.isNullOrEmpty(uri) && uri.startsWith("/health");
     }
 }
