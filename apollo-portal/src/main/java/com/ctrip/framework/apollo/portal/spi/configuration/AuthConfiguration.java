@@ -265,8 +265,6 @@ public class AuthConfiguration {
   static class YouzanAuthAutoConfiguration{
     @Autowired
     PortalConfig portalConfig;
-    @Autowired
-    UserInfoHolder userInfoHolder;
     @Bean
     public UserInfoHolder youzanUserInfoHolder(){
       return new YouzanUserInfoHolder();
@@ -292,7 +290,7 @@ public class AuthConfiguration {
     @Bean
     public FilterRegistrationBean loginFilter() {
       FilterRegistrationBean filter = new FilterRegistrationBean();
-      filter.setFilter(new LoginFilter(portalConfig,userInfoHolder));
+      filter.setFilter(new LoginFilter(portalConfig,new YouzanUserInfoHolder()));
       filter.addUrlPatterns("/*");
       return filter;
     }
