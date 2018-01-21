@@ -9,4 +9,7 @@
 		<appender-ref ref="FILE" />
 		<appender-ref ref="CONSOLE" />
 	</root>
+	<logger name="com.ctrip.framework.apollo.adminservice.filter.RequestLoggingFilterWithExcludedUris" level="DEBUG" additivity="false">
+		<appender-ref ref="CONSOLE" />
+	</logger>
 </configuration>
