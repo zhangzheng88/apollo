@@ -12,4 +12,7 @@
 	<logger name="com.ctrip.framework.apollo.adminservice.filter.RequestLoggingFilterWithExcludedUris" level="DEBUG" additivity="false">
 		<appender-ref ref="CONSOLE" />
 	</logger>
+	<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="trace" additivity="false">
+		<appender-ref ref="CONSOLE" />
+	</logger>
 </configuration>
