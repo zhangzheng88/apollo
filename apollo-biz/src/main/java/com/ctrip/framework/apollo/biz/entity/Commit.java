@@ -18,19 +18,19 @@ public class Commit extends BaseEntity {
 
   @Lob
   @Column(name = "ChangeSets", nullable = false)
-  private String changeSets;
+  private String changeSets = "";
 
   @Column(name = "AppId", nullable = false)
-  private String appId;
+  private String appId = "";
 
   @Column(name = "ClusterName", nullable = false)
-  private String clusterName;
+  private String clusterName = "";
 
   @Column(name = "NamespaceName", nullable = false)
-  private String namespaceName;
+  private String namespaceName = "";
 
-  @Column(name = "Comment")
-  private String comment;
+  @Column(name = "Comment", nullable = false)
+  private String comment = "";
 
   public String getChangeSets() {
     return changeSets;

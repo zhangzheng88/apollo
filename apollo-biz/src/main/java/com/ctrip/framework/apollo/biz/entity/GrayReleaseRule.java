@@ -16,25 +16,25 @@ import javax.persistence.Table;
 public class GrayReleaseRule extends BaseEntity{
 
   @Column(name = "appId", nullable = false)
-  private String appId;
+  private String appId = "";
 
   @Column(name = "ClusterName", nullable = false)
-  private String clusterName;
+  private String clusterName = "";
 
   @Column(name = "NamespaceName", nullable = false)
-  private String namespaceName;
+  private String namespaceName = "";
 
   @Column(name = "BranchName", nullable = false)
-  private String branchName;
+  private String branchName = "";
 
-  @Column(name = "Rules")
-  private String rules;
+  @Column(name = "Rules", nullable = false)
+  private String rules = "";
 
   @Column(name = "releaseId", nullable = false)
-  private Long releaseId;
+  private Long releaseId = 0L;
 
   @Column(name = "BranchStatus", nullable = false)
-  private int branchStatus;
+  private int branchStatus = 0;
 
   public String getAppId() {
     return appId;

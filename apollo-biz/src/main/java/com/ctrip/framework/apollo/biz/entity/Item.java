@@ -20,17 +20,17 @@ public class Item extends BaseEntity {
   private long namespaceId;
 
   @Column(name = "key", nullable = false)
-  private String key;
+  private String key = "";
 
-  @Column(name = "value")
+  @Column(name = "value", nullable = false)
   @Lob
-  private String value;
+  private String value = "";
 
-  @Column(name = "comment")
-  private String comment;
+  @Column(name = "comment", nullable = false)
+  private String comment = "";
 
-  @Column(name = "LineNum")
-  private Integer lineNum;
+  @Column(name = "LineNum", nullable = false)
+  private Integer lineNum = 0;
 
   public String getComment() {
     return comment;

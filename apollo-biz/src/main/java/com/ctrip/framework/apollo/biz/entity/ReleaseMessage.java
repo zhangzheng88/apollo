@@ -23,10 +23,10 @@ public class ReleaseMessage {
   private long id;
 
   @Column(name = "Message", nullable = false)
-  private String message;
+  private String message = "";
 
-  @Column(name = "updated_at")
-  private Date dataChangeLastModifiedTime;
+  @Column(name = "updated_at", nullable = false)
+  private Date dataChangeLastModifiedTime = new Date();
 
   @PrePersist
   protected void prePersist() {

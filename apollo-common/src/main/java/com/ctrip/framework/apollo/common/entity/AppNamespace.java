@@ -17,19 +17,19 @@ import javax.persistence.Table;
 public class AppNamespace extends BaseEntity {
 
   @Column(name = "Name", nullable = false)
-  private String name;
+  private String name = "";
 
   @Column(name = "AppId", nullable = false)
-  private String appId;
+  private String appId = "";
 
   @Column(name = "Format", nullable = false)
-  private String format;
+  private String format = "";
 
-  @Column(name = "IsPublic", columnDefinition = "Bit default '0'")
+  @Column(name = "IsPublic", columnDefinition = "TINYINT default 0", nullable = false)
   private boolean isPublic = false;
 
   @Column(name = "Comment")
-  private String comment;
+  private String comment = "";
 
   public String getAppId() {
     return appId;

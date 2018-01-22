@@ -13,8 +13,8 @@ import javax.persistence.Table;
 @Where(clause = "isDeleted = 0")
 public class NamespaceLock extends BaseEntity{
 
-  @Column(name = "NamespaceId")
-  private long namespaceId;
+  @Column(name = "NamespaceId", nullable = false)
+  private long namespaceId = 0L;
 
   public long getNamespaceId() {
     return namespaceId;

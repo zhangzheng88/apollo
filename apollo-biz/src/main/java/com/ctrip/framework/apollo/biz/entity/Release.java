@@ -19,28 +19,28 @@ import javax.persistence.Table;
 @Where(clause = "isDeleted = 0")
 public class Release extends BaseEntity {
   @Column(name = "ReleaseKey", nullable = false)
-  private String releaseKey;
+  private String releaseKey = "";
 
   @Column(name = "Name", nullable = false)
-  private String name;
+  private String name = "";
 
   @Column(name = "AppId", nullable = false)
-  private String appId;
+  private String appId = "";
 
   @Column(name = "ClusterName", nullable = false)
-  private String clusterName;
+  private String clusterName = "";
 
   @Column(name = "NamespaceName", nullable = false)
-  private String namespaceName;
+  private String namespaceName = "";
 
   @Column(name = "Configurations", nullable = false)
   @Lob
-  private String configurations;
+  private String configurations = "";
 
   @Column(name = "Comment", nullable = false)
-  private String comment;
+  private String comment = "";
 
-  @Column(name = "IsAbandoned", columnDefinition = "Bit default '0'")
+  @Column(name = "IsAbandoned", columnDefinition = "TINYINT default 0")
   private boolean isAbandoned;
 
   public String getReleaseKey() {

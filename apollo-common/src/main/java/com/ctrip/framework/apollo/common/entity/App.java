@@ -14,22 +14,22 @@ import javax.persistence.Table;
 public class App extends BaseEntity {
 
   @Column(name = "Name", nullable = false)
-  private String name;
+  private String name = "";
 
   @Column(name = "AppId", nullable = false)
-  private String appId;
+  private String appId = "";
 
   @Column(name = "OrgId", nullable = false)
-  private String orgId;
+  private String orgId = "";
 
   @Column(name = "OrgName", nullable = false)
-  private String orgName;
+  private String orgName = "";
 
   @Column(name = "OwnerName", nullable = false)
-  private String ownerName;
+  private String ownerName = "";
 
   @Column(name = "OwnerEmail", nullable = false)
-  private String ownerEmail;
+  private String ownerEmail = "";
 
   public String getAppId() {
     return appId;

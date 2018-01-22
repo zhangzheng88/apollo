@@ -20,16 +20,16 @@ public class Audit extends BaseEntity {
   }
 
   @Column(name = "EntityName", nullable = false)
-  private String entityName;
+  private String entityName = "";
 
-  @Column(name = "EntityId")
-  private Long entityId;
+  @Column(name = "EntityId", nullable = false)
+  private Long entityId = 0L;
 
   @Column(name = "OpName", nullable = false)
-  private String opName;
+  private String opName = "";
 
-  @Column(name = "Comment")
-  private String comment;
+  @Column(name = "Comment",nullable = false)
+  private String comment = "";
 
   public String getComment() {
     return comment;

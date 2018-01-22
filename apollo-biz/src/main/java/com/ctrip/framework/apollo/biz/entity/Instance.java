@@ -23,22 +23,22 @@ public class Instance {
   private long id;
 
   @Column(name = "AppId", nullable = false)
-  private String appId;
+  private String appId = "";
 
   @Column(name = "ClusterName", nullable = false)
-  private String clusterName;
+  private String clusterName = "";
 
   @Column(name = "DataCenter", nullable = false)
-  private String dataCenter;
+  private String dataCenter = "";
 
   @Column(name = "Ip", nullable = false)
-  private String ip;
+  private String ip = "";
 
-  @Column(name = "created_at", nullable = false)
-  private Date dataChangeCreatedTime;
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private Date dataChangeCreatedTime = new Date();
 
-  @Column(name = "updated_at")
-  private Date dataChangeLastModifiedTime;
+  @Column(name = "updated_at", nullable = false)
+  private Date dataChangeLastModifiedTime = new Date();
 
   @PrePersist
   protected void prePersist() {

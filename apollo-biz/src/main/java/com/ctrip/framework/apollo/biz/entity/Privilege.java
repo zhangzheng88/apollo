@@ -16,13 +16,13 @@ import javax.persistence.Table;
 public class Privilege extends BaseEntity {
 
   @Column(name = "Name", nullable = false)
-  private String name;
+  private String name = "";
 
   @Column(name = "PrivilType", nullable = false)
-  private String privilType;
+  private String privilType = "";
 
-  @Column(name = "NamespaceId")
-  private long namespaceId;
+  @Column(name = "NamespaceId", nullable = false)
+  private long namespaceId = 0L;
 
   public String getName() {
     return name;

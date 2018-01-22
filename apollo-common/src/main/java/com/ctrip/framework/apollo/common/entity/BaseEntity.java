@@ -24,20 +24,20 @@ public abstract class BaseEntity {
   @Column(name = "Id")
   private long id;
 
-  @Column(name = "IsDeleted", columnDefinition = "Bit default '0'")
+  @Column(name = "IsDeleted", columnDefinition = "TINYINT default 0", nullable = false)
   protected boolean isDeleted = false;
 
   @Column(name = "DataChange_CreatedBy", nullable = false)
-  private String dataChangeCreatedBy;
+  private String dataChangeCreatedBy = "";
 
-  @Column(name = "created_at", nullable = false)
-  private Date dataChangeCreatedTime;
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private Date dataChangeCreatedTime = new Date();
 
-  @Column(name = "DataChange_LastModifiedBy")
-  private String dataChangeLastModifiedBy;
+  @Column(name = "DataChange_LastModifiedBy",nullable = false)
+  private String dataChangeLastModifiedBy = "";
 
-  @Column(name = "updated_at")
-  private Date dataChangeLastModifiedTime;
+  @Column(name = "updated_at", nullable = false)
+  private Date dataChangeLastModifiedTime = new Date();
 
   public String getDataChangeCreatedBy() {
     return dataChangeCreatedBy;

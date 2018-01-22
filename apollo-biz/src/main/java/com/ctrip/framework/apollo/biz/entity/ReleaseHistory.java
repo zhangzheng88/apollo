@@ -18,28 +18,28 @@ import javax.persistence.Table;
 @Where(clause = "isDeleted = 0")
 public class ReleaseHistory extends BaseEntity {
   @Column(name = "AppId", nullable = false)
-  private String appId;
+  private String appId = "";
 
   @Column(name = "ClusterName", nullable = false)
-  private String clusterName;
+  private String clusterName = "";
 
   @Column(name = "NamespaceName", nullable = false)
-  private String namespaceName;
+  private String namespaceName = "";
 
   @Column(name = "BranchName", nullable = false)
-  private String branchName;
+  private String branchName = "";
 
-  @Column(name = "ReleaseId")
+  @Column(name = "ReleaseId", nullable = false)
   private long releaseId;
 
-  @Column(name = "PreviousReleaseId")
+  @Column(name = "PreviousReleaseId", nullable = false)
   private long previousReleaseId;
 
-  @Column(name = "Operation")
+  @Column(name = "Operation", nullable = false)
   private int operation;
 
   @Column(name = "OperationContext", nullable = false)
-  private String operationContext;
+  private String operationContext = "";
 
   public String getAppId() {
     return appId;

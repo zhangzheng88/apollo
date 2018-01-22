@@ -23,29 +23,29 @@ public class InstanceConfig {
   @Column(name = "Id")
   private long id;
 
-  @Column(name = "InstanceId")
-  private long instanceId;
+  @Column(name = "InstanceId", nullable = false)
+  private long instanceId = 0L;
 
   @Column(name = "ConfigAppId", nullable = false)
-  private String configAppId;
+  private String configAppId = "";
 
   @Column(name = "ConfigClusterName", nullable = false)
-  private String configClusterName;
+  private String configClusterName = "";
 
   @Column(name = "ConfigNamespaceName", nullable = false)
-  private String configNamespaceName;
+  private String configNamespaceName = "";
 
   @Column(name = "ReleaseKey", nullable = false)
-  private String releaseKey;
+  private String releaseKey = "";
 
   @Column(name = "ReleaseDeliveryTime", nullable = false)
-  private Date releaseDeliveryTime;
+  private Date releaseDeliveryTime = new Date();
 
-  @Column(name = "created_at", nullable = false)
-  private Date dataChangeCreatedTime;
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private Date dataChangeCreatedTime = new Date();
 
-  @Column(name = "updated_at")
-  private Date dataChangeLastModifiedTime;
+  @Column(name = "updated_at", nullable = false)
+  private Date dataChangeLastModifiedTime = new Date();
 
   @PrePersist
   protected void prePersist() {

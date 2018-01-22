@@ -16,13 +16,13 @@ import javax.persistence.Table;
 public class Namespace extends BaseEntity {
 
   @Column(name = "appId", nullable = false)
-  private String appId;
+  private String appId = "";
 
   @Column(name = "ClusterName", nullable = false)
-  private String clusterName;
+  private String clusterName = "";
 
   @Column(name = "NamespaceName", nullable = false)
-  private String namespaceName;
+  private String namespaceName = "";
 
   public Namespace(){
 
