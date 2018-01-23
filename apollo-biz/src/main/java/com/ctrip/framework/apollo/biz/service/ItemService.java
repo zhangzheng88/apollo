@@ -3,15 +3,14 @@ package com.ctrip.framework.apollo.biz.service;
 
 import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.entity.Audit;
-import com.ctrip.framework.apollo.biz.entity.Commit;
 import com.ctrip.framework.apollo.biz.entity.Item;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
 import com.ctrip.framework.apollo.biz.repository.ItemRepository;
-import com.ctrip.framework.apollo.biz.utils.ConfigChangeContentBuilder;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,51 +33,8 @@ public class ItemService {
   private AuditService auditService;
 
   @Autowired
-  private CommitService commitService;
-
-  @Autowired
   private BizConfig bizConfig;
 
-  @Transactional
-  public Item update(Item change, String appId, String clusterName, String namespaceName) {
-    Item[] itemPair = revise(change);
-
-    Item managedEntity = itemPair[1];
-    auditService.audit(Item.class.getSimpleName(), managedEntity.getId(), Audit.OP.UPDATE,
-            managedEntity.getDataChangeLastModifiedBy());
-
-    Item beforeUpdateItem = itemPair[0];
-    ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
-    builder.updateItem(beforeUpdateItem, managedEntity);
-    if (builder.hasContent()) {
-      Commit commit = new Commit();
-      commit.setAppId(appId);
-      commit.setClusterName(clusterName);
-      commit.setNamespaceName(namespaceName);
-      commit.setChangeSets(builder.build());
-      commit.setDataChangeCreatedBy(managedEntity.getDataChangeLastModifiedBy());
-      commit.setDataChangeLastModifiedBy(managedEntity.getDataChangeLastModifiedBy());
-      commitService.save(commit);
-    }
-
-    return managedEntity;
-  }
-
-  public Item[] revise(Item change) {
-    Item managedEntity = findOne(change.getId());
-    if (managedEntity == null) {
-      throw new BadRequestException("item not exist");
-    }
-
-    Item beforeUpdateItem = BeanUtils.transfrom(Item.class, managedEntity);
-
-    //protect. only value,comment,lastModifiedBy can be modified
-    managedEntity.setValue(change.getValue());
-    managedEntity.setComment(change.getComment());
-    managedEntity.setDataChangeLastModifiedBy(change.getDataChangeLastModifiedBy());
-
-    return new Item[] {beforeUpdateItem, managedEntity};
-  }
 
   @Transactional
   public Item delete(long id, String operator) {
@@ -196,7 +152,7 @@ public class ItemService {
     managedItem = itemRepository.save(managedItem);
 
     auditService.audit(Item.class.getSimpleName(), managedItem.getId(), Audit.OP.UPDATE,
-            managedItem.getDataChangeLastModifiedBy());
+                       managedItem.getDataChangeLastModifiedBy());
 
     return managedItem;
   }

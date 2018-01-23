@@ -70,9 +70,37 @@ public class ItemController {
                         @PathVariable("itemId") long itemId,
                         @RequestBody ItemDTO itemDTO) {
 
-    Item change = BeanUtils.transfrom(Item.class, itemDTO);
-    Item refreshedItem = itemService.update(change, appId, clusterName, namespaceName);
-    itemDTO = BeanUtils.transfrom(ItemDTO.class, refreshedItem);
+    Item entity = BeanUtils.transfrom(Item.class, itemDTO);
+
+    ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
+
+    Item managedEntity = itemService.findOne(itemId);
+    if (managedEntity == null) {
+      throw new BadRequestException("item not exist");
+    }
+
+    Item beforeUpdateItem = BeanUtils.transfrom(Item.class, managedEntity);
+
+    //protect. only value,comment,lastModifiedBy can be modified
+    managedEntity.setValue(entity.getValue());
+    managedEntity.setComment(entity.getComment());
+    managedEntity.setDataChangeLastModifiedBy(entity.getDataChangeLastModifiedBy());
+
+    entity = itemService.update(managedEntity);
+    builder.updateItem(beforeUpdateItem, entity);
+    itemDTO = BeanUtils.transfrom(ItemDTO.class, entity);
+
+    if (builder.hasContent()) {
+      Commit commit = new Commit();
+      commit.setAppId(appId);
+      commit.setClusterName(clusterName);
+      commit.setNamespaceName(namespaceName);
+      commit.setChangeSets(builder.build());
+      commit.setDataChangeCreatedBy(itemDTO.getDataChangeLastModifiedBy());
+      commit.setDataChangeLastModifiedBy(itemDTO.getDataChangeLastModifiedBy());
+      commitService.save(commit);
+    }
+
     return itemDTO;
   }
 
