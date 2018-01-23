@@ -48,17 +48,18 @@ public class ConfigChangeContentBuilder {
 
   public String build() {
     //因为事务第一段提交并没有更新时间,所以build时统一更新
-    for (Item item : createItems) {
-      item.setDataChangeLastModifiedTime(new Date());
-    }
-
-    for (ItemPair item : updateItems) {
-      item.newItem.setDataChangeLastModifiedTime(new Date());
-    }
-
-    for (Item item : deleteItems) {
-      item.setDataChangeLastModifiedTime(new Date());
-    }
+    //这块代码注释掉，因为对Item的更新如果是作用在一个被管控的对象的话，修改操作会触发数据库操作。如果时间变化不大的话，还会抛出异常
+//    for (Item item : createItems) {
+//      item.setDataChangeLastModifiedTime(new Date());
+//    }
+//
+//    for (ItemPair item : updateItems) {
+//      item.newItem.setDataChangeLastModifiedTime(new Date());
+//    }
+//
+//    for (Item item : deleteItems) {
+//      item.setDataChangeLastModifiedTime(new Date());
+//    }
     return gson.toJson(this);
   }
 
