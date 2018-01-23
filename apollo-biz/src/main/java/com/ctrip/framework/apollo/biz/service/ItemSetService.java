@@ -47,7 +47,7 @@ public class ItemSetService {
         Item createdItem = itemService.save(entity);
         configChangeContentBuilder.createItem(createdItem);
       }
-      auditService.audit("ItemSet", null, Audit.OP.INSERT, operator);
+      auditService.audit("ItemSet", 0L, Audit.OP.INSERT, operator);
     }
 
     if (!CollectionUtils.isEmpty(changeSet.getUpdateItems())) {
@@ -70,7 +70,7 @@ public class ItemSetService {
         configChangeContentBuilder.updateItem(beforeUpdateItem, updatedItem);
 
       }
-      auditService.audit("ItemSet", null, Audit.OP.UPDATE, operator);
+      auditService.audit("ItemSet", 0L, Audit.OP.UPDATE, operator);
     }
 
     if (!CollectionUtils.isEmpty(changeSet.getDeleteItems())) {
@@ -78,7 +78,7 @@ public class ItemSetService {
         Item deletedItem = itemService.delete(item.getId(), operator);
         configChangeContentBuilder.deleteItem(deletedItem);
       }
-      auditService.audit("ItemSet", null, Audit.OP.DELETE, operator);
+      auditService.audit("ItemSet", 0L, Audit.OP.DELETE, operator);
     }
 
     if (configChangeContentBuilder.hasContent()){
