@@ -12,7 +12,6 @@
 	<root level="INFO">
 		<appender-ref ref="FILE" />
 		<appender-ref ref="DEBUG_FILE" />
-		<!--<appender-ref ref="CONSOLE" />-->
 	</root>
 	<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="trace" additivity="false">
 		<appender-ref ref="DEBUG_FILE" />
