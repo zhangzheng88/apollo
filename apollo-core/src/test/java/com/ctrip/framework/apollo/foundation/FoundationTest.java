@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.ctrip.framework.foundation.Foundation;
 
 public class FoundationTest {
-  private static final String someEnv = "pro";
+  private static final String someEnv = "dev";
 
    @BeforeClass
    public static void before() {
@@ -24,7 +24,7 @@ public class FoundationTest {
    public void testApp() {
       // 获取AppId
       String appId = Foundation.app().getAppId();
-      Assert.assertEquals("110402", appId);
+      Assert.assertEquals("SampleApp", appId);
    }
 
    @Test

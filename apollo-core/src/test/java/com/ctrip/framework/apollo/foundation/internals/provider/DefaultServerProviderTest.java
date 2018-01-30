@@ -16,6 +16,8 @@ import com.ctrip.framework.foundation.internals.provider.DefaultServerProvider;
 
 public class DefaultServerProviderTest {
   private DefaultServerProvider defaultServerProvider;
+  private String PREDEFINED_ENV="dev";
+  private String PREDEFINED_CLUSTER="default";
 
   @Before
   public void setUp() throws Exception {
@@ -29,16 +31,16 @@ public class DefaultServerProviderTest {
   }
 
   private void cleanUp() {
-    System.clearProperty("env");
-    System.clearProperty("idc");
+    System.clearProperty("apollo.env");
+    System.clearProperty("apollo.cluster");
   }
 
   @Test
   public void testEnvWithSystemProperty() throws Exception {
     String someEnv = "someEnv";
     String someDc = "someDc";
-    System.setProperty("env", someEnv);
-    System.setProperty("idc", someDc);
+    System.setProperty("apollo.env", someEnv);
+    System.setProperty("apollo.cluster", someDc);
 
     defaultServerProvider.initialize(null);
 
@@ -48,38 +50,35 @@ public class DefaultServerProviderTest {
 
   @Test
   public void testWithPropertiesStream() throws Exception {
-    File baseDir = new File("src/test/resources/properties");
-    File serverProperties = new File(baseDir, "server.properties");
+    File baseDir = new File("src/test/resources/");
+    File serverProperties = new File(baseDir, "container.properties");
     defaultServerProvider.initialize(new FileInputStream(serverProperties));
 
-    assertEquals("SHAJQ", defaultServerProvider.getDataCenter());
+    assertEquals(PREDEFINED_CLUSTER, defaultServerProvider.getDataCenter());
     assertTrue(defaultServerProvider.isEnvTypeSet());
-    assertEquals("DEV", defaultServerProvider.getEnvType());
+    assertEquals(PREDEFINED_ENV, defaultServerProvider.getEnvType());
   }
 
   @Test
-  public void testWithUTF8BomPropertiesStream() throws Exception {
-    File baseDir = new File("src/test/resources/properties");
-    File serverProperties = new File(baseDir, "server-with-utf8bom.properties");
-    defaultServerProvider.initialize(new FileInputStream(serverProperties));
+  public void testWithDefaultPropertyFile() throws Exception {
+    defaultServerProvider.initialize();
 
-    assertEquals("SHAJQ", defaultServerProvider.getDataCenter());
+    assertEquals(PREDEFINED_CLUSTER, defaultServerProvider.getDataCenter());
     assertTrue(defaultServerProvider.isEnvTypeSet());
-    assertEquals("DEV", defaultServerProvider.getEnvType());
+    assertEquals(PREDEFINED_ENV, defaultServerProvider.getEnvType());
   }
+
+
 
   @Test
   public void testWithPropertiesStreamAndEnvFromSystemProperty() throws Exception {
     String prodEnv = "pro";
-    System.setProperty("env", prodEnv);
+    System.setProperty("apollo.env", prodEnv);
 
-    File baseDir = new File("src/test/resources/properties");
-    File serverProperties = new File(baseDir, "server.properties");
-    defaultServerProvider.initialize(new FileInputStream(serverProperties));
+    defaultServerProvider.initialize();
 
-    String predefinedDataCenter = "SHAJQ";
 
-    assertEquals(predefinedDataCenter, defaultServerProvider.getDataCenter());
+    assertEquals(PREDEFINED_CLUSTER, defaultServerProvider.getDataCenter());
     assertTrue(defaultServerProvider.isEnvTypeSet());
     assertEquals(prodEnv, defaultServerProvider.getEnvType());
   }

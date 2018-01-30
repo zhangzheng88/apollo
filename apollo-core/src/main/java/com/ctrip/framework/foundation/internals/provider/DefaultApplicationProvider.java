@@ -15,7 +15,7 @@ import com.ctrip.framework.foundation.spi.provider.Provider;
 
 public class DefaultApplicationProvider implements ApplicationProvider {
   private static final Logger logger = LoggerFactory.getLogger(DefaultApplicationProvider.class);
-  public static final String APP_PROPERTIES_CLASSPATH = "/META-INF/app.properties";
+  public static final String APP_PROPERTIES_CLASSPATH = "/container.properties";
   private Properties m_appProperties = new Properties();
 
   private String m_appId;
@@ -66,7 +66,7 @@ public class DefaultApplicationProvider implements ApplicationProvider {
 
   @Override
   public String getProperty(String name, String defaultValue) {
-    if ("app.id".equals(name)) {
+    if ("application.name".equals(name)) {
       String val = getAppId();
       return val == null ? defaultValue : val;
     } else {
@@ -82,15 +82,15 @@ public class DefaultApplicationProvider implements ApplicationProvider {
 
   private void initAppId() {
     // 1. Get app.id from System Property
-    m_appId = System.getProperty("app.id");
+    m_appId = System.getProperty("application.name");
     if (!Utils.isBlank(m_appId)) {
       m_appId = m_appId.trim();
       logger.info("App ID is set to {} by app.id property from System Property", m_appId);
       return;
     }
 
-    // 2. Try to get app id from app.properties.
-    m_appId = m_appProperties.getProperty("app.id");
+    // 2. Try to get app id from container.properties.
+    m_appId = m_appProperties.getProperty("application.name");
     if (!Utils.isBlank(m_appId)) {
       m_appId = m_appId.trim();
       logger.info("App ID is set to {} by app.id property from {}", m_appId, APP_PROPERTIES_CLASSPATH);
