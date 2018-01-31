@@ -40,10 +40,11 @@ public class YouzanUserService implements UserService {
     HttpEntity httpEntity = new HttpEntity(httpHeaders);
     Map<String,String> uriVariables = new HashMap<>();
     uriVariables.put("keyword",keyword);
-    ResponseEntity<YouzanUserService.UserInfoResponse> responseEntity = restTemplate.exchange(url, HttpMethod.GET,httpEntity, YouzanUserService.UserInfoResponse.class,uriVariables);
+    ParameterizedTypeReference<ResponseData<List<YouzanUserInfo>>> typeReference = new ParameterizedTypeReference<ResponseData<List<YouzanUserInfo>>>() {};
+    ResponseEntity<ResponseData<List<YouzanUserInfo>>> responseEntity = restTemplate.exchange(url, HttpMethod.GET,httpEntity, typeReference,uriVariables);
     List<UserInfo> userInfos = new ArrayList<>();
-    if(responseEntity.getBody()!=null && responseEntity.getBody().getMsg().equals("ok")){
-      for(YouzanUserInfo youzanUserInfo:responseEntity.getBody().getData()){
+    if(responseEntity.getBody()!=null && responseEntity.getBody().msg.equals("ok")){
+      for(YouzanUserInfo youzanUserInfo:responseEntity.getBody().data){
         userInfos.add(youzanUserInfo.toUserInfo());
       }
     }
@@ -74,36 +75,6 @@ public class YouzanUserService implements UserService {
     return userInfos;
   }
 
-
-  static class UserInfoResponse{
-    int code;
-    String msg;
-    List<YouzanUserInfo> data;
-
-    public int getCode() {
-      return code;
-    }
-
-    public void setCode(int code) {
-      this.code = code;
-    }
-
-    public String getMsg() {
-      return msg;
-    }
-
-    public void setMsg(String msg) {
-      this.msg = msg;
-    }
-
-    public List<YouzanUserInfo> getData() {
-      return data;
-    }
-
-    public void setData(List<YouzanUserInfo> data) {
-      this.data = data;
-    }
-  }
 
   static class YouzanUserInfo{
     private String nickname;
