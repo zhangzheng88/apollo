@@ -40,7 +40,7 @@ namespace_module.controller("LinkNamespaceController",
 
                                  AppService.load($scope.appId).then(function (result) {
                                      $scope.appBaseInfo = result;
-                                     $scope.appBaseInfo.namespacePrefix = result.orgId + '.';
+                                     $scope.appBaseInfo.namespacePrefix = result.appId + '.';
                                  }, function (result) {
                                      toastr.error(AppUtil.errorMsg(result), "加载App信息出错");
                                  });

@@ -81,7 +81,7 @@ public class AppNamespaceService {
     StringBuilder appNamespaceName = new StringBuilder();
     //add prefix postfix
     appNamespaceName
-        .append(appNamespace.isPublic() ? app.getOrgId() + "." : "")
+        .append(appNamespace.isPublic() ? app.getAppId() + "." : "")
         .append(appNamespace.getName())
         .append(appNamespace.formatAsEnum() == ConfigFileFormat.Properties ? "" : "." + appNamespace.getFormat());
     appNamespace.setName(appNamespaceName.toString());
