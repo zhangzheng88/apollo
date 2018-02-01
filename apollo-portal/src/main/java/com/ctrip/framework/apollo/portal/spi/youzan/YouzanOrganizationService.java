@@ -24,7 +24,8 @@ public class YouzanOrganizationService implements OrganizationService{
 
     @Autowired
     private RestTemplate restTemplate;
-
+    @Autowired
+    PortalConfig portalConfig;
     private static String OPEN_API_BASE = "http://oa.s.qima-inc.com";
 
     private Logger logger = LoggerFactory.getLogger(YouzanOrganizationService.class);
@@ -34,7 +35,7 @@ public class YouzanOrganizationService implements OrganizationService{
         logger.info("start to load orgs from open api");
         String url = OPEN_API_BASE + "/api/v1/departments/tree";
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("authorization","auth d40a15b5-024c-410e-bb6f-97cadda77148");
+        httpHeaders.add("authorization","auth "+portalConfig.getValue("openapi.appsecret"));
         HttpEntity httpEntity = new HttpEntity(httpHeaders);
         ParameterizedTypeReference<ResponseData<List<YouzanOrganization>>> typeReference = new ParameterizedTypeReference<ResponseData<List<YouzanOrganization>>>() {};
         ResponseEntity<ResponseData<List<YouzanOrganization>>> responseEntity = restTemplate.exchange(url, HttpMethod.GET,httpEntity, typeReference);
