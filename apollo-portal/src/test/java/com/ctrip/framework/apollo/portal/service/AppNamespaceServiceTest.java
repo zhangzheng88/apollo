@@ -72,6 +72,7 @@ public class AppNamespaceServiceTest extends AbstractIntegrationTest {
     AppNamespace appNamespace = assmbleBaseAppNamespace();
     appNamespace.setPublic(true);
     appNamespace.setName("old");
+    appNamespace.setAppId("FX");
 
     appNamespaceService.createAppNamespaceInLocal(appNamespace);
   }
