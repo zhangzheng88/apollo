@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
+import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.foundation.internals.Utils;
 import com.ctrip.framework.foundation.internals.io.BOMInputStream;
 import com.ctrip.framework.foundation.spi.provider.Provider;
@@ -122,9 +123,30 @@ public class DefaultServerProvider implements ServerProvider {
       return;
     }
 
-    // 4. Set environment to null.
-    m_env = null;
+    // try to get environment from os environment variable
+    m_env = System.getenv("APPLICATION_STANDARD_ENV");
+    if (!Utils.isBlank(m_env)) {
+      m_env = convertEnv(m_env);
+      logger.info("Environment is set to [{}] by OS env variable 'ENV'.", m_env);
+      return;
+    }
+
+
+    // 4. Set environment to default daily.
+    m_env = "daily";
     logger.warn("Environment is set to null. Because it is not available in either (1) JVM system property 'env', (2) OS env variable 'ENV' nor (3) property 'env' from the properties InputStream.");
+  }
+
+  private String convertEnv(String m_env){
+    //由于apollo只支持三个环境，所以将线上的perf转成qa，将per转成prod
+    switch (m_env.trim().toUpperCase()) {
+      case "PERF":
+        return "qa";
+      case "PRE":
+        return "prod";
+      default:
+        return m_env;
+    }
   }
 
   private void initDataCenter() {
@@ -144,11 +166,18 @@ public class DefaultServerProvider implements ServerProvider {
 //      return;
 //    }
 
-    // 3. Try to get idc from from file "server.properties"
+    // 3. Try to get idc from from file "container.properties"
     m_dc = m_serverProperties.getProperty("apollo.cluster");
     if (!Utils.isBlank(m_dc)) {
       m_dc = m_dc.trim();
       logger.info("Data Center is set to [{}] by property 'idc' in server.properties.", m_dc);
+      return;
+    }
+//     2. Try to get idc from OS environment variable
+    m_dc = System.getenv("APPLICATION_IDC");
+    if (!Utils.isBlank(m_dc)) {
+      m_dc = m_dc.trim();
+      logger.info("Data Center is set to [{}] by OS env variable 'IDC'.", m_dc);
       return;
     }
 

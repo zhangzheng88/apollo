@@ -20,7 +20,7 @@
 	<logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
 		<appender-ref ref="DEBUG_FILE" />
 	</logger>
-	<logger name="com.ctrip.framework.apollo" level="DEBUG" additivity="false">
+	<logger name="com.ctrip.framework.apollo" level="DEBUG" additivity="true">
 		<appender-ref ref="DEBUG_FILE" />
 	</logger>
 </configuration>
