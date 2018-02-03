@@ -127,14 +127,14 @@ public class DefaultServerProvider implements ServerProvider {
     m_env = System.getenv("APPLICATION_STANDARD_ENV");
     if (!Utils.isBlank(m_env)) {
       m_env = convertEnv(m_env);
-      logger.info("Environment is set to [{}] by OS env variable 'ENV'.", m_env);
+      logger.info("Environment is set to [{}] by OS env variable 'APPLICATION_STANDARD_ENV'.", m_env);
       return;
     }
 
 
     // 4. Set environment to default daily.
     m_env = "daily";
-    logger.warn("Environment is set to null. Because it is not available in either (1) JVM system property 'env', (2) OS env variable 'ENV' nor (3) property 'env' from the properties InputStream.");
+    logger.warn("Environment is set to daily. Because it is not available in either (1) JVM system property 'apollo.env', (2) OS env variable 'APPLICATION_STANDARD_ENV' nor (3) property 'apollo.env' from the properties InputStream.");
   }
 
   private String convertEnv(String m_env){
