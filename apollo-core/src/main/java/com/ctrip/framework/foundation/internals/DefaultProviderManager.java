@@ -27,7 +27,7 @@ public class DefaultProviderManager implements ProviderManager {
     networkProvider.initialize();
     register(networkProvider);
 
-    // Load environment (fat, fws, uat, prod ...) and dc, from /opt/settings/server.properties, JVM property and/or OS
+    // Load environment (fat, fws, uat, prod ...) and dc, from container.properties, JVM property and/or OS
     // environment variables.
     Provider serverProvider = new DefaultServerProvider();
     serverProvider.initialize();

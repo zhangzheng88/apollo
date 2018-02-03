@@ -119,7 +119,7 @@ public class DefaultServerProvider implements ServerProvider {
     m_env = m_serverProperties.getProperty("apollo.env");
     if (!Utils.isBlank(m_env)) {
       m_env = m_env.trim();
-      logger.info("Environment is set to [{}] by property 'env' in server.properties.", m_env);
+      logger.info("Environment is set to [{}] by property 'apollo.env' in container.properties.", m_env);
       return;
     }
 
@@ -170,7 +170,7 @@ public class DefaultServerProvider implements ServerProvider {
     m_dc = m_serverProperties.getProperty("apollo.cluster");
     if (!Utils.isBlank(m_dc)) {
       m_dc = m_dc.trim();
-      logger.info("Data Center is set to [{}] by property 'idc' in server.properties.", m_dc);
+      logger.info("Data Center is set to [{}] by property 'apollo.cluster' in container.properties.", m_dc);
       return;
     }
 //     2. Try to get idc from OS environment variable
