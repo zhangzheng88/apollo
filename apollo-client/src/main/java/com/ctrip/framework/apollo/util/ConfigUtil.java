@@ -204,7 +204,7 @@ public class ConfigUtil {
   }
 
   public String getDefaultLocalCacheDir() {
-    String cacheRoot = isOSWindows() ? "C:\\opt\\data\\%s" : "/opt/data/%s";
+    String cacheRoot = isOSWindows() ? "C:\\opt\\data\\%s" : "/data/project/%s";
     return String.format(cacheRoot, getAppId());
   }
 
