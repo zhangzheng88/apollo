@@ -31,59 +31,35 @@ import com.google.common.base.Preconditions;
  *
  * @author Jason Song(song_s@ctrip.com)
  */
-public class ApolloAnnotationProcessor implements BeanPostProcessor, PriorityOrdered {
-  private Pattern pattern = Pattern.compile("\\$\\{(.*?):(.*?)}");
-  private static Multimap<String, SpringValue> monitor = LinkedListMultimap.create();
+public class ApolloAnnotationProcessor extends ApolloProcessor {
+
   private Logger logger = LoggerFactory.getLogger(ApolloAnnotationProcessor.class);
 
-  public static Multimap<String, SpringValue> monitor() {
-    return monitor;
-  }
 
   @Override
-  public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-    Class clazz = bean.getClass();
-    processFields(bean, findAllField(clazz));
-    processMethods(bean, findAllMethod(clazz));
-    return bean;
-  }
-
-  @Override
-  public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-    return bean;
-  }
-
-  private void processFields(Object bean, List<Field> declaredFields) {
-    for (Field field : declaredFields) {
-      // regist @Value on field
-      registSpringValueOnField(bean, field);
-
-      ApolloConfig annotation = AnnotationUtils.getAnnotation(field, ApolloConfig.class);
-      if (annotation == null) {
-        continue;
-      }
-
-      Preconditions.checkArgument(Config.class.isAssignableFrom(field.getType()),
-          "Invalid type: %s for field: %s, should be Config", field.getType(), field);
-
-      String namespace = annotation.value();
-      Config config = ConfigService.getConfig(namespace);
-
-      ReflectionUtils.makeAccessible(field);
-      ReflectionUtils.setField(field, bean, config);
+  protected void processField(Object bean, Field field) {
+    ApolloConfig annotation = AnnotationUtils.getAnnotation(field, ApolloConfig.class);
+    if (annotation == null) {
+      return;
     }
-  }
 
-  private void processMethods(final Object bean, List<Method> declaredMethods) {
-    for (final Method method : declaredMethods) {
-      //regist @Value on method
-      registSpringValueOnMethod(bean, method);
+    Preconditions.checkArgument(Config.class.isAssignableFrom(field.getType()),
+        "Invalid type: %s for field: %s, should be Config", field.getType(), field);
+
+    String namespace = annotation.value();
+    Config config = ConfigService.getConfig(namespace);
+
+    ReflectionUtils.makeAccessible(field);
+    ReflectionUtils.setField(field, bean, config);
+
+  }
+  @Override
+  protected void processMethod(final Object bean, final Method method) {
 
       ApolloConfigChangeListener annotation = AnnotationUtils.findAnnotation(method, ApolloConfigChangeListener.class);
       if (annotation == null) {
-        continue;
+        return;
       }
-
       Class<?>[] parameterTypes = method.getParameterTypes();
       Preconditions.checkArgument(parameterTypes.length == 1,
           "Invalid number of parameters: %s for method: %s, should be 1", parameterTypes.length, method);
@@ -101,60 +77,8 @@ public class ApolloAnnotationProcessor implements BeanPostProcessor, PriorityOrd
             ReflectionUtils.invokeMethod(method, bean, changeEvent);
           }
         });
-      }
+
     }
   }
 
-  @Override
-  public int getOrder() {
-    //make it as late as possible
-    return Ordered.LOWEST_PRECEDENCE;
-  }
-  private void registSpringValueOnMethod(Object bean, Method method) {
-    Value value = method.getAnnotation(Value.class);
-    if (value == null) {
-      return;
-    }
-    Matcher matcher = pattern.matcher(value.value());
-    if (matcher.matches()) {
-      String key = matcher.group(1);
-      monitor.put(key, SpringValue.create(bean, method));
-      logger.info("Listening apollo key = {}", key);
-    }
-  }
-
-  private void registSpringValueOnField(Object bean, Field field) {
-    Value value = field.getAnnotation(Value.class);
-    if (value == null) {
-      return;
-    }
-    Matcher matcher = pattern.matcher(value.value());
-    if (matcher.matches()) {
-      String key = matcher.group(1);
-      monitor.put(key, SpringValue.create(bean, field));
-      logger.info("Listening apollo key = {}", key);
-    }
-  }
-
-  private List<Field> findAllField(Class clazz) {
-    final List<Field> res = new LinkedList<>();
-    ReflectionUtils.doWithFields(clazz, new ReflectionUtils.FieldCallback() {
-      @Override
-      public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-        res.add(field);
-      }
-    });
-    return res;
-  }
-
-  private List<Method> findAllMethod(Class clazz) {
-    final List<Method> res = new LinkedList<>();
-    ReflectionUtils.doWithMethods(clazz, new ReflectionUtils.MethodCallback() {
-      @Override
-      public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-        res.add(method);
-      }
-    });
-    return res;
-  }
 }

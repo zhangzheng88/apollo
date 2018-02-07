@@ -4,6 +4,8 @@ import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.model.ConfigChange;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.spring.annotation.ApolloAnnotationProcessor;
+import com.ctrip.framework.apollo.spring.annotation.ApolloValue;
+import com.ctrip.framework.apollo.spring.annotation.ApolloValueProcessor;
 import com.ctrip.framework.apollo.spring.auto.SpringValue;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSortedSet;
@@ -76,7 +78,7 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
             }
             for (String k:keys){
               ConfigChange configChange = changeEvent.getChange(k);
-              Collection<SpringValue> targetValues = ApolloAnnotationProcessor.monitor().get(k);
+              Collection<SpringValue> targetValues = ApolloValueProcessor.monitor().get(k);
               if (targetValues==null||targetValues.isEmpty()){
                 return;
               }

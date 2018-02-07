@@ -2,19 +2,23 @@ package com.ctrip.framework.apollo.spring.auto;
 
 import com.ctrip.framework.apollo.util.function.Functions;
 import com.google.common.base.Function;
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Date;
 
 /**
- * Spring @Value field or method info
+ * Spring @Value or @ApolloValue field or method info
  * @author github.com/zhegexiaohuozi [wanghaomiao@huli.com]
  * @since 2017/12/20.
  */
 public class SpringValue {
+    private static Gson gson = new Gson();
+
     private Object bean;
     private Field field;
     private Method method;
@@ -22,6 +26,9 @@ public class SpringValue {
     private String className;
     private String fieldName;
     private Function<String, ?> parser;
+    private Type genericType;
+    private Class type;
+
     private Logger logger = LoggerFactory.getLogger(SpringValue.class);
 
     private SpringValue(Object ins, Field field) {
@@ -30,6 +37,8 @@ public class SpringValue {
         this.fieldName = field.getName();
         this.field = field;
         this.isField = true;
+        this.genericType = field.getGenericType();
+        this.type = field.getType();
         this.parser = findParser(field.getType());
     }
 
@@ -43,6 +52,8 @@ public class SpringValue {
             logger.error("invalid setter,can not update in {}.{}",className,fieldName);
             return;
         }
+        this.type = paramTps[0];
+        this.genericType = method.getGenericParameterTypes()[0];
         this.parser = findParser(paramTps[0]);
     }
 
@@ -77,7 +88,10 @@ public class SpringValue {
 
     private Object parseVal(String newVal){
         if (parser == null){
-            return newVal;
+            if(type.equals(String.class)){
+                return newVal;
+            }
+            return gson.fromJson(newVal,genericType);
         }
         return parser.apply(newVal);
     }
