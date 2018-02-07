@@ -14,7 +14,8 @@ public class DefaultMessageProducerManager implements MessageProducerManager {
 
   public DefaultMessageProducerManager() {
     if (ClassLoaderUtil.isClassPresent(CatNames.CAT_CLASS)) {
-      producer = new CatMessageProducer();
+//      producer = new CatMessageProducer();
+      producer = new NullMessageProducerManager().getProducer();
     } else {
       producer = new NullMessageProducerManager().getProducer();
     }
