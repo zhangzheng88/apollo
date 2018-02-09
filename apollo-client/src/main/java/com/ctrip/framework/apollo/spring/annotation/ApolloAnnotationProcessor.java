@@ -21,69 +21,52 @@ import com.google.common.base.Preconditions;
  *
  * @author Jason Song(song_s@ctrip.com)
  */
-public class ApolloAnnotationProcessor implements BeanPostProcessor, PriorityOrdered {
+public class ApolloAnnotationProcessor extends ApolloBeanPostProcessor {
+
+
+
   @Override
-  public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-    Class clazz = bean.getClass();
-    processFields(bean, clazz.getDeclaredFields());
-    processMethods(bean, clazz.getDeclaredMethods());
-    return bean;
+  protected void processField(Object bean, Field field) {
+    ApolloConfig annotation = AnnotationUtils.getAnnotation(field, ApolloConfig.class);
+    if (annotation == null) {
+      return;
+    }
+
+    Preconditions.checkArgument(Config.class.isAssignableFrom(field.getType()),
+        "Invalid type: %s for field: %s, should be Config", field.getType(), field);
+
+    String namespace = annotation.value();
+    Config config = ConfigService.getConfig(namespace);
+
+    ReflectionUtils.makeAccessible(field);
+    ReflectionUtils.setField(field, bean, config);
   }
 
   @Override
-  public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-    return bean;
-  }
+  protected void processMethod(final Object bean, final Method method) {
+    ApolloConfigChangeListener annotation = AnnotationUtils.findAnnotation(method, ApolloConfigChangeListener.class);
+    if (annotation == null) {
+      return;
+    }
 
-  private void processFields(Object bean, Field[] declaredFields) {
-    for (Field field : declaredFields) {
-      ApolloConfig annotation = AnnotationUtils.getAnnotation(field, ApolloConfig.class);
-      if (annotation == null) {
-        continue;
-      }
+    Class<?>[] parameterTypes = method.getParameterTypes();
+    Preconditions.checkArgument(parameterTypes.length == 1,
+        "Invalid number of parameters: %s for method: %s, should be 1", parameterTypes.length, method);
+    Preconditions.checkArgument(ConfigChangeEvent.class.isAssignableFrom(parameterTypes[0]),
+        "Invalid parameter type: %s for method: %s, should be ConfigChangeEvent", parameterTypes[0], method);
 
-      Preconditions.checkArgument(Config.class.isAssignableFrom(field.getType()),
-          "Invalid type: %s for field: %s, should be Config", field.getType(), field);
-
-      String namespace = annotation.value();
+    ReflectionUtils.makeAccessible(method);
+    String[] namespaces = annotation.value();
+    for (String namespace : namespaces) {
       Config config = ConfigService.getConfig(namespace);
 
-      ReflectionUtils.makeAccessible(field);
-      ReflectionUtils.setField(field, bean, config);
+      config.addChangeListener(new ConfigChangeListener() {
+        @Override
+        public void onChange(ConfigChangeEvent changeEvent) {
+          ReflectionUtils.invokeMethod(method, bean, changeEvent);
+        }
+      });
     }
   }
 
-  private void processMethods(final Object bean, Method[] declaredMethods) {
-    for (final Method method : declaredMethods) {
-      ApolloConfigChangeListener annotation = AnnotationUtils.findAnnotation(method, ApolloConfigChangeListener.class);
-      if (annotation == null) {
-        continue;
-      }
-
-      Class<?>[] parameterTypes = method.getParameterTypes();
-      Preconditions.checkArgument(parameterTypes.length == 1,
-          "Invalid number of parameters: %s for method: %s, should be 1", parameterTypes.length, method);
-      Preconditions.checkArgument(ConfigChangeEvent.class.isAssignableFrom(parameterTypes[0]),
-          "Invalid parameter type: %s for method: %s, should be ConfigChangeEvent", parameterTypes[0], method);
-
-      ReflectionUtils.makeAccessible(method);
-      String[] namespaces = annotation.value();
-      for (String namespace : namespaces) {
-        Config config = ConfigService.getConfig(namespace);
-
-        config.addChangeListener(new ConfigChangeListener() {
-          @Override
-          public void onChange(ConfigChangeEvent changeEvent) {
-            ReflectionUtils.invokeMethod(method, bean, changeEvent);
-          }
-        });
-      }
-    }
-  }
-
-  @Override
-  public int getOrder() {
-    //make it as late as possible
-    return Ordered.LOWEST_PRECEDENCE;
-  }
 }
