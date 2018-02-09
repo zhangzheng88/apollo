@@ -1,14 +1,15 @@
 package com.ctrip.framework.apollo.spring.config;
 
+import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigChangeListener;
-import com.google.common.collect.HashMultimap;
+import com.ctrip.framework.apollo.ConfigService;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigService;
-
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -18,10 +19,6 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
-
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Apollo Property Sources processor for Spring Annotation Based Application. <br /> <br />
@@ -34,7 +31,7 @@ import java.util.List;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class PropertySourcesProcessor implements BeanFactoryPostProcessor, EnvironmentAware, PriorityOrdered {
-  private static final Multimap<Integer, String> NAMESPACE_NAMES = HashMultimap.create();
+  private static final Multimap<Integer, String> NAMESPACE_NAMES = LinkedHashMultimap.create();
   private static final List<Config> ALL_CONFIG = Lists.newLinkedList();
 
   private ConfigurableEnvironment environment;
