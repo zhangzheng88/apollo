@@ -15,22 +15,22 @@ import java.util.Date;
  */
 public abstract class SpringValue {
     protected Object bean;
-    String className;
-    String fieldName;
-    String valKey;
+    protected String className;
+    protected String fieldName;
+    protected String valKey;
     protected Function<String, ?> parser;
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     public abstract void updateVal(String newVal);
 
-    Object parseVal(String newVal) {
+    protected Object parseVal(String newVal) {
         if (parser == null) {
             return newVal;
         }
         return parser.apply(newVal);
     }
 
-    Function<String, ?> findParser(Class<?> targetType) {
+    protected Function<String, ?> findParser(Class<?> targetType) {
         Function<String, ?> res = null;
         if (targetType.equals(String.class)) {
             return null;

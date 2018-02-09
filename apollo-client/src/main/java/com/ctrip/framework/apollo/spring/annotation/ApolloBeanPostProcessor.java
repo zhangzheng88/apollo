@@ -28,8 +28,18 @@ public abstract class ApolloBeanPostProcessor implements BeanPostProcessor, Prio
     return bean;
   }
 
+  /**
+   * implemented by subclass to handle class field
+   * @param bean
+   * @param field
+   */
   protected void processField(Object bean, Field field){}
 
+  /**
+   * implemented by subclass the handle class method
+   * @param bean
+   * @param method
+   */
   protected void processMethod(Object bean, Method method){}
 
   @Override
