@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.demo.spring.common.refresh;
 import com.ctrip.framework.apollo.demo.spring.common.bean.AnnotatedBean;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ApolloRefreshConfig {
+
   private static final Logger logger = LoggerFactory.getLogger(ApolloRefreshConfig.class);
 
   @Autowired

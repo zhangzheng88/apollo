@@ -16,26 +16,28 @@ import org.springframework.context.annotation.Profile;
 public class OrganizationConfiguration {
 
 
-    @Configuration
-    @Profile("youzan")
-    static class YouzanOrganizationConfiguration{
-        @Bean
-        public YouzanOrganizationService youzanOrganizationService(){
-            return new YouzanOrganizationService();
-        }
+  @Configuration
+  @Profile("youzan")
+  static class YouzanOrganizationConfiguration {
 
+    @Bean
+    public YouzanOrganizationService youzanOrganizationService() {
+      return new YouzanOrganizationService();
     }
 
-    @Configuration
-    @ConditionalOnMissingProfile("youzan")
-    static class DefaultOrganizationConfiguration{
-        @Autowired
-        PortalConfig portalConfig;
+  }
 
-        @Bean
-        public DefaultOrganizationService defaultOrganizationConfiguration(){
-            return new DefaultOrganizationService(portalConfig);
-        }
+  @Configuration
+  @ConditionalOnMissingProfile("youzan")
+  static class DefaultOrganizationConfiguration {
 
+    @Autowired
+    PortalConfig portalConfig;
+
+    @Bean
+    public DefaultOrganizationService defaultOrganizationConfiguration() {
+      return new DefaultOrganizationService(portalConfig);
     }
+
+  }
 }

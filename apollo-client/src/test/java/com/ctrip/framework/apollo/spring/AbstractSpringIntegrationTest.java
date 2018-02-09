@@ -1,12 +1,5 @@
 package com.ctrip.framework.apollo.spring;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-
-import org.junit.After;
-import org.junit.Before;
-import org.springframework.util.ReflectionUtils;
-
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigFile;
 import com.ctrip.framework.apollo.ConfigService;
@@ -15,11 +8,17 @@ import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.internals.ConfigManager;
 import com.ctrip.framework.apollo.spring.config.PropertySourcesProcessor;
 import com.google.common.collect.Maps;
+import java.lang.reflect.Method;
+import java.util.Map;
+import org.junit.After;
+import org.junit.Before;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public abstract class AbstractSpringIntegrationTest {
+
   private static final Map<String, Config> CONFIG_REGISTRY = Maps.newHashMap();
   private static Method PROPERTY_SOURCES_PROCESSOR_CLEAR;
   private static Method CONFIG_SERVICE_RESET;

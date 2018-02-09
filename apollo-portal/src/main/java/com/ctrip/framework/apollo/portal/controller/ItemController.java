@@ -1,5 +1,7 @@
 package com.ctrip.framework.apollo.portal.controller;
 
+import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
+
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.core.enums.Env;
@@ -9,7 +11,9 @@ import com.ctrip.framework.apollo.portal.entity.model.NamespaceTextModel;
 import com.ctrip.framework.apollo.portal.entity.vo.ItemDiffs;
 import com.ctrip.framework.apollo.portal.service.ItemService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
-import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
 @RestController
 public class ItemController {
@@ -39,8 +37,8 @@ public class ItemController {
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items", method = RequestMethod.PUT, consumes = {
       "application/json"})
   public void modifyItemsByText(@PathVariable String appId, @PathVariable String env,
-                                @PathVariable String clusterName, @PathVariable String namespaceName,
-                                @RequestBody NamespaceTextModel model) {
+      @PathVariable String clusterName, @PathVariable String namespaceName,
+      @RequestBody NamespaceTextModel model) {
 
     checkModel(model != null);
 
@@ -55,8 +53,8 @@ public class ItemController {
   @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName)")
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/item", method = RequestMethod.POST)
   public ItemDTO createItem(@PathVariable String appId, @PathVariable String env,
-                            @PathVariable String clusterName, @PathVariable String namespaceName,
-                            @RequestBody ItemDTO item) {
+      @PathVariable String clusterName, @PathVariable String namespaceName,
+      @RequestBody ItemDTO item) {
     checkModel(isValidItem(item));
 
     //protect
@@ -74,8 +72,8 @@ public class ItemController {
   @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName)")
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/item", method = RequestMethod.PUT)
   public void updateItem(@PathVariable String appId, @PathVariable String env,
-                         @PathVariable String clusterName, @PathVariable String namespaceName,
-                         @RequestBody ItemDTO item) {
+      @PathVariable String clusterName, @PathVariable String namespaceName,
+      @RequestBody ItemDTO item) {
     checkModel(isValidItem(item));
 
     String username = userInfoHolder.getUser().getUserId();
@@ -88,8 +86,8 @@ public class ItemController {
   @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName)")
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items/{itemId}", method = RequestMethod.DELETE)
   public void deleteItem(@PathVariable String appId, @PathVariable String env,
-                         @PathVariable String clusterName, @PathVariable String namespaceName,
-                         @PathVariable long itemId) {
+      @PathVariable String clusterName, @PathVariable String namespaceName,
+      @PathVariable long itemId) {
     if (itemId <= 0) {
       throw new BadRequestException("item id invalid");
     }
@@ -99,10 +97,11 @@ public class ItemController {
 
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items", method = RequestMethod.GET)
   public List<ItemDTO> findItems(@PathVariable String appId, @PathVariable String env,
-                                 @PathVariable String clusterName, @PathVariable String namespaceName,
-                                 @RequestParam(defaultValue = "lineNum") String orderBy) {
+      @PathVariable String clusterName, @PathVariable String namespaceName,
+      @RequestParam(defaultValue = "lineNum") String orderBy) {
 
-    List<ItemDTO> items = configService.findItems(appId, Env.valueOf(env), clusterName, namespaceName);
+    List<ItemDTO> items = configService
+        .findItems(appId, Env.valueOf(env), clusterName, namespaceName);
     if ("lastModifiedTime".equals(orderBy)) {
       Collections.sort(items, (o1, o2) -> {
         if (o1.getDataChangeLastModifiedTime().after(o2.getDataChangeLastModifiedTime())) {
@@ -118,10 +117,11 @@ public class ItemController {
   }
 
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/items", method = RequestMethod.GET)
-  public List<ItemDTO> findBranchItems(@PathVariable("appId") String appId, @PathVariable String env,
-                                       @PathVariable("clusterName") String clusterName,
-                                       @PathVariable("namespaceName") String namespaceName,
-                                       @PathVariable("branchName") String branchName) {
+  public List<ItemDTO> findBranchItems(@PathVariable("appId") String appId,
+      @PathVariable String env,
+      @PathVariable("clusterName") String clusterName,
+      @PathVariable("namespaceName") String namespaceName,
+      @PathVariable("branchName") String branchName) {
 
     return findItems(appId, env, branchName, namespaceName, "lastModifiedTime");
   }
@@ -138,7 +138,7 @@ public class ItemController {
   @RequestMapping(value = "/apps/{appId}/namespaces/{namespaceName}/items", method = RequestMethod.PUT, consumes = {
       "application/json"})
   public ResponseEntity<Void> update(@PathVariable String appId, @PathVariable String namespaceName,
-                                     @RequestBody NamespaceSyncModel model) {
+      @RequestBody NamespaceSyncModel model) {
     checkModel(Objects.nonNull(model) && !model.isInvalid());
 
     configService.syncItems(model.getSyncToNamespaces(), model.getSyncItems());

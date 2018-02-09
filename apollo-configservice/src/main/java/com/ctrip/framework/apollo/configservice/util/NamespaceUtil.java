@@ -2,7 +2,6 @@ package com.ctrip.framework.apollo.configservice.util;
 
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +24,8 @@ public class NamespaceUtil {
   }
 
   public String normalizeNamespace(String appId, String namespaceName) {
-    AppNamespace appNamespace = appNamespaceServiceWithCache.findByAppIdAndNamespace(appId, namespaceName);
+    AppNamespace appNamespace = appNamespaceServiceWithCache
+        .findByAppIdAndNamespace(appId, namespaceName);
     if (appNamespace != null) {
       return appNamespace.getName();
     }

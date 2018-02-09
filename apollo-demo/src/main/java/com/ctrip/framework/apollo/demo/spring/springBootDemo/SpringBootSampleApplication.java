@@ -1,9 +1,8 @@
 package com.ctrip.framework.apollo.demo.spring.springBootDemo;
 
+import java.util.Scanner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-
-import java.util.Scanner;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

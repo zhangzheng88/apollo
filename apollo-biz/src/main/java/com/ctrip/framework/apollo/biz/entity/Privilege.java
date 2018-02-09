@@ -1,13 +1,11 @@
 package com.ctrip.framework.apollo.biz.entity;
 
 import com.ctrip.framework.apollo.common.entity.BaseEntity;
-
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Table(name = "Privilege")
@@ -28,20 +26,20 @@ public class Privilege extends BaseEntity {
     return name;
   }
 
-  public long getNamespaceId() {
-    return namespaceId;
-  }
-
-  public String getPrivilType() {
-    return privilType;
-  }
-
   public void setName(String name) {
     this.name = name;
   }
 
+  public long getNamespaceId() {
+    return namespaceId;
+  }
+
   public void setNamespaceId(long namespaceId) {
     this.namespaceId = namespaceId;
+  }
+
+  public String getPrivilType() {
+    return privilType;
   }
 
   public void setPrivilType(String privilType) {

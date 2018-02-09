@@ -1,10 +1,5 @@
 package com.ctrip.framework.apollo.util;
 
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.MetaDomainConsts;
 import com.ctrip.framework.apollo.core.enums.Env;
@@ -12,11 +7,15 @@ import com.ctrip.framework.apollo.core.enums.EnvUtils;
 import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
 import com.ctrip.framework.foundation.Foundation;
 import com.google.common.base.Strings;
+import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ConfigUtil {
+
   private static final Logger logger = LoggerFactory.getLogger(ConfigUtil.class);
   private int refreshInterval = 5;
   private TimeUnit refreshIntervalTimeUnit = TimeUnit.MINUTES;
@@ -53,8 +52,10 @@ public class ConfigUtil {
     String appId = Foundation.app().getAppId();
     if (Strings.isNullOrEmpty(appId)) {
       appId = ConfigConsts.NO_APPID_PLACEHOLDER;
-      logger.warn("app.id is not set, please make sure it is set in classpath:/META-INF/app.properties, now apollo " +
-          "will only load public namespace configurations!");
+      logger.warn(
+          "app.id is not set, please make sure it is set in classpath:/META-INF/app.properties, now apollo "
+              +
+              "will only load public namespace configurations!");
     }
     return appId;
   }
@@ -250,12 +251,14 @@ public class ConfigUtil {
   }
 
   private void initLongPollingInitialDelayInMills() {
-    String customizedLongPollingInitialDelay = System.getProperty("apollo.longPollingInitialDelayInMills");
+    String customizedLongPollingInitialDelay = System
+        .getProperty("apollo.longPollingInitialDelayInMills");
     if (!Strings.isNullOrEmpty(customizedLongPollingInitialDelay)) {
       try {
         longPollingInitialDelayInMills = Long.valueOf(customizedLongPollingInitialDelay);
       } catch (Throwable ex) {
-        logger.error("Config for apollo.longPollingInitialDelayInMills is invalid: {}", customizedLongPollingInitialDelay);
+        logger.error("Config for apollo.longPollingInitialDelayInMills is invalid: {}",
+            customizedLongPollingInitialDelay);
       }
     }
   }

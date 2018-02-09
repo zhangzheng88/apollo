@@ -1,9 +1,8 @@
 package com.ctrip.framework.apollo.portal.util;
 
-import com.google.common.base.Joiner;
-
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.portal.constant.RoleType;
+import com.google.common.base.Joiner;
 
 public class RoleUtils {
 
@@ -34,7 +33,8 @@ public class RoleUtils {
   }
 
   public static String buildReleaseDefaultNamespaceRoleName(String appId) {
-    return STRING_JOINER.join(RoleType.RELEASE_NAMESPACE, appId, ConfigConsts.NAMESPACE_APPLICATION);
+    return STRING_JOINER
+        .join(RoleType.RELEASE_NAMESPACE, appId, ConfigConsts.NAMESPACE_APPLICATION);
   }
 
   public static String buildNamespaceTargetId(String appId, String namespaceName) {

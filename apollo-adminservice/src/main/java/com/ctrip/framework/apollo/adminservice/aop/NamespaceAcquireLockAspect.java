@@ -12,7 +12,6 @@ import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
-
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
@@ -23,12 +22,12 @@ import org.springframework.stereotype.Component;
 
 
 /**
- * 一个namespace在一次发布中只能允许一个人修改配置
- * 通过数据库lock表来实现
+ * 一个namespace在一次发布中只能允许一个人修改配置 通过数据库lock表来实现
  */
 @Aspect
 @Component
 public class NamespaceAcquireLockAspect {
+
   private static final Logger logger = LoggerFactory.getLogger(NamespaceAcquireLockAspect.class);
 
 
@@ -45,21 +44,21 @@ public class NamespaceAcquireLockAspect {
   //create item
   @Before("@annotation(PreAcquireNamespaceLock) && args(appId, clusterName, namespaceName, item, ..)")
   public void requireLockAdvice(String appId, String clusterName, String namespaceName,
-                                ItemDTO item) {
+      ItemDTO item) {
     acquireLock(appId, clusterName, namespaceName, item.getDataChangeLastModifiedBy());
   }
 
   //update item
   @Before("@annotation(PreAcquireNamespaceLock) && args(appId, clusterName, namespaceName, itemId, item, ..)")
   public void requireLockAdvice(String appId, String clusterName, String namespaceName, long itemId,
-                                ItemDTO item) {
+      ItemDTO item) {
     acquireLock(appId, clusterName, namespaceName, item.getDataChangeLastModifiedBy());
   }
 
   //update by change set
   @Before("@annotation(PreAcquireNamespaceLock) && args(appId, clusterName, namespaceName, changeSet, ..)")
   public void requireLockAdvice(String appId, String clusterName, String namespaceName,
-                                ItemChangeSets changeSet) {
+      ItemChangeSets changeSet) {
     acquireLock(appId, clusterName, namespaceName, changeSet.getDataChangeLastModifiedBy());
   }
 
@@ -67,14 +66,14 @@ public class NamespaceAcquireLockAspect {
   @Before("@annotation(PreAcquireNamespaceLock) && args(itemId, operator, ..)")
   public void requireLockAdvice(long itemId, String operator) {
     Item item = itemService.findOne(itemId);
-    if (item == null){
+    if (item == null) {
       throw new BadRequestException("item not exist.");
     }
     acquireLock(item.getNamespaceId(), operator);
   }
 
   void acquireLock(String appId, String clusterName, String namespaceName,
-                           String currentUser) {
+      String currentUser) {
     if (bizConfig.isNamespaceLockSwitchOff()) {
       return;
     }
@@ -130,7 +129,7 @@ public class NamespaceAcquireLockAspect {
   }
 
   private void checkLock(Namespace namespace, NamespaceLock namespaceLock,
-                         String currentUser) {
+      String currentUser) {
     if (namespaceLock == null) {
       throw new ServiceException(
           String.format("Check lock for %s failed, please retry.", namespace.getNamespaceName()));

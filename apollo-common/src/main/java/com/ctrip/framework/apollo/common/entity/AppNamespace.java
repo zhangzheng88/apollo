@@ -2,13 +2,11 @@ package com.ctrip.framework.apollo.common.entity;
 
 
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
-
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Table(name = "AppNamespace")
@@ -35,20 +33,20 @@ public class AppNamespace extends BaseEntity {
     return appId;
   }
 
-  public String getComment() {
-    return comment;
-  }
-
-  public String getName() {
-    return name;
-  }
-
   public void setAppId(String appId) {
     this.appId = appId;
   }
 
+  public String getComment() {
+    return comment;
+  }
+
   public void setComment(String comment) {
     this.comment = comment;
+  }
+
+  public String getName() {
+    return name;
   }
 
   public void setName(String name) {

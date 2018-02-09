@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.spring.util;
 
 import java.util.Objects;
-
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -10,8 +9,10 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class BeanRegistrationUtil {
-  public static boolean registerBeanDefinitionIfNotExists(BeanDefinitionRegistry registry, String beanName,
-                                                          Class<?> beanClass) {
+
+  public static boolean registerBeanDefinitionIfNotExists(BeanDefinitionRegistry registry,
+      String beanName,
+      Class<?> beanClass) {
     if (registry.containsBeanDefinition(beanName)) {
       return false;
     }
@@ -25,7 +26,8 @@ public class BeanRegistrationUtil {
       }
     }
 
-    BeanDefinition annotationProcessor = BeanDefinitionBuilder.genericBeanDefinition(beanClass).getBeanDefinition();
+    BeanDefinition annotationProcessor = BeanDefinitionBuilder.genericBeanDefinition(beanClass)
+        .getBeanDefinition();
     registry.registerBeanDefinition(beanName, annotationProcessor);
 
     return true;

@@ -7,7 +7,6 @@ import com.ctrip.framework.apollo.configservice.controller.ConfigFileController;
 import com.ctrip.framework.apollo.configservice.controller.NotificationController;
 import com.ctrip.framework.apollo.configservice.controller.NotificationControllerV2;
 import com.ctrip.framework.apollo.configservice.service.ReleaseMessageServiceWithCache;
-
 import com.ctrip.framework.apollo.configservice.service.config.ConfigService;
 import com.ctrip.framework.apollo.configservice.service.config.ConfigServiceWithCache;
 import com.ctrip.framework.apollo.configservice.service.config.DefaultConfigService;
@@ -39,6 +38,7 @@ public class ConfigServiceAutoConfiguration {
 
   @Configuration
   static class MessageScannerConfiguration {
+
     @Autowired
     private NotificationController notificationController;
     @Autowired

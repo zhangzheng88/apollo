@@ -5,28 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
-
 import com.ctrip.framework.apollo.BaseIntegrationTest;
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigChangeListener;
@@ -43,11 +21,31 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.SettableFuture;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ConfigIntegrationTest extends BaseIntegrationTest {
+
   private String someReleaseKey;
   private File configDir;
   private String defaultNamespace;
@@ -279,7 +277,8 @@ public class ConfigIntegrationTest extends BaseIntegrationTest {
   }
 
   @Test
-  public void testLongPollRefreshWithMultipleNamespacesAndOnlyOneNamespaceNotified() throws Exception {
+  public void testLongPollRefreshWithMultipleNamespacesAndOnlyOneNamespaceNotified()
+      throws Exception {
     final String someKey = "someKey";
     final String someValue = "someValue";
     final String anotherValue = "anotherValue";
@@ -323,7 +322,8 @@ public class ConfigIntegrationTest extends BaseIntegrationTest {
   }
 
   @Test
-  public void testLongPollRefreshWithMultipleNamespacesAndMultipleNamespaceNotified() throws Exception {
+  public void testLongPollRefreshWithMultipleNamespacesAndMultipleNamespaceNotified()
+      throws Exception {
     final String someKey = "someKey";
     final String someValue = "someValue";
     final String anotherValue = "anotherValue";
@@ -375,16 +375,16 @@ public class ConfigIntegrationTest extends BaseIntegrationTest {
   }
 
   private ContextHandler mockPollNotificationHandler(final long pollResultTimeOutInMS,
-                                                     final int statusCode,
-                                                     final List<ApolloConfigNotification> result,
-                                                     final boolean failedAtFirstTime) {
+      final int statusCode,
+      final List<ApolloConfigNotification> result,
+      final boolean failedAtFirstTime) {
     ContextHandler context = new ContextHandler("/notifications/v2");
     context.setHandler(new AbstractHandler() {
       AtomicInteger counter = new AtomicInteger(0);
 
       @Override
       public void handle(String target, Request baseRequest, HttpServletRequest request,
-                         HttpServletResponse response) throws IOException, ServletException {
+          HttpServletResponse response) throws IOException, ServletException {
         if (failedAtFirstTime && counter.incrementAndGet() == 1) {
           response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
           baseRequest.setHandled(true);
@@ -407,14 +407,14 @@ public class ConfigIntegrationTest extends BaseIntegrationTest {
   }
 
   private ContextHandler mockConfigServerHandler(final int statusCode, final ApolloConfig result,
-                                                 final boolean failedAtFirstTime) {
+      final boolean failedAtFirstTime) {
     ContextHandler context = new ContextHandler("/configs/*");
     context.setHandler(new AbstractHandler() {
       AtomicInteger counter = new AtomicInteger(0);
 
       @Override
       public void handle(String target, Request baseRequest, HttpServletRequest request,
-                         HttpServletResponse response) throws IOException, ServletException {
+          HttpServletResponse response) throws IOException, ServletException {
         if (failedAtFirstTime && counter.incrementAndGet() == 1) {
           response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
           baseRequest.setHandled(true);

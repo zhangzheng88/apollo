@@ -1,10 +1,10 @@
 package com.ctrip.framework.apollo.spring.annotation;
 
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import org.springframework.core.ParameterizedTypeReference;
-
-import java.lang.annotation.*;
-import java.lang.reflect.Type;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Create by zhangzheng on 2018/2/6
@@ -14,6 +14,6 @@ import java.lang.reflect.Type;
 @Documented
 public @interface ApolloValue {
 
-    String value();
+  String value();
 
 }

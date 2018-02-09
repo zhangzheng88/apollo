@@ -14,15 +14,12 @@ import com.ctrip.framework.apollo.portal.service.ReleaseHistoryService;
 import com.ctrip.framework.apollo.portal.spi.EmailService;
 import com.ctrip.framework.apollo.portal.spi.MQService;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.annotation.PostConstruct;
 
 @Component
 public class ConfigPublishListener {
@@ -48,7 +45,8 @@ public class ConfigPublishListener {
 
   @PostConstruct
   public void init() {
-    executorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("ConfigPublishNotify", true));
+    executorService = Executors
+        .newSingleThreadExecutor(ApolloThreadFactory.create("ConfigPublishNotify", true));
   }
 
   @EventListener
@@ -82,9 +80,9 @@ public class ConfigPublishListener {
       Env env = publishInfo.getEnv();
 
       int operation = publishInfo.isMergeEvent() ? ReleaseOperation.GRAY_RELEASE_MERGE_TO_MASTER :
-                      publishInfo.isRollbackEvent() ? ReleaseOperation.ROLLBACK :
-                      publishInfo.isNormalPublishEvent() ? ReleaseOperation.NORMAL_RELEASE :
-                      publishInfo.isGrayPublishEvent() ? ReleaseOperation.GRAY_RELEASE : -1;
+          publishInfo.isRollbackEvent() ? ReleaseOperation.ROLLBACK :
+              publishInfo.isNormalPublishEvent() ? ReleaseOperation.NORMAL_RELEASE :
+                  publishInfo.isGrayPublishEvent() ? ReleaseOperation.GRAY_RELEASE : -1;
 
       if (operation == -1) {
         return null;
@@ -92,9 +90,11 @@ public class ConfigPublishListener {
 
       if (publishInfo.isRollbackEvent()) {
         return releaseHistoryService
-            .findLatestByPreviousReleaseIdAndOperation(env, publishInfo.getPreviousReleaseId(), operation);
+            .findLatestByPreviousReleaseIdAndOperation(env, publishInfo.getPreviousReleaseId(),
+                operation);
       } else {
-        return releaseHistoryService.findLatestByReleaseIdAndOperation(env, publishInfo.getReleaseId(), operation);
+        return releaseHistoryService
+            .findLatestByReleaseIdAndOperation(env, publishInfo.getReleaseId(), operation);
       }
 
     }

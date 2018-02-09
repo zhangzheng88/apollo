@@ -1,15 +1,5 @@
 package com.ctrip.framework.apollo.internals;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicReference;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ctrip.framework.apollo.ConfigFile;
 import com.ctrip.framework.apollo.ConfigFileChangeListener;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
@@ -19,22 +9,31 @@ import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
 import com.ctrip.framework.apollo.util.ExceptionUtil;
 import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public abstract class AbstractConfigFile implements ConfigFile, RepositoryChangeListener {
+
   private static final Logger logger = LoggerFactory.getLogger(AbstractConfigFile.class);
   private static ExecutorService m_executorService;
-  protected ConfigRepository m_configRepository;
-  protected String m_namespace;
-  protected AtomicReference<Properties> m_configProperties;
-  private List<ConfigFileChangeListener> m_listeners = Lists.newCopyOnWriteArrayList();
 
   static {
     m_executorService = Executors.newCachedThreadPool(ApolloThreadFactory
         .create("ConfigFile", true));
   }
+
+  protected ConfigRepository m_configRepository;
+  protected String m_namespace;
+  protected AtomicReference<Properties> m_configProperties;
+  private List<ConfigFileChangeListener> m_listeners = Lists.newCopyOnWriteArrayList();
 
   public AbstractConfigFile(String namespace, ConfigRepository configRepository) {
     m_configRepository = configRepository;
@@ -104,7 +103,8 @@ public abstract class AbstractConfigFile implements ConfigFile, RepositoryChange
         @Override
         public void run() {
           String listenerName = listener.getClass().getName();
-          Transaction transaction = Tracer.newTransaction("Apollo.ConfigFileChangeListener", listenerName);
+          Transaction transaction = Tracer
+              .newTransaction("Apollo.ConfigFileChangeListener", listenerName);
           try {
             listener.onChange(changeEvent);
             transaction.setStatus(Transaction.SUCCESS);

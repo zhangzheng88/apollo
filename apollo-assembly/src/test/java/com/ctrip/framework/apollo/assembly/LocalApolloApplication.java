@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.assembly;
 import com.ctrip.framework.apollo.adminservice.AdminServiceApplication;
 import com.ctrip.framework.apollo.configservice.ConfigServiceApplication;
 import com.ctrip.framework.apollo.portal.PortalApplication;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.system.ApplicationPidFileWriter;

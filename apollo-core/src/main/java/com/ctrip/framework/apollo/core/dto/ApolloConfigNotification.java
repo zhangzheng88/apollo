@@ -4,6 +4,7 @@ package com.ctrip.framework.apollo.core.dto;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ApolloConfigNotification {
+
   private String namespaceName;
   private long notificationId;
   private volatile ApolloNotificationMessages messages;
@@ -21,12 +22,12 @@ public class ApolloConfigNotification {
     return namespaceName;
   }
 
-  public long getNotificationId() {
-    return notificationId;
-  }
-
   public void setNamespaceName(String namespaceName) {
     this.namespaceName = namespaceName;
+  }
+
+  public long getNotificationId() {
+    return notificationId;
   }
 
   public ApolloNotificationMessages getMessages() {

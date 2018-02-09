@@ -1,5 +1,15 @@
 package com.ctrip.framework.apollo.configservice.controller;
 
+import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
+import com.ctrip.framework.apollo.biz.grayReleaseRule.GrayReleaseRulesHolder;
+import com.ctrip.framework.apollo.biz.message.ReleaseMessageListener;
+import com.ctrip.framework.apollo.biz.message.Topics;
+import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
+import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
+import com.ctrip.framework.apollo.core.ConfigConsts;
+import com.ctrip.framework.apollo.core.dto.ApolloConfig;
+import com.ctrip.framework.apollo.core.utils.PropertiesUtil;
+import com.ctrip.framework.apollo.tracer.Tracer;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -13,18 +23,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.gson.Gson;
-
-import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
-import com.ctrip.framework.apollo.biz.grayReleaseRule.GrayReleaseRulesHolder;
-import com.ctrip.framework.apollo.biz.message.ReleaseMessageListener;
-import com.ctrip.framework.apollo.biz.message.Topics;
-import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
-import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.core.dto.ApolloConfig;
-import com.ctrip.framework.apollo.core.utils.PropertiesUtil;
-import com.ctrip.framework.apollo.tracer.Tracer;
-
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,38 +43,28 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @RestController
 @RequestMapping("/configfiles")
 public class ConfigFileController implements ReleaseMessageListener {
+
   private static final Logger logger = LoggerFactory.getLogger(ConfigFileController.class);
   private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
   private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings()
       .trimResults();
   private static final long MAX_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
   private static final long EXPIRE_AFTER_WRITE = 30;
+  private static final Gson gson = new Gson();
   private final HttpHeaders propertiesResponseHeaders;
   private final HttpHeaders jsonResponseHeaders;
   private final ResponseEntity<String> NOT_FOUND_RESPONSE;
-  private Cache<String, String> localCache;
   private final Multimap<String, String>
       watchedKeys2CacheKey = Multimaps.synchronizedSetMultimap(HashMultimap.create());
   private final Multimap<String, String>
       cacheKey2WatchedKeys = Multimaps.synchronizedSetMultimap(HashMultimap.create());
-  private static final Gson gson = new Gson();
-
+  private Cache<String, String> localCache;
   @Autowired
   private ConfigController configController;
 
@@ -118,12 +114,12 @@ public class ConfigFileController implements ReleaseMessageListener {
 
   @RequestMapping(value = "/{appId}/{clusterName}/{namespace:.+}", method = RequestMethod.GET)
   public ResponseEntity<String> queryConfigAsProperties(@PathVariable String appId,
-                                                        @PathVariable String clusterName,
-                                                        @PathVariable String namespace,
-                                                        @RequestParam(value = "dataCenter", required = false) String dataCenter,
-                                                        @RequestParam(value = "ip", required = false) String clientIp,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response)
+      @PathVariable String clusterName,
+      @PathVariable String namespace,
+      @RequestParam(value = "dataCenter", required = false) String dataCenter,
+      @RequestParam(value = "ip", required = false) String clientIp,
+      HttpServletRequest request,
+      HttpServletResponse response)
       throws IOException {
 
     String result =
@@ -139,12 +135,12 @@ public class ConfigFileController implements ReleaseMessageListener {
 
   @RequestMapping(value = "/json/{appId}/{clusterName}/{namespace:.+}", method = RequestMethod.GET)
   public ResponseEntity<String> queryConfigAsJson(@PathVariable String appId,
-                                                  @PathVariable String clusterName,
-                                                  @PathVariable String namespace,
-                                                  @RequestParam(value = "dataCenter", required = false) String dataCenter,
-                                                  @RequestParam(value = "ip", required = false) String clientIp,
-                                                  HttpServletRequest request,
-                                                  HttpServletResponse response) throws IOException {
+      @PathVariable String clusterName,
+      @PathVariable String namespace,
+      @RequestParam(value = "dataCenter", required = false) String dataCenter,
+      @RequestParam(value = "ip", required = false) String clientIp,
+      HttpServletRequest request,
+      HttpServletResponse response) throws IOException {
 
     String result =
         queryConfig(ConfigFileOutputFormat.JSON, appId, clusterName, namespace, dataCenter,
@@ -158,9 +154,9 @@ public class ConfigFileController implements ReleaseMessageListener {
   }
 
   String queryConfig(ConfigFileOutputFormat outputFormat, String appId, String clusterName,
-                     String namespace, String dataCenter, String clientIp,
-                     HttpServletRequest request,
-                     HttpServletResponse response) throws IOException {
+      String namespace, String dataCenter, String clientIp,
+      HttpServletRequest request,
+      HttpServletResponse response) throws IOException {
     //strip out .properties suffix
     namespace = namespaceUtil.filterNamespaceName(namespace);
     //fix the character case issue, such as FX.apollo <-> fx.apollo
@@ -223,9 +219,9 @@ public class ConfigFileController implements ReleaseMessageListener {
   }
 
   private String loadConfig(ConfigFileOutputFormat outputFormat, String appId, String clusterName,
-                            String namespace, String dataCenter, String clientIp,
-                            HttpServletRequest request,
-                            HttpServletResponse response) throws IOException {
+      String namespace, String dataCenter, String clientIp,
+      HttpServletRequest request,
+      HttpServletResponse response) throws IOException {
     ApolloConfig apolloConfig = configController.queryConfig(appId, clusterName, namespace,
         dataCenter, "-1", clientIp, null, request, response);
 
@@ -250,8 +246,8 @@ public class ConfigFileController implements ReleaseMessageListener {
   }
 
   String assembleCacheKey(ConfigFileOutputFormat outputFormat, String appId, String clusterName,
-                          String namespace,
-                          String dataCenter) {
+      String namespace,
+      String dataCenter) {
     List<String> keyParts =
         Lists.newArrayList(outputFormat.getValue(), appId, clusterName, namespace);
     if (!Strings.isNullOrEmpty(dataCenter)) {
@@ -282,6 +278,14 @@ public class ConfigFileController implements ReleaseMessageListener {
     }
   }
 
+  private String tryToGetClientIp(HttpServletRequest request) {
+    String forwardedFor = request.getHeader("X-FORWARDED-FOR");
+    if (!Strings.isNullOrEmpty(forwardedFor)) {
+      return X_FORWARDED_FOR_SPLITTER.splitToList(forwardedFor).get(0);
+    }
+    return request.getRemoteAddr();
+  }
+
   enum ConfigFileOutputFormat {
     PROPERTIES("properties"), JSON("json");
 
@@ -294,13 +298,5 @@ public class ConfigFileController implements ReleaseMessageListener {
     public String getValue() {
       return value;
     }
-  }
-
-  private String tryToGetClientIp(HttpServletRequest request) {
-    String forwardedFor = request.getHeader("X-FORWARDED-FOR");
-    if (!Strings.isNullOrEmpty(forwardedFor)) {
-      return X_FORWARDED_FOR_SPLITTER.splitToList(forwardedFor).get(0);
-    }
-    return request.getRemoteAddr();
   }
 }

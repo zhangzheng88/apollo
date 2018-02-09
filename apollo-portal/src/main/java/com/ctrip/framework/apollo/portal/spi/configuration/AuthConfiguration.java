@@ -1,10 +1,5 @@
 package com.ctrip.framework.apollo.portal.spi.configuration;
 
-import com.ctrip.framework.apollo.portal.spi.youzan.YouzanUserInfoHolder;
-import com.ctrip.framework.apollo.portal.spi.youzan.YouzanUserService;
-import com.ctrip.framework.apollo.portal.spi.youzan.filters.LoginFilter;
-import com.google.common.collect.Maps;
-
 import com.ctrip.framework.apollo.common.condition.ConditionalOnMissingProfile;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.spi.LogoutHandler;
@@ -21,7 +16,13 @@ import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultUserService;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserService;
-
+import com.ctrip.framework.apollo.portal.spi.youzan.YouzanUserInfoHolder;
+import com.ctrip.framework.apollo.portal.spi.youzan.YouzanUserService;
+import com.ctrip.framework.apollo.portal.spi.youzan.filters.LoginFilter;
+import com.google.common.collect.Maps;
+import java.util.EventListener;
+import java.util.Map;
+import javax.servlet.Filter;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -40,10 +41,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
-import javax.servlet.Filter;
-import java.util.EventListener;
-import java.util.Map;
-
 
 @Configuration
 public class AuthConfiguration {
@@ -61,7 +58,8 @@ public class AuthConfiguration {
     @Bean
     public ServletListenerRegistrationBean redisAppSettingListner() {
       ServletListenerRegistrationBean redisAppSettingListener = new ServletListenerRegistrationBean();
-      redisAppSettingListener.setListener(listener("org.jasig.cas.client.credis.CRedisAppSettingListner"));
+      redisAppSettingListener
+          .setListener(listener("org.jasig.cas.client.credis.CRedisAppSettingListner"));
       return redisAppSettingListener;
     }
 
@@ -95,7 +93,8 @@ public class AuthConfiguration {
       filterInitParam.put("/openapi.*", "exclude");
 
       casFilter.setInitParameters(filterInitParam);
-      casFilter.setFilter(filter("com.ctrip.framework.apollo.sso.filter.ApolloAuthenticationFilter"));
+      casFilter
+          .setFilter(filter("com.ctrip.framework.apollo.sso.filter.ApolloAuthenticationFilter"));
       casFilter.addUrlPatterns("/*");
       casFilter.setOrder(2);
 
@@ -115,7 +114,8 @@ public class AuthConfiguration {
       filterInitParam.put("redisClusterName", "casClientPrincipal");
 
       casValidationFilter
-          .setFilter(filter("org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter"));
+          .setFilter(
+              filter("org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter"));
       casValidationFilter.setInitParameters(filterInitParam);
       casValidationFilter.addUrlPatterns("/*");
       casValidationFilter.setOrder(3);
@@ -134,7 +134,8 @@ public class AuthConfiguration {
 
       assertionHolderFilter.setInitParameters(filterInitParam);
 
-      assertionHolderFilter.setFilter(filter("com.ctrip.framework.apollo.sso.filter.ApolloAssertionThreadLocalFilter"));
+      assertionHolderFilter.setFilter(
+          filter("com.ctrip.framework.apollo.sso.filter.ApolloAssertionThreadLocalFilter"));
       assertionHolderFilter.addUrlPatterns("/*");
       assertionHolderFilter.setOrder(4);
 
@@ -213,19 +214,27 @@ public class AuthConfiguration {
     }
 
     @Bean
-    public JdbcUserDetailsManager jdbcUserDetailsManager(AuthenticationManagerBuilder auth, DataSource datasource) throws Exception {
-      JdbcUserDetailsManager jdbcUserDetailsManager = auth.jdbcAuthentication().passwordEncoder(new BCryptPasswordEncoder()).dataSource(datasource)
+    public JdbcUserDetailsManager jdbcUserDetailsManager(AuthenticationManagerBuilder auth,
+        DataSource datasource) throws Exception {
+      JdbcUserDetailsManager jdbcUserDetailsManager = auth.jdbcAuthentication()
+          .passwordEncoder(new BCryptPasswordEncoder()).dataSource(datasource)
           .usersByUsernameQuery("select Username,Password,Enabled from `Users` where Username = ?")
-          .authoritiesByUsernameQuery("select Username,Authority from `Authorities` where Username = ?")
+          .authoritiesByUsernameQuery(
+              "select Username,Authority from `Authorities` where Username = ?")
           .getUserDetailsService();
 
       jdbcUserDetailsManager.setUserExistsSql("select Username from `Users` where Username = ?");
-      jdbcUserDetailsManager.setCreateUserSql("insert into `Users` (Username, Password, Enabled) values (?,?,?)");
-      jdbcUserDetailsManager.setUpdateUserSql("update `Users` set Password = ?, Enabled = ? where Username = ?");
+      jdbcUserDetailsManager
+          .setCreateUserSql("insert into `Users` (Username, Password, Enabled) values (?,?,?)");
+      jdbcUserDetailsManager
+          .setUpdateUserSql("update `Users` set Password = ?, Enabled = ? where Username = ?");
       jdbcUserDetailsManager.setDeleteUserSql("delete from `Users` where Username = ?");
-      jdbcUserDetailsManager.setCreateAuthoritySql("insert into `Authorities` (Username, Authority) values (?,?)");
-      jdbcUserDetailsManager.setDeleteUserAuthoritiesSql("delete from `Authorities` where Username = ?");
-      jdbcUserDetailsManager.setChangePasswordSql("update `Users` set Password = ? where Username = ?");
+      jdbcUserDetailsManager
+          .setCreateAuthoritySql("insert into `Authorities` (Username, Authority) values (?,?)");
+      jdbcUserDetailsManager
+          .setDeleteUserAuthoritiesSql("delete from `Authorities` where Username = ?");
+      jdbcUserDetailsManager
+          .setChangePasswordSql("update `Users` set Password = ? where Username = ?");
 
       return jdbcUserDetailsManager;
     }
@@ -251,26 +260,34 @@ public class AuthConfiguration {
     protected void configure(HttpSecurity http) throws Exception {
       http.csrf().disable();
       http.headers().frameOptions().sameOrigin();
-      http.authorizeRequests().antMatchers("/openapi/**", "/vendor/**", "/styles/**", "/scripts/**", "/views/**", "/img/**").permitAll()
-      .antMatchers("/**").hasAnyRole(USER_ROLE);
-      http.formLogin().loginPage("/signin").permitAll().failureUrl("/signin?#/error").and().httpBasic();
-      http.logout().invalidateHttpSession(true).clearAuthentication(true).logoutSuccessUrl("/signin?#/logout");
-      http.exceptionHandling().authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/signin"));
+      http.authorizeRequests()
+          .antMatchers("/openapi/**", "/vendor/**", "/styles/**", "/scripts/**", "/views/**",
+              "/img/**").permitAll()
+          .antMatchers("/**").hasAnyRole(USER_ROLE);
+      http.formLogin().loginPage("/signin").permitAll().failureUrl("/signin?#/error").and()
+          .httpBasic();
+      http.logout().invalidateHttpSession(true).clearAuthentication(true)
+          .logoutSuccessUrl("/signin?#/logout");
+      http.exceptionHandling()
+          .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/signin"));
     }
 
   }
 
   @Configuration
   @Profile("youzan")
-  static class YouzanAuthAutoConfiguration{
+  static class YouzanAuthAutoConfiguration {
+
     @Autowired
     PortalConfig portalConfig;
+
     @Bean
-    public UserInfoHolder youzanUserInfoHolder(){
+    public UserInfoHolder youzanUserInfoHolder() {
       return new YouzanUserInfoHolder();
     }
+
     @Bean
-    public YouzanUserService youzanUserService(){
+    public YouzanUserService youzanUserService() {
       return new YouzanUserService();
     }
 
@@ -290,7 +307,7 @@ public class AuthConfiguration {
     @Bean
     public FilterRegistrationBean loginFilter() {
       FilterRegistrationBean filter = new FilterRegistrationBean();
-      filter.setFilter(new LoginFilter(portalConfig,youzanUserInfoHolder()));
+      filter.setFilter(new LoginFilter(portalConfig, youzanUserInfoHolder()));
       filter.addUrlPatterns("/*");
       return filter;
     }
@@ -298,12 +315,11 @@ public class AuthConfiguration {
   }
 
 
-
   /**
    * default profile
    */
   @Configuration
-  @ConditionalOnMissingProfile({"ctrip", "auth","youzan"})
+  @ConditionalOnMissingProfile({"ctrip", "auth", "youzan"})
   static class DefaultAuthAutoConfiguration {
 
     @Bean

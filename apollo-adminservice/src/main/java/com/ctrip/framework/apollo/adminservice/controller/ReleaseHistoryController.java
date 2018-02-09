@@ -1,14 +1,16 @@
 package com.ctrip.framework.apollo.adminservice.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import com.ctrip.framework.apollo.biz.entity.ReleaseHistory;
 import com.ctrip.framework.apollo.biz.service.ReleaseHistoryService;
 import com.ctrip.framework.apollo.common.dto.PageDTO;
 import com.ctrip.framework.apollo.common.dto.ReleaseHistoryDTO;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,11 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -43,8 +40,9 @@ public class ReleaseHistoryController {
       @PathVariable String namespaceName,
       Pageable pageable) {
 
-    Page<ReleaseHistory> result = releaseHistoryService.findReleaseHistoriesByNamespace(appId, clusterName,
-                                                                                        namespaceName, pageable);
+    Page<ReleaseHistory> result = releaseHistoryService
+        .findReleaseHistoriesByNamespace(appId, clusterName,
+            namespaceName, pageable);
     return transform2PageDTO(result, pageable);
   }
 
@@ -55,7 +53,8 @@ public class ReleaseHistoryController {
       @RequestParam("operation") int operation,
       Pageable pageable) {
 
-    Page<ReleaseHistory> result = releaseHistoryService.findByReleaseIdAndOperation(releaseId, operation, pageable);
+    Page<ReleaseHistory> result = releaseHistoryService
+        .findByReleaseIdAndOperation(releaseId, operation, pageable);
 
     return transform2PageDTO(result, pageable);
   }
@@ -66,13 +65,15 @@ public class ReleaseHistoryController {
       @RequestParam("operation") int operation,
       Pageable pageable) {
 
-    Page<ReleaseHistory> result = releaseHistoryService.findByPreviousReleaseIdAndOperation(previousReleaseId, operation, pageable);
+    Page<ReleaseHistory> result = releaseHistoryService
+        .findByPreviousReleaseIdAndOperation(previousReleaseId, operation, pageable);
 
     return transform2PageDTO(result, pageable);
 
   }
 
-  private PageDTO<ReleaseHistoryDTO> transform2PageDTO(Page<ReleaseHistory> releaseHistoriesPage, Pageable pageable){
+  private PageDTO<ReleaseHistoryDTO> transform2PageDTO(Page<ReleaseHistory> releaseHistoriesPage,
+      Pageable pageable) {
     if (!releaseHistoriesPage.hasContent()) {
       return null;
     }
@@ -90,7 +91,7 @@ public class ReleaseHistoryController {
     ReleaseHistoryDTO dto = new ReleaseHistoryDTO();
     BeanUtils.copyProperties(releaseHistory, dto, "operationContext");
     dto.setOperationContext(gson.fromJson(releaseHistory.getOperationContext(),
-                                          configurationTypeReference));
+        configurationTypeReference));
 
     return dto;
   }

@@ -1,19 +1,5 @@
 package com.ctrip.framework.apollo.internals;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ctrip.framework.apollo.build.ApolloInjector;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.utils.ClassLoaderUtil;
@@ -24,17 +10,30 @@ import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.ctrip.framework.apollo.util.ExceptionUtil;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class LocalFileConfigRepository extends AbstractConfigRepository
     implements RepositoryChangeListener {
+
   private static final Logger logger = LoggerFactory.getLogger(LocalFileConfigRepository.class);
   private static final String CONFIG_DIR = "/config-cache";
   private final String m_namespace;
-  private File m_baseDir;
   private final ConfigUtil m_configUtil;
+  private File m_baseDir;
   private volatile Properties m_fileProperties;
   private volatile ConfigRepository m_upstream;
 
@@ -214,7 +213,8 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
 
     OutputStream out = null;
 
-    Transaction transaction = Tracer.newTransaction("Apollo.ConfigService", "persistLocalConfigFile");
+    Transaction transaction = Tracer
+        .newTransaction("Apollo.ConfigService", "persistLocalConfigFile");
     transaction.addData("LocalConfigFile", file.getAbsolutePath());
     try {
       out = new FileOutputStream(file);

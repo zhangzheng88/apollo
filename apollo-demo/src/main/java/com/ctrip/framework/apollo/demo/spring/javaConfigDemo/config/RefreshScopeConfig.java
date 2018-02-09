@@ -6,9 +6,11 @@ import org.springframework.context.annotation.Import;
 
 /**
  * to support RefreshScope
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
 @Configuration
 @Import(RefreshAutoConfiguration.class)
 public class RefreshScopeConfig {
+
 }

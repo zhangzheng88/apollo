@@ -5,9 +5,11 @@ import com.ctrip.framework.apollo.enums.PropertyChangeType;
 
 /**
  * Holds the information for a config change.
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ConfigChange {
+
   private final String namespace;
   private final String propertyName;
   private String oldValue;
@@ -16,6 +18,7 @@ public class ConfigChange {
 
   /**
    * Constructor.
+   *
    * @param namespace the namespace of the key
    * @param propertyName the key whose value is changed
    * @param oldValue the value before change
@@ -23,7 +26,7 @@ public class ConfigChange {
    * @param changeType the change type
    */
   public ConfigChange(String namespace, String propertyName, String oldValue, String newValue,
-                      PropertyChangeType changeType) {
+      PropertyChangeType changeType) {
     this.namespace = namespace;
     this.propertyName = propertyName;
     this.oldValue = oldValue;
@@ -39,20 +42,20 @@ public class ConfigChange {
     return oldValue;
   }
 
-  public String getNewValue() {
-    return newValue;
-  }
-
-  public PropertyChangeType getChangeType() {
-    return changeType;
-  }
-
   public void setOldValue(String oldValue) {
     this.oldValue = oldValue;
   }
 
+  public String getNewValue() {
+    return newValue;
+  }
+
   public void setNewValue(String newValue) {
     this.newValue = newValue;
+  }
+
+  public PropertyChangeType getChangeType() {
+    return changeType;
   }
 
   public void setChangeType(PropertyChangeType changeType) {

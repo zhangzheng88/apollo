@@ -12,20 +12,20 @@ public class ServiceDTO {
     return appName;
   }
 
-  public String getHomepageUrl() {
-    return homepageUrl;
-  }
-
-  public String getInstanceId() {
-    return instanceId;
-  }
-
   public void setAppName(String appName) {
     this.appName = appName;
   }
 
+  public String getHomepageUrl() {
+    return homepageUrl;
+  }
+
   public void setHomepageUrl(String homepageUrl) {
     this.homepageUrl = homepageUrl;
+  }
+
+  public String getInstanceId() {
+    return instanceId;
   }
 
   public void setInstanceId(String instanceId) {

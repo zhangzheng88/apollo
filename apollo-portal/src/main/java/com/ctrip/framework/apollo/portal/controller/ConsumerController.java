@@ -7,7 +7,12 @@ import com.ctrip.framework.apollo.openapi.entity.Consumer;
 import com.ctrip.framework.apollo.openapi.entity.ConsumerRole;
 import com.ctrip.framework.apollo.openapi.entity.ConsumerToken;
 import com.ctrip.framework.apollo.openapi.service.ConsumerService;
-
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,20 +24,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Objects;
-
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @RestController
 public class ConsumerController {
 
-  private static final Date DEFAULT_EXPIRES = new GregorianCalendar(2099, Calendar.JANUARY, 1).getTime();
+  private static final Date DEFAULT_EXPIRES = new GregorianCalendar(2099, Calendar.JANUARY, 1)
+      .getTime();
 
   @Autowired
   private ConsumerService consumerService;
@@ -42,12 +41,12 @@ public class ConsumerController {
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
   @RequestMapping(value = "/consumers", method = RequestMethod.POST)
   public ConsumerToken createConsumer(@RequestBody Consumer consumer,
-                                      @RequestParam(value = "expires", required = false)
-                                      @DateTimeFormat(pattern = "yyyyMMddHHmmss") Date
-                                          expires) {
+      @RequestParam(value = "expires", required = false)
+      @DateTimeFormat(pattern = "yyyyMMddHHmmss") Date
+          expires) {
 
     if (StringUtils.isContainEmpty(consumer.getAppId(), consumer.getName(),
-                                   consumer.getOwnerName(), consumer.getOrgId())) {
+        consumer.getOwnerName(), consumer.getOrgId())) {
       throw new BadRequestException("Params(appId、name、ownerName、orgId) can not be empty.");
     }
 
@@ -68,8 +67,8 @@ public class ConsumerController {
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
   @RequestMapping(value = "/consumers/{token}/assign-role", method = RequestMethod.POST)
   public List<ConsumerRole> assignNamespaceRoleToConsumer(@PathVariable String token,
-                                                          @RequestParam String type,
-                                                          @RequestBody NamespaceDTO namespace) {
+      @RequestParam String type,
+      @RequestBody NamespaceDTO namespace) {
 
     String appId = namespace.getAppId();
     String namespaceName = namespace.getNamespaceName();
@@ -87,7 +86,6 @@ public class ConsumerController {
       return consumerService.assignNamespaceRoleToConsumer(token, appId, namespaceName);
     }
   }
-
 
 
 }

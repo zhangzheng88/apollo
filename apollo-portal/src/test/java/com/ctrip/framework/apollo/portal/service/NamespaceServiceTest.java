@@ -1,5 +1,11 @@
 package com.ctrip.framework.apollo.portal.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
@@ -13,21 +19,13 @@ import com.ctrip.framework.apollo.portal.component.txtresolver.PropertyResolver;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class NamespaceServiceTest extends AbstractUnitTest {
 
@@ -93,13 +91,17 @@ public class NamespaceServiceTest extends AbstractUnitTest {
     when(appNamespaceService.findByAppIdAndName(testAppId, testNamespaceName))
         .thenReturn(applicationAppNamespace);
     when(appNamespaceService.findPublicAppNamespace("hermes")).thenReturn(hermesAppNamespace);
-    when(namespaceAPI.findNamespaceByCluster(testAppId, Env.DEV, testClusterName)).thenReturn(namespaces);
+    when(namespaceAPI.findNamespaceByCluster(testAppId, Env.DEV, testClusterName))
+        .thenReturn(namespaces);
     when(releaseService.loadLatestRelease(testAppId, Env.DEV, testClusterName,
-                                          testNamespaceName)).thenReturn(someRelease);
-    when(releaseService.loadLatestRelease(testAppId, Env.DEV, testClusterName, "hermes")).thenReturn(someRelease);
-    when(itemService.findItems(testAppId, Env.DEV, testClusterName, testNamespaceName)).thenReturn(someItems);
+        testNamespaceName)).thenReturn(someRelease);
+    when(releaseService.loadLatestRelease(testAppId, Env.DEV, testClusterName, "hermes"))
+        .thenReturn(someRelease);
+    when(itemService.findItems(testAppId, Env.DEV, testClusterName, testNamespaceName))
+        .thenReturn(someItems);
 
-    List<NamespaceBO> namespaceVOs = namespaceService.findNamespaceBOs(testAppId, Env.DEV, testClusterName);
+    List<NamespaceBO> namespaceVOs = namespaceService
+        .findNamespaceBOs(testAppId, Env.DEV, testClusterName);
     assertEquals(2, namespaceVOs.size());
     NamespaceBO namespaceVO = namespaceVOs.get(0);
     assertEquals(4, namespaceVO.getItems().size());
@@ -115,7 +117,8 @@ public class NamespaceServiceTest extends AbstractUnitTest {
   public void testDeletePrivateNamespace() {
     AppNamespace privateNamespace = createAppNamespace(testAppId, testNamespaceName, false);
 
-    when(appNamespaceService.findByAppIdAndName(testAppId, testNamespaceName)).thenReturn(privateNamespace);
+    when(appNamespaceService.findByAppIdAndName(testAppId, testNamespaceName))
+        .thenReturn(privateNamespace);
 
     namespaceService.deleteNamespace(testAppId, testEnv, testClusterName, testNamespaceName);
   }
@@ -124,8 +127,10 @@ public class NamespaceServiceTest extends AbstractUnitTest {
   public void testDeleteNamespaceHasInstance() {
     AppNamespace publicNamespace = createAppNamespace(testAppId, testNamespaceName, true);
 
-    when(appNamespaceService.findByAppIdAndName(testAppId, testNamespaceName)).thenReturn(publicNamespace);
-    when(instanceService.getInstanceCountByNamepsace(testAppId, testEnv, testClusterName, testNamespaceName))
+    when(appNamespaceService.findByAppIdAndName(testAppId, testNamespaceName))
+        .thenReturn(publicNamespace);
+    when(instanceService
+        .getInstanceCountByNamepsace(testAppId, testEnv, testClusterName, testNamespaceName))
         .thenReturn(10);
 
     namespaceService.deleteNamespace(testAppId, testEnv, testClusterName, testNamespaceName);
@@ -138,11 +143,16 @@ public class NamespaceServiceTest extends AbstractUnitTest {
     String branchName = "branch";
     NamespaceDTO branch = createNamespace(testAppId, branchName, testNamespaceName);
 
-    when(appNamespaceService.findByAppIdAndName(testAppId, testNamespaceName)).thenReturn(publicNamespace);
-    when(instanceService.getInstanceCountByNamepsace(testAppId, testEnv, testClusterName, testNamespaceName))
+    when(appNamespaceService.findByAppIdAndName(testAppId, testNamespaceName))
+        .thenReturn(publicNamespace);
+    when(instanceService
+        .getInstanceCountByNamepsace(testAppId, testEnv, testClusterName, testNamespaceName))
         .thenReturn(0);
-    when(branchService.findBranchBaseInfo(testAppId, testEnv, testClusterName, testNamespaceName)).thenReturn(branch);
-    when(instanceService.getInstanceCountByNamepsace(testAppId, testEnv, branchName, testNamespaceName)).thenReturn(10);
+    when(branchService.findBranchBaseInfo(testAppId, testEnv, testClusterName, testNamespaceName))
+        .thenReturn(branch);
+    when(instanceService
+        .getInstanceCountByNamepsace(testAppId, testEnv, branchName, testNamespaceName))
+        .thenReturn(10);
 
     namespaceService.deleteNamespace(testAppId, testEnv, testClusterName, testNamespaceName);
 
@@ -155,14 +165,20 @@ public class NamespaceServiceTest extends AbstractUnitTest {
 
     NamespaceDTO branch = createNamespace(testAppId, branchName, testNamespaceName);
 
-    when(appNamespaceService.findByAppIdAndName(testAppId, testNamespaceName)).thenReturn(publicNamespace);
-    when(instanceService.getInstanceCountByNamepsace(testAppId, testEnv, testClusterName, testNamespaceName))
+    when(appNamespaceService.findByAppIdAndName(testAppId, testNamespaceName))
+        .thenReturn(publicNamespace);
+    when(instanceService
+        .getInstanceCountByNamepsace(testAppId, testEnv, testClusterName, testNamespaceName))
         .thenReturn(0);
-    when(branchService.findBranchBaseInfo(testAppId, testEnv, testClusterName, testNamespaceName)).thenReturn(branch);
-    when(instanceService.getInstanceCountByNamepsace(testAppId, testEnv, branchName, testNamespaceName)).thenReturn(0);
+    when(branchService.findBranchBaseInfo(testAppId, testEnv, testClusterName, testNamespaceName))
+        .thenReturn(branch);
+    when(instanceService
+        .getInstanceCountByNamepsace(testAppId, testEnv, branchName, testNamespaceName))
+        .thenReturn(0);
     when(appNamespaceService.findPublicAppNamespace(testNamespaceName)).thenReturn(publicNamespace);
 
-   when(namespaceAPI.countPublicAppNamespaceAssociatedNamespaces(testEnv, testNamespaceName)).thenReturn(10);
+    when(namespaceAPI.countPublicAppNamespaceAssociatedNamespaces(testEnv, testNamespaceName))
+        .thenReturn(10);
 
     namespaceService.deleteNamespace(testAppId, testEnv, testClusterName, testNamespaceName);
   }
@@ -175,21 +191,28 @@ public class NamespaceServiceTest extends AbstractUnitTest {
     AppNamespace publicNamespace = createAppNamespace(testAppId, testNamespaceName, true);
     NamespaceDTO branch = createNamespace(testAppId, branchName, testNamespaceName);
 
-    when(appNamespaceService.findByAppIdAndName(testAppId, testNamespaceName)).thenReturn(publicNamespace);
-    when(instanceService.getInstanceCountByNamepsace(testAppId, testEnv, testClusterName, testNamespaceName))
+    when(appNamespaceService.findByAppIdAndName(testAppId, testNamespaceName))
+        .thenReturn(publicNamespace);
+    when(instanceService
+        .getInstanceCountByNamepsace(testAppId, testEnv, testClusterName, testNamespaceName))
         .thenReturn(0);
-    when(branchService.findBranchBaseInfo(testAppId, testEnv, testClusterName, testNamespaceName)).thenReturn(branch);
-    when(instanceService.getInstanceCountByNamepsace(testAppId, testEnv, branchName, testNamespaceName)).thenReturn(0);
+    when(branchService.findBranchBaseInfo(testAppId, testEnv, testClusterName, testNamespaceName))
+        .thenReturn(branch);
+    when(instanceService
+        .getInstanceCountByNamepsace(testAppId, testEnv, branchName, testNamespaceName))
+        .thenReturn(0);
     when(appNamespaceService.findPublicAppNamespace(testNamespaceName)).thenReturn(publicNamespace);
 
     NamespaceDTO namespace = createNamespace(testAppId, testClusterName, testNamespaceName);
-    when(namespaceAPI.getPublicAppNamespaceAllNamespaces(testEnv, testNamespaceName, 0, 10)).thenReturn(
-        Collections.singletonList(namespace));
+    when(namespaceAPI.getPublicAppNamespaceAllNamespaces(testEnv, testNamespaceName, 0, 10))
+        .thenReturn(
+            Collections.singletonList(namespace));
     when(userInfoHolder.getUser()).thenReturn(createUser(operator));
 
     namespaceService.deleteNamespace(testAppId, testEnv, testClusterName, testNamespaceName);
 
-    verify(namespaceAPI, times(1)).deleteNamespace(testEnv, testAppId, testClusterName, testNamespaceName, operator);
+    verify(namespaceAPI, times(1))
+        .deleteNamespace(testEnv, testAppId, testClusterName, testNamespaceName, operator);
 
   }
 

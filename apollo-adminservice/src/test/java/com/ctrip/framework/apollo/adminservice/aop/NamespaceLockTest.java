@@ -1,6 +1,12 @@
 package com.ctrip.framework.apollo.adminservice.aop;
 
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
 import com.ctrip.framework.apollo.biz.entity.NamespaceLock;
@@ -9,19 +15,12 @@ import com.ctrip.framework.apollo.biz.service.NamespaceLockService;
 import com.ctrip.framework.apollo.biz.service.NamespaceService;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NamespaceLockTest {
@@ -32,7 +31,8 @@ public class NamespaceLockTest {
   private static final String CURRENT_USER = "user-test";
   private static final String ANOTHER_USER = "user-test2";
   private static final long NAMESPACE_ID = 100;
-
+  @InjectMocks
+  NamespaceAcquireLockAspect namespaceLockAspect;
   @Mock
   private NamespaceLockService namespaceLockService;
   @Mock
@@ -41,8 +41,6 @@ public class NamespaceLockTest {
   private ItemService itemService;
   @Mock
   private BizConfig bizConfig;
-  @InjectMocks
-  NamespaceAcquireLockAspect namespaceLockAspect;
 
   @Test
   public void acquireLockWithNotLockedAndSwitchON() {
@@ -99,7 +97,7 @@ public class NamespaceLockTest {
   }
 
   @Test
-  public void acquireLockWithNamespaceIdSwitchOn(){
+  public void acquireLockWithNamespaceIdSwitchOn() {
 
     when(bizConfig.isNamespaceLockSwitchOff()).thenReturn(false);
     when(namespaceService.findOne(NAMESPACE_ID)).thenReturn(mockNamespace());
@@ -114,7 +112,7 @@ public class NamespaceLockTest {
   }
 
   @Test(expected = ServiceException.class)
-  public void testDuplicateLock(){
+  public void testDuplicateLock() {
 
     when(bizConfig.isNamespaceLockSwitchOff()).thenReturn(false);
     when(namespaceService.findOne(NAMESPACE_ID)).thenReturn(mockNamespace());

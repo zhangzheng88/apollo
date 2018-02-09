@@ -8,7 +8,6 @@ import com.ctrip.framework.apollo.biz.service.NamespaceService;
 import com.ctrip.framework.apollo.common.dto.NamespaceLockDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +26,9 @@ public class NamespaceLockController {
   private BizConfig bizConfig;
 
   @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/lock", method = RequestMethod.GET)
-  public NamespaceLockDTO getNamespaceLockOwner(@PathVariable String appId, @PathVariable String clusterName,
-                                                @PathVariable String namespaceName) {
+  public NamespaceLockDTO getNamespaceLockOwner(@PathVariable String appId,
+      @PathVariable String clusterName,
+      @PathVariable String namespaceName) {
     Namespace namespace = namespaceService.findOne(appId, clusterName, namespaceName);
     if (namespace == null) {
       throw new BadRequestException("namespace not exist.");

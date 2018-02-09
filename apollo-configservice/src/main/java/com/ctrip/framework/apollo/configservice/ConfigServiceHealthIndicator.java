@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.configservice;
 
 import com.ctrip.framework.apollo.biz.service.AppService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;

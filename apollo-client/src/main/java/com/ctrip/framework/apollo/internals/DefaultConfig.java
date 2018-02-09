@@ -1,5 +1,13 @@
 package com.ctrip.framework.apollo.internals;
 
+import com.ctrip.framework.apollo.core.utils.ClassLoaderUtil;
+import com.ctrip.framework.apollo.enums.PropertyChangeType;
+import com.ctrip.framework.apollo.model.ConfigChange;
+import com.ctrip.framework.apollo.model.ConfigChangeEvent;
+import com.ctrip.framework.apollo.tracer.Tracer;
+import com.ctrip.framework.apollo.util.ExceptionUtil;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.util.concurrent.RateLimiter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -9,24 +17,15 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.ctrip.framework.apollo.core.utils.ClassLoaderUtil;
-import com.ctrip.framework.apollo.enums.PropertyChangeType;
-import com.ctrip.framework.apollo.model.ConfigChange;
-import com.ctrip.framework.apollo.model.ConfigChangeEvent;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.apollo.util.ExceptionUtil;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.util.concurrent.RateLimiter;
 
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class DefaultConfig extends AbstractConfig implements RepositoryChangeListener {
+
   private static final Logger logger = LoggerFactory.getLogger(DefaultConfig.class);
   private final String m_namespace;
   private Properties m_resourceProperties;
@@ -37,7 +36,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
   /**
    * Constructor.
    *
-   * @param namespace        the namespace of this config instance
+   * @param namespace the namespace of this config instance
    * @param configRepository the config repository for this config instance
    */
   public DefaultConfig(String namespace, ConfigRepository configRepository) {
@@ -88,7 +87,9 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     }
 
     if (value == null && m_configProperties.get() == null && m_warnLogRateLimiter.tryAcquire()) {
-      logger.warn("Could not load config for namespace {} from Apollo, please check whether the configs are released in Apollo! Return default value now!", m_namespace);
+      logger.warn(
+          "Could not load config for namespace {} from Apollo, please check whether the configs are released in Apollo! Return default value now!",
+          m_namespace);
     }
 
     return value == null ? defaultValue : value;

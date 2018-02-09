@@ -2,14 +2,12 @@ package com.ctrip.framework.apollo.biz.eureka;
 
 
 import com.ctrip.framework.apollo.biz.config.BizConfig;
-
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.eureka.EurekaClientConfigBean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-
-import java.util.List;
 
 @Component
 @Primary

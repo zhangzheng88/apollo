@@ -7,7 +7,9 @@ import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.constant.TracerEventType;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
-
+import java.net.SocketTimeoutException;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.Logger;
@@ -22,11 +24,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriTemplateHandler;
 import org.springframework.web.util.UriTemplateHandler;
-
-import java.net.SocketTimeoutException;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
 
 /**
  * 封装RestTemplate. admin server集群在某些机器宕机或者超时的情况下轮询重试
@@ -57,18 +54,20 @@ public class RetryableRestTemplate {
   }
 
   public <T> ResponseEntity<T> get(Env env, String path, ParameterizedTypeReference<T> reference,
-                                   Object... uriVariables)
+      Object... uriVariables)
       throws RestClientException {
 
     return exchangeGet(env, path, reference, uriVariables);
   }
 
-  public <T> T post(Env env, String path, Object request, Class<T> responseType, Object... uriVariables)
+  public <T> T post(Env env, String path, Object request, Class<T> responseType,
+      Object... uriVariables)
       throws RestClientException {
     return execute(HttpMethod.POST, env, path, request, responseType, uriVariables);
   }
 
-  public void put(Env env, String path, Object request, Object... urlVariables) throws RestClientException {
+  public void put(Env env, String path, Object request, Object... urlVariables)
+      throws RestClientException {
     execute(HttpMethod.PUT, env, path, request, null, urlVariables);
   }
 
@@ -76,8 +75,9 @@ public class RetryableRestTemplate {
     execute(HttpMethod.DELETE, env, path, null, null, urlVariables);
   }
 
-  private <T> T execute(HttpMethod method, Env env, String path, Object request, Class<T> responseType,
-                        Object... uriVariables) {
+  private <T> T execute(HttpMethod method, Env env, String path, Object request,
+      Class<T> responseType,
+      Object... uriVariables) {
 
     if (path.startsWith("/")) {
       path = path.substring(1, path.length());
@@ -112,15 +112,17 @@ public class RetryableRestTemplate {
 
     //all admin server down
     ServiceException e =
-        new ServiceException(String.format("Admin servers are unresponsive. meta server address: %s, admin servers: %s",
-                                           MetaDomainConsts.getDomain(env), services));
+        new ServiceException(String
+            .format("Admin servers are unresponsive. meta server address: %s, admin servers: %s",
+                MetaDomainConsts.getDomain(env), services));
     ct.setStatus(e);
     ct.complete();
     throw e;
   }
 
-  private <T> ResponseEntity<T> exchangeGet(Env env, String path, ParameterizedTypeReference<T> reference,
-                                            Object... uriVariables) {
+  private <T> ResponseEntity<T> exchangeGet(Env env, String path,
+      ParameterizedTypeReference<T> reference,
+      Object... uriVariables) {
     if (path.startsWith("/")) {
       path = path.substring(1, path.length());
     }
@@ -135,7 +137,8 @@ public class RetryableRestTemplate {
       try {
 
         ResponseEntity<T> result =
-            restTemplate.exchange(parseHost(serviceDTO) + path, HttpMethod.GET, null, reference, uriVariables);
+            restTemplate.exchange(parseHost(serviceDTO) + path, HttpMethod.GET, null, reference,
+                uriVariables);
 
         ct.setStatus(Transaction.SUCCESS);
         ct.complete();
@@ -156,8 +159,9 @@ public class RetryableRestTemplate {
 
     //all admin server down
     ServiceException e =
-        new ServiceException(String.format("Admin servers are unresponsive. meta server address: %s, admin servers: %s",
-                                           MetaDomainConsts.getDomain(env), services));
+        new ServiceException(String
+            .format("Admin servers are unresponsive. meta server address: %s, admin servers: %s",
+                MetaDomainConsts.getDomain(env), services));
     ct.setStatus(e);
     ct.complete();
     throw e;
@@ -170,9 +174,9 @@ public class RetryableRestTemplate {
 
     if (CollectionUtils.isEmpty(services)) {
       ServiceException e = new ServiceException(String.format("No available admin server."
-                                                              + " Maybe because of meta server down or all admin server down. "
-                                                              + "Meta server address: %s",
-                                                              MetaDomainConsts.getDomain(env)));
+              + " Maybe because of meta server down or all admin server down. "
+              + "Meta server address: %s",
+          MetaDomainConsts.getDomain(env)));
       ct.setStatus(e);
       ct.complete();
       throw e;
@@ -182,8 +186,8 @@ public class RetryableRestTemplate {
   }
 
   private <T> T doExecute(HttpMethod method, ServiceDTO service, String path, Object request,
-                          Class<T> responseType,
-                          Object... uriVariables) {
+      Class<T> responseType,
+      Object... uriVariables) {
     T result = null;
     switch (method) {
       case GET:
@@ -191,7 +195,9 @@ public class RetryableRestTemplate {
         break;
       case POST:
         result =
-            restTemplate.postForEntity(parseHost(service) + path, request, responseType, uriVariables).getBody();
+            restTemplate
+                .postForEntity(parseHost(service) + path, request, responseType, uriVariables)
+                .getBody();
         break;
       case PUT:
         restTemplate.put(parseHost(service) + path, request, uriVariables);
@@ -200,7 +206,8 @@ public class RetryableRestTemplate {
         restTemplate.delete(parseHost(service) + path, uriVariables);
         break;
       default:
-        throw new UnsupportedOperationException(String.format("unsupported http method(method=%s)", method));
+        throw new UnsupportedOperationException(
+            String.format("unsupported http method(method=%s)", method));
     }
     return result;
   }
@@ -214,11 +221,11 @@ public class RetryableRestTemplate {
     Throwable nestedException = e.getCause();
     if (method == HttpMethod.GET) {
       return nestedException instanceof SocketTimeoutException
-             || nestedException instanceof HttpHostConnectException
-             || nestedException instanceof ConnectTimeoutException;
+          || nestedException instanceof HttpHostConnectException
+          || nestedException instanceof ConnectTimeoutException;
     } else {
       return nestedException instanceof HttpHostConnectException
-             || nestedException instanceof ConnectTimeoutException;
+          || nestedException instanceof ConnectTimeoutException;
     }
   }
 

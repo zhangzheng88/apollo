@@ -8,15 +8,13 @@ import com.ctrip.framework.apollo.biz.repository.AppRepository;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-
+import java.util.Date;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
-import java.util.List;
-
-public class AdminServiceTest extends AbstractIntegrationTest{
+public class AdminServiceTest extends AbstractIntegrationTest {
 
   @Autowired
   private AdminService adminService;

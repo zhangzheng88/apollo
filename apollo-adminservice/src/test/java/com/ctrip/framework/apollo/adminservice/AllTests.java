@@ -9,7 +9,6 @@ import com.ctrip.framework.apollo.adminservice.controller.ControllerIntegrationE
 import com.ctrip.framework.apollo.adminservice.controller.InstanceConfigControllerTest;
 import com.ctrip.framework.apollo.adminservice.controller.ItemSetControllerTest;
 import com.ctrip.framework.apollo.adminservice.controller.ReleaseControllerTest;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

@@ -1,19 +1,18 @@
 package com.ctrip.framework.apollo.spring.config;
 
+import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigChangeListener;
+import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.model.ConfigChange;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
-import com.ctrip.framework.apollo.spring.annotation.ApolloAnnotationProcessor;
-import com.ctrip.framework.apollo.spring.annotation.ApolloValue;
 import com.ctrip.framework.apollo.spring.annotation.ApolloValueProcessor;
 import com.ctrip.framework.apollo.spring.auto.SpringValue;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Multimap;
-
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigService;
-
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -25,21 +24,20 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
-
 /**
  * Apollo Property Sources processor for Spring Annotation Based Application. <br /> <br />
  *
  * The reason why PropertySourcesProcessor implements {@link BeanFactoryPostProcessor} instead of
- * {@link org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor} is that lower versions of
- * Spring (e.g. 3.1.1) doesn't support registering BeanDefinitionRegistryPostProcessor in ImportBeanDefinitionRegistrar
- * - {@link com.ctrip.framework.apollo.spring.annotation.ApolloConfigRegistrar}
+ * {@link org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor} is that
+ * lower versions of Spring (e.g. 3.1.1) doesn't support registering
+ * BeanDefinitionRegistryPostProcessor in ImportBeanDefinitionRegistrar - {@link
+ * com.ctrip.framework.apollo.spring.annotation.ApolloConfigRegistrar}
  *
  * @author Jason Song(song_s@ctrip.com)
  */
-public class PropertySourcesProcessor implements BeanFactoryPostProcessor, EnvironmentAware, PriorityOrdered {
+public class PropertySourcesProcessor implements BeanFactoryPostProcessor, EnvironmentAware,
+    PriorityOrdered {
+
   private static final String APOLLO_PROPERTY_SOURCE_NAME = "ApolloPropertySources";
   private static final Multimap<Integer, String> NAMESPACE_NAMES = HashMultimap.create();
 
@@ -49,8 +47,14 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
     return NAMESPACE_NAMES.putAll(order, namespaces);
   }
 
+  //only for test
+  private static void reset() {
+    NAMESPACE_NAMES.clear();
+  }
+
   @Override
-  public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+  public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
+      throws BeansException {
     initializePropertySources();
   }
 
@@ -73,16 +77,16 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
           @Override
           public void onChange(ConfigChangeEvent changeEvent) {
             Set<String> keys = changeEvent.changedKeys();
-            if (CollectionUtils.isEmpty(keys)){
+            if (CollectionUtils.isEmpty(keys)) {
               return;
             }
-            for (String k:keys){
+            for (String k : keys) {
               ConfigChange configChange = changeEvent.getChange(k);
               Collection<SpringValue> targetValues = ApolloValueProcessor.monitor().get(k);
-              if (targetValues==null||targetValues.isEmpty()){
+              if (targetValues == null || targetValues.isEmpty()) {
                 return;
               }
-              for (SpringValue val:targetValues){
+              for (SpringValue val : targetValues) {
                 val.updateVal(configChange.getNewValue());
               }
             }
@@ -98,11 +102,6 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
   public void setEnvironment(Environment environment) {
     //it is safe enough to cast as all known environment is derived from ConfigurableEnvironment
     this.environment = (ConfigurableEnvironment) environment;
-  }
-
-  //only for test
-  private static void reset() {
-    NAMESPACE_NAMES.clear();
   }
 
   @Override

@@ -21,9 +21,9 @@ public class ApolloConfig {
   }
 
   public ApolloConfig(String appId,
-                      String cluster,
-                      String namespaceName,
-                      String releaseKey) {
+      String cluster,
+      String namespaceName,
+      String releaseKey) {
     this.appId = appId;
     this.cluster = cluster;
     this.namespaceName = namespaceName;
@@ -34,36 +34,36 @@ public class ApolloConfig {
     return appId;
   }
 
-  public String getCluster() {
-    return cluster;
-  }
-
-  public String getNamespaceName() {
-    return namespaceName;
-  }
-
-  public String getReleaseKey() {
-    return releaseKey;
-  }
-
-  public Map<String, String> getConfigurations() {
-    return configurations;
-  }
-
   public void setAppId(String appId) {
     this.appId = appId;
+  }
+
+  public String getCluster() {
+    return cluster;
   }
 
   public void setCluster(String cluster) {
     this.cluster = cluster;
   }
 
+  public String getNamespaceName() {
+    return namespaceName;
+  }
+
   public void setNamespaceName(String namespaceName) {
     this.namespaceName = namespaceName;
   }
 
+  public String getReleaseKey() {
+    return releaseKey;
+  }
+
   public void setReleaseKey(String releaseKey) {
     this.releaseKey = releaseKey;
+  }
+
+  public Map<String, String> getConfigurations() {
+    return configurations;
   }
 
   public void setConfigurations(Map<String, String> configurations) {

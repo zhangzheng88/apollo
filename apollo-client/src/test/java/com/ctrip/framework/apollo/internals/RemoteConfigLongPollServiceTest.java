@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.internals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -11,26 +10,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import com.ctrip.framework.apollo.Apollo;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
@@ -43,12 +22,31 @@ import com.ctrip.framework.apollo.util.http.HttpUtil;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.SettableFuture;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.servlet.http.HttpServletResponse;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @RunWith(MockitoJUnitRunner.class)
 public class RemoteConfigLongPollServiceTest {
+
+  private static String someServerUrl;
+  private static String someAppId;
+  private static String someCluster;
   private RemoteConfigLongPollService remoteConfigLongPollService;
   @Mock
   private HttpResponse<List<ApolloConfigNotification>> pollResponse;
@@ -57,10 +55,6 @@ public class RemoteConfigLongPollServiceTest {
   @Mock
   private ConfigServiceLocator configServiceLocator;
   private Type responseType;
-
-  private static String someServerUrl;
-  private static String someAppId;
-  private static String someCluster;
 
   @Before
   public void setUp() throws Exception {
@@ -120,7 +114,8 @@ public class RemoteConfigLongPollServiceTest {
 
     remoteConfigLongPollService.stopLongPollingRefresh();
 
-    verify(someRepository, never()).onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
+    verify(someRepository, never())
+        .onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
   }
 
   @Test
@@ -163,7 +158,8 @@ public class RemoteConfigLongPollServiceTest {
         onNotified.set(true);
         return null;
       }
-    }).when(someRepository).onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
+    }).when(someRepository)
+        .onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
 
     remoteConfigLongPollService.submit(someNamespace, someRepository);
 
@@ -171,7 +167,8 @@ public class RemoteConfigLongPollServiceTest {
 
     remoteConfigLongPollService.stopLongPollingRefresh();
 
-    final ArgumentCaptor<ApolloNotificationMessages> captor = ArgumentCaptor.forClass(ApolloNotificationMessages.class);
+    final ArgumentCaptor<ApolloNotificationMessages> captor = ArgumentCaptor
+        .forClass(ApolloNotificationMessages.class);
     verify(someRepository, times(1)).onLongPollNotified(any(ServiceDTO.class), captor.capture());
 
     ApolloNotificationMessages captured = captor.getValue();
@@ -243,7 +240,8 @@ public class RemoteConfigLongPollServiceTest {
         onAnotherRepositoryNotified.set(true);
         return null;
       }
-    }).when(anotherRepository).onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
+    }).when(anotherRepository)
+        .onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
 
     remoteConfigLongPollService.submit(someNamespace, someRepository);
 
@@ -255,12 +253,15 @@ public class RemoteConfigLongPollServiceTest {
 
     remoteConfigLongPollService.stopLongPollingRefresh();
 
-    verify(someRepository, times(1)).onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
-    verify(anotherRepository, times(1)).onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
+    verify(someRepository, times(1))
+        .onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
+    verify(anotherRepository, times(1))
+        .onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
   }
 
   @Test
-  public void testSubmitLongPollMultipleNamespacesWithMultipleNotificationsReturned() throws Exception {
+  public void testSubmitLongPollMultipleNamespacesWithMultipleNotificationsReturned()
+      throws Exception {
     RemoteConfigRepository someRepository = mock(RemoteConfigRepository.class);
     RemoteConfigRepository anotherRepository = mock(RemoteConfigRepository.class);
     final String someNamespace = "someNamespace";
@@ -284,7 +285,8 @@ public class RemoteConfigLongPollServiceTest {
     when(anotherNotification.getMessages()).thenReturn(anotherNotificationMessages);
 
     when(pollResponse.getStatusCode()).thenReturn(HttpServletResponse.SC_OK);
-    when(pollResponse.getBody()).thenReturn(Lists.newArrayList(someNotification, anotherNotification));
+    when(pollResponse.getBody())
+        .thenReturn(Lists.newArrayList(someNotification, anotherNotification));
 
     doAnswer(new Answer<HttpResponse<List<ApolloConfigNotification>>>() {
       @Override
@@ -306,7 +308,8 @@ public class RemoteConfigLongPollServiceTest {
         someRepositoryNotified.set(true);
         return null;
       }
-    }).when(someRepository).onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
+    }).when(someRepository)
+        .onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
     final SettableFuture<Boolean> anotherRepositoryNotified = SettableFuture.create();
     doAnswer(new Answer<Void>() {
       @Override
@@ -314,7 +317,8 @@ public class RemoteConfigLongPollServiceTest {
         anotherRepositoryNotified.set(true);
         return null;
       }
-    }).when(anotherRepository).onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
+    }).when(anotherRepository)
+        .onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
 
     remoteConfigLongPollService.submit(someNamespace, someRepository);
     remoteConfigLongPollService.submit(anotherNamespace, anotherRepository);
@@ -324,10 +328,13 @@ public class RemoteConfigLongPollServiceTest {
 
     remoteConfigLongPollService.stopLongPollingRefresh();
 
-    final ArgumentCaptor<ApolloNotificationMessages> captor = ArgumentCaptor.forClass(ApolloNotificationMessages.class);
-    final ArgumentCaptor<ApolloNotificationMessages> anotherCaptor = ArgumentCaptor.forClass(ApolloNotificationMessages.class);
+    final ArgumentCaptor<ApolloNotificationMessages> captor = ArgumentCaptor
+        .forClass(ApolloNotificationMessages.class);
+    final ArgumentCaptor<ApolloNotificationMessages> anotherCaptor = ArgumentCaptor
+        .forClass(ApolloNotificationMessages.class);
     verify(someRepository, times(1)).onLongPollNotified(any(ServiceDTO.class), captor.capture());
-    verify(anotherRepository, times(1)).onLongPollNotified(any(ServiceDTO.class), anotherCaptor.capture());
+    verify(anotherRepository, times(1))
+        .onLongPollNotified(any(ServiceDTO.class), anotherCaptor.capture());
 
     ApolloNotificationMessages result = captor.getValue();
     assertEquals(1, result.getDetails().size());
@@ -375,7 +382,8 @@ public class RemoteConfigLongPollServiceTest {
         onNotified.set(true);
         return null;
       }
-    }).when(someRepository).onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
+    }).when(someRepository)
+        .onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
 
     remoteConfigLongPollService.submit(someNamespace, someRepository);
 
@@ -384,7 +392,8 @@ public class RemoteConfigLongPollServiceTest {
     //reset to 304
     when(pollResponse.getStatusCode()).thenReturn(HttpServletResponse.SC_NOT_MODIFIED);
 
-    final ArgumentCaptor<ApolloNotificationMessages> captor = ArgumentCaptor.forClass(ApolloNotificationMessages.class);
+    final ArgumentCaptor<ApolloNotificationMessages> captor = ArgumentCaptor
+        .forClass(ApolloNotificationMessages.class);
     verify(someRepository, times(1)).onLongPollNotified(any(ServiceDTO.class), captor.capture());
 
     ApolloNotificationMessages captured = captor.getValue();
@@ -399,7 +408,8 @@ public class RemoteConfigLongPollServiceTest {
         anotherOnNotified.set(true);
         return null;
       }
-    }).when(someRepository).onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
+    }).when(someRepository)
+        .onLongPollNotified(any(ServiceDTO.class), any(ApolloNotificationMessages.class));
 
     String anotherKey = "anotherKey";
     long anotherNotificationId = 2;
@@ -469,6 +479,7 @@ public class RemoteConfigLongPollServiceTest {
   }
 
   public static class MockConfigUtil extends ConfigUtil {
+
     @Override
     public String getAppId() {
       return someAppId;

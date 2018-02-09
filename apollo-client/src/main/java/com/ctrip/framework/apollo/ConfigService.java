@@ -13,34 +13,11 @@ import com.ctrip.framework.apollo.spi.ConfigRegistry;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ConfigService {
+
   private static final ConfigService s_instance = new ConfigService();
 
   private volatile ConfigManager m_configManager;
   private volatile ConfigRegistry m_configRegistry;
-
-  private ConfigManager getManager() {
-    if (m_configManager == null) {
-      synchronized (this) {
-        if (m_configManager == null) {
-          m_configManager = ApolloInjector.getInstance(ConfigManager.class);
-        }
-      }
-    }
-
-    return m_configManager;
-  }
-
-  private ConfigRegistry getRegistry() {
-    if (m_configRegistry == null) {
-      synchronized (this) {
-        if (m_configRegistry == null) {
-          m_configRegistry = ApolloInjector.getInstance(ConfigRegistry.class);
-        }
-      }
-    }
-
-    return m_configRegistry;
-  }
 
   /**
    * Get Application's config instance.
@@ -58,7 +35,7 @@ public class ConfigService {
    * @return config instance
    */
   public static Config getConfig(String namespace) {
-     return s_instance.getManager().getConfig(namespace);
+    return s_instance.getManager().getConfig(namespace);
   }
 
   public static ConfigFile getConfigFile(String namespace, ConfigFileFormat configFileFormat) {
@@ -73,7 +50,7 @@ public class ConfigService {
    * Manually set the config for the namespace specified, use with caution.
    *
    * @param namespace the namespace
-   * @param config    the config instance
+   * @param config the config instance
    */
   static void setConfig(String namespace, final Config config) {
     s_instance.getRegistry().register(namespace, new ConfigFactory() {
@@ -98,7 +75,7 @@ public class ConfigService {
    * Manually set the config factory for the namespace specified, use with caution.
    *
    * @param namespace the namespace
-   * @param factory   the factory instance
+   * @param factory the factory instance
    */
   static void setConfigFactory(String namespace, ConfigFactory factory) {
     s_instance.getRegistry().register(namespace, factory);
@@ -110,5 +87,29 @@ public class ConfigService {
       s_instance.m_configManager = null;
       s_instance.m_configRegistry = null;
     }
+  }
+
+  private ConfigManager getManager() {
+    if (m_configManager == null) {
+      synchronized (this) {
+        if (m_configManager == null) {
+          m_configManager = ApolloInjector.getInstance(ConfigManager.class);
+        }
+      }
+    }
+
+    return m_configManager;
+  }
+
+  private ConfigRegistry getRegistry() {
+    if (m_configRegistry == null) {
+      synchronized (this) {
+        if (m_configRegistry == null) {
+          m_configRegistry = ApolloInjector.getInstance(ConfigRegistry.class);
+        }
+      }
+    }
+
+    return m_configRegistry;
   }
 }

@@ -1,14 +1,12 @@
 package com.ctrip.framework.apollo.portal.controller;
 
 import com.ctrip.framework.apollo.portal.spi.SsoHeartbeatHandler;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Since sso auth information has a limited expiry time, so we need to do sso heartbeat to keep the
@@ -19,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 @RequestMapping("/sso_heartbeat")
 public class SsoHeartbeatController {
+
   @Autowired
   private SsoHeartbeatHandler handler;
 

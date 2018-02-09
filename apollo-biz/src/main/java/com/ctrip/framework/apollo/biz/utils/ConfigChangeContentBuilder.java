@@ -1,11 +1,9 @@
 package com.ctrip.framework.apollo.biz.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import com.ctrip.framework.apollo.biz.entity.Item;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,14 +20,14 @@ public class ConfigChangeContentBuilder {
 
 
   public ConfigChangeContentBuilder createItem(Item item) {
-    if (!StringUtils.isEmpty(item.getKey())){
+    if (!StringUtils.isEmpty(item.getKey())) {
       createItems.add(cloneItem(item));
     }
     return this;
   }
 
   public ConfigChangeContentBuilder updateItem(Item oldItem, Item newItem) {
-    if (!oldItem.getValue().equals(newItem.getValue())){
+    if (!oldItem.getValue().equals(newItem.getValue())) {
       ItemPair itemPair = new ItemPair(cloneItem(oldItem), cloneItem(newItem));
       updateItems.add(itemPair);
     }
@@ -43,7 +41,7 @@ public class ConfigChangeContentBuilder {
     return this;
   }
 
-  public boolean hasContent(){
+  public boolean hasContent() {
     return !createItems.isEmpty() || !updateItems.isEmpty() || !deleteItems.isEmpty();
   }
 
@@ -65,6 +63,14 @@ public class ConfigChangeContentBuilder {
     return gson.toJson(this);
   }
 
+  Item cloneItem(Item source) {
+    Item target = new Item();
+
+    BeanUtils.copyProperties(source, target);
+
+    return target;
+  }
+
   static class ItemPair {
 
     Item oldItem;
@@ -74,14 +80,6 @@ public class ConfigChangeContentBuilder {
       this.oldItem = oldItem;
       this.newItem = newItem;
     }
-  }
-
-  Item cloneItem(Item source) {
-    Item target = new Item();
-
-    BeanUtils.copyProperties(source, target);
-
-    return target;
   }
 
 }

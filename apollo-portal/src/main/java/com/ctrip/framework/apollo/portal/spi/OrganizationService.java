@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.portal.spi;
 
 import com.ctrip.framework.apollo.portal.entity.vo.Organization;
-
 import java.util.List;
 
 /**
@@ -9,6 +8,6 @@ import java.util.List;
  */
 public interface OrganizationService {
 
-    List<Organization> loadOrgs();
+  List<Organization> loadOrgs();
 
 }

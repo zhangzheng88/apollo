@@ -1,29 +1,20 @@
 package com.ctrip.framework.apollo.configservice.service;
 
+import com.ctrip.framework.apollo.biz.config.BizConfig;
+import com.ctrip.framework.apollo.biz.repository.AppNamespaceRepository;
+import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.configservice.wrapper.CaseInsensitiveMapWrapper;
+import com.ctrip.framework.apollo.core.ConfigConsts;
+import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
+import com.ctrip.framework.apollo.tracer.Tracer;
+import com.ctrip.framework.apollo.tracer.spi.Transaction;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import com.ctrip.framework.apollo.biz.config.BizConfig;
-import com.ctrip.framework.apollo.biz.repository.AppNamespaceRepository;
-import com.ctrip.framework.apollo.common.entity.AppNamespace;
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.apollo.tracer.spi.Transaction;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +22,19 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @Service
 public class AppNamespaceServiceWithCache implements InitializingBean {
+
   private static final Logger logger = LoggerFactory.getLogger(AppNamespaceServiceWithCache.class);
   private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR)
       .skipNulls();
@@ -76,7 +74,8 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
   }
 
   public AppNamespace findByAppIdAndNamespace(String appId, String namespaceName) {
-    Preconditions.checkArgument(!StringUtils.isContainEmpty(appId, namespaceName), "appId and namespaceName must not be empty");
+    Preconditions.checkArgument(!StringUtils.isContainEmpty(appId, namespaceName),
+        "appId and namespaceName must not be empty");
     return appNamespaceCache.get(STRING_JOINER.join(appId, namespaceName));
   }
 
@@ -96,7 +95,8 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
   }
 
   public AppNamespace findPublicNamespaceByName(String namespaceName) {
-    Preconditions.checkArgument(!Strings.isNullOrEmpty(namespaceName), "namespaceName must not be empty");
+    Preconditions
+        .checkArgument(!Strings.isNullOrEmpty(namespaceName), "namespaceName must not be empty");
     return publicAppNamespaceCache.get(namespaceName);
   }
 

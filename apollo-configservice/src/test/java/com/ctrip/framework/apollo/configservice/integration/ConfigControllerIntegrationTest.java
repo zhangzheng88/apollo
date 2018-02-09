@@ -1,11 +1,15 @@
 package com.ctrip.framework.apollo.configservice.integration;
 
-import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
-import com.google.common.base.Joiner;
+import static org.junit.Assert.assertEquals;
 
+import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.dto.ApolloConfig;
-
+import com.google.common.base.Joiner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +19,11 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static org.junit.Assert.assertEquals;
-
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest {
+
   private String someAppId;
   private String somePublicAppId;
   private String someCluster;
@@ -60,7 +58,8 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
   public void testQueryConfigWithDefaultClusterAndDefaultNamespaceOK() throws Exception {
     ResponseEntity<ApolloConfig> response = restTemplate
         .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}", ApolloConfig.class,
-            getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, ConfigConsts.NAMESPACE_APPLICATION);
+            getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT,
+            ConfigConsts.NAMESPACE_APPLICATION);
     ApolloConfig result = response.getBody();
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -71,7 +70,8 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
   @Test
   @Sql(scripts = "/integration-test/test-release.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-  public void testQueryConfigWithDefaultClusterAndDefaultNamespaceAndIncorrectCase() throws Exception {
+  public void testQueryConfigWithDefaultClusterAndDefaultNamespaceAndIncorrectCase()
+      throws Exception {
     ResponseEntity<ApolloConfig> response = restTemplate
         .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}", ApolloConfig.class,
             getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT,
@@ -89,7 +89,8 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
   @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
   public void testQueryGrayConfigWithDefaultClusterAndDefaultNamespaceOK() throws Exception {
     AtomicBoolean stop = new AtomicBoolean();
-    periodicSendMessage(executorService, assembleKey(someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, ConfigConsts.NAMESPACE_APPLICATION),
+    periodicSendMessage(executorService, assembleKey(someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT,
+        ConfigConsts.NAMESPACE_APPLICATION),
         stop);
 
     TimeUnit.MILLISECONDS.sleep(500);
@@ -97,8 +98,10 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
     stop.set(true);
 
     ResponseEntity<ApolloConfig> response = restTemplate
-        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}", ApolloConfig.class,
-            getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, ConfigConsts.NAMESPACE_APPLICATION, someClientIp);
+        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}",
+            ApolloConfig.class,
+            getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT,
+            ConfigConsts.NAMESPACE_APPLICATION, someClientIp);
     ApolloConfig result = response.getBody();
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -110,9 +113,11 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
   @Sql(scripts = "/integration-test/test-release.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   @Sql(scripts = "/integration-test/test-gray-release.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-  public void testQueryGrayConfigWithDefaultClusterAndDefaultNamespaceAndIncorrectCase() throws Exception {
+  public void testQueryGrayConfigWithDefaultClusterAndDefaultNamespaceAndIncorrectCase()
+      throws Exception {
     AtomicBoolean stop = new AtomicBoolean();
-    periodicSendMessage(executorService, assembleKey(someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, ConfigConsts.NAMESPACE_APPLICATION),
+    periodicSendMessage(executorService, assembleKey(someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT,
+        ConfigConsts.NAMESPACE_APPLICATION),
         stop);
 
     TimeUnit.MILLISECONDS.sleep(500);
@@ -120,7 +125,8 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
     stop.set(true);
 
     ResponseEntity<ApolloConfig> response = restTemplate
-        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}", ApolloConfig.class,
+        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}",
+            ApolloConfig.class,
             getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT,
             ConfigConsts.NAMESPACE_APPLICATION.toUpperCase(), someClientIp);
     ApolloConfig result = response.getBody();
@@ -136,7 +142,8 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
   public void testQueryConfigFileWithDefaultClusterAndDefaultNamespaceOK() throws Exception {
     ResponseEntity<ApolloConfig> response = restTemplate
         .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}", ApolloConfig.class,
-            getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, ConfigConsts.NAMESPACE_APPLICATION + ".properties");
+            getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT,
+            ConfigConsts.NAMESPACE_APPLICATION + ".properties");
     ApolloConfig result = response.getBody();
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -208,7 +215,8 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
   @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
   public void testQueryPublicGrayConfigWithNoOverride() throws Exception {
     AtomicBoolean stop = new AtomicBoolean();
-    periodicSendMessage(executorService, assembleKey(somePublicAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, somePublicNamespace),
+    periodicSendMessage(executorService,
+        assembleKey(somePublicAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, somePublicNamespace),
         stop);
 
     TimeUnit.MILLISECONDS.sleep(500);
@@ -216,7 +224,8 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
     stop.set(true);
 
     ResponseEntity<ApolloConfig> response = restTemplate
-        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}", ApolloConfig.class,
+        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}",
+            ApolloConfig.class,
             getHostUrl(), someAppId, someCluster, somePublicNamespace, someClientIp);
     ApolloConfig result = response.getBody();
 
@@ -269,7 +278,8 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
   @Sql(scripts = "/integration-test/test-release.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   @Sql(scripts = "/integration-test/test-release-public-dc-override.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-  public void testQueryPublicConfigWithIncorrectCaseAndDataCenterFoundAndOverride() throws Exception {
+  public void testQueryPublicConfigWithIncorrectCaseAndDataCenterFoundAndOverride()
+      throws Exception {
     ResponseEntity<ApolloConfig> response = restTemplate
         .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?dataCenter={dateCenter}",
             ApolloConfig.class,
@@ -331,7 +341,8 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
   @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
   public void testQueryPublicGrayConfigWithOverride() throws Exception {
     AtomicBoolean stop = new AtomicBoolean();
-    periodicSendMessage(executorService, assembleKey(somePublicAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, somePublicNamespace),
+    periodicSendMessage(executorService,
+        assembleKey(somePublicAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, somePublicNamespace),
         stop);
 
     TimeUnit.MILLISECONDS.sleep(500);
@@ -339,7 +350,8 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
     stop.set(true);
 
     ResponseEntity<ApolloConfig> response = restTemplate
-        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}", ApolloConfig.class,
+        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}",
+            ApolloConfig.class,
             getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace, someClientIp);
     ApolloConfig result = response.getBody();
 
@@ -358,7 +370,8 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
   @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
   public void testQueryPublicGrayConfigWithIncorrectCaseAndOverride() throws Exception {
     AtomicBoolean stop = new AtomicBoolean();
-    periodicSendMessage(executorService, assembleKey(somePublicAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, somePublicNamespace),
+    periodicSendMessage(executorService,
+        assembleKey(somePublicAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, somePublicNamespace),
         stop);
 
     TimeUnit.MILLISECONDS.sleep(500);
@@ -366,8 +379,10 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
     stop.set(true);
 
     ResponseEntity<ApolloConfig> response = restTemplate
-        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}", ApolloConfig.class,
-            getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace.toUpperCase(), someClientIp);
+        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}",
+            ApolloConfig.class,
+            getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace.toUpperCase(),
+            someClientIp);
     ApolloConfig result = response.getBody();
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -404,7 +419,8 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
     try {
       ResponseEntity<ApolloConfig> response = restTemplate
           .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}", ApolloConfig.class,
-              getHostUrl(), ConfigConsts.NO_APPID_PLACEHOLDER, someCluster, ConfigConsts.NAMESPACE_APPLICATION);
+              getHostUrl(), ConfigConsts.NO_APPID_PLACEHOLDER, someCluster,
+              ConfigConsts.NAMESPACE_APPLICATION);
     } catch (HttpStatusCodeException ex) {
       httpException = ex;
     }
@@ -419,7 +435,8 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
     ResponseEntity<ApolloConfig> response = restTemplate
         .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?dataCenter={dateCenter}",
             ApolloConfig.class,
-            getHostUrl(), ConfigConsts.NO_APPID_PLACEHOLDER, someCluster, somePublicNamespace, someDC);
+            getHostUrl(), ConfigConsts.NO_APPID_PLACEHOLDER, someCluster, somePublicNamespace,
+            someDC);
     ApolloConfig result = response.getBody();
 
     assertEquals("TEST-RELEASE-KEY4", result.getReleaseKey());

@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class HttpUtil {
+
   private ConfigUtil m_configUtil;
   private Gson gson;
 
@@ -33,7 +34,7 @@ public class HttpUtil {
   /**
    * Do get operation for the http request.
    *
-   * @param httpRequest  the request
+   * @param httpRequest the request
    * @param responseType the response type
    * @return the response
    * @throws ApolloConfigException if any error happened or response code is neither 200 nor 304
@@ -52,7 +53,7 @@ public class HttpUtil {
   /**
    * Do get operation for the http request.
    *
-   * @param httpRequest  the request
+   * @param httpRequest the request
    * @param responseType the response type
    * @return the response
    * @throws ApolloConfigException if any error happened or response code is neither 200 nor 304
@@ -69,7 +70,7 @@ public class HttpUtil {
   }
 
   private <T> HttpResponse<T> doGetWithSerializeFunction(HttpRequest httpRequest,
-                                                         Function<String, T> serializeFunction) {
+      Function<String, T> serializeFunction) {
     InputStreamReader isr = null;
     InputStreamReader esr = null;
     int statusCode;

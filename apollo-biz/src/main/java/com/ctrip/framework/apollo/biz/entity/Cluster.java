@@ -1,13 +1,11 @@
 package com.ctrip.framework.apollo.biz.entity;
 
 import com.ctrip.framework.apollo.common.entity.BaseEntity;
-
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -31,12 +29,12 @@ public class Cluster extends BaseEntity implements Comparable<Cluster> {
     return appId;
   }
 
-  public String getName() {
-    return name;
-  }
-
   public void setAppId(String appId) {
     this.appId = appId;
+  }
+
+  public String getName() {
+    return name;
   }
 
   public void setName(String name) {

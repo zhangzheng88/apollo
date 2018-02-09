@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.common.dto;
 
 
-public class ItemDTO extends BaseDTO{
+public class ItemDTO extends BaseDTO {
 
   private long id;
 
@@ -38,28 +38,28 @@ public class ItemDTO extends BaseDTO{
     return comment;
   }
 
-  public String getKey() {
-    return key;
-  }
-
-  public long getNamespaceId() {
-    return namespaceId;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
   public void setComment(String comment) {
     this.comment = comment;
+  }
+
+  public String getKey() {
+    return key;
   }
 
   public void setKey(String key) {
     this.key = key;
   }
 
+  public long getNamespaceId() {
+    return namespaceId;
+  }
+
   public void setNamespaceId(long namespaceId) {
     this.namespaceId = namespaceId;
+  }
+
+  public String getValue() {
+    return value;
   }
 
   public void setValue(String value) {

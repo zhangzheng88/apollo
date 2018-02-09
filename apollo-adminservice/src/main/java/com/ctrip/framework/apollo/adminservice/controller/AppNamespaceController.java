@@ -10,7 +10,7 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
-
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 public class AppNamespaceController {
@@ -39,7 +37,7 @@ public class AppNamespaceController {
       throw new BadRequestException("app namespaces already exist.");
     }
 
-    if (StringUtils.isEmpty(entity.getFormat())){
+    if (StringUtils.isEmpty(entity.getFormat())) {
       entity.setFormat(ConfigFileFormat.Properties.getValue());
     }
 
@@ -50,9 +48,11 @@ public class AppNamespaceController {
   }
 
   @RequestMapping(value = "/appnamespaces/{publicNamespaceName}/namespaces", method = RequestMethod.GET)
-  public List<NamespaceDTO> findPublicAppNamespaceAllNamespaces(@PathVariable String publicNamespaceName, Pageable pageable) {
+  public List<NamespaceDTO> findPublicAppNamespaceAllNamespaces(
+      @PathVariable String publicNamespaceName, Pageable pageable) {
 
-    List<Namespace> namespaces = namespaceService.findPublicAppNamespaceAllNamespaces(publicNamespaceName, pageable);
+    List<Namespace> namespaces = namespaceService
+        .findPublicAppNamespaceAllNamespaces(publicNamespaceName, pageable);
 
     return BeanUtils.batchTransform(NamespaceDTO.class, namespaces);
   }

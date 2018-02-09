@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.core;
 
 import com.ctrip.framework.apollo.core.enums.Env;
-
 import org.junit.Assert;
 import org.junit.Test;
 

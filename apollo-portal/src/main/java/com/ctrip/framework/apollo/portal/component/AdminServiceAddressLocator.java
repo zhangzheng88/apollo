@@ -1,23 +1,11 @@
 package com.ctrip.framework.apollo.portal.component;
 
-import com.google.common.collect.Lists;
-
 import com.ctrip.framework.apollo.core.MetaDomainConsts;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
-
+import com.google.common.collect.Lists;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -26,8 +14,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class AdminServiceAddressLocator {
@@ -60,7 +54,8 @@ public class AdminServiceAddressLocator {
     refreshServiceAddressService =
         Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("ServiceLocator", true));
 
-    refreshServiceAddressService.schedule(new RefreshAdminServerAddressTask(), 1, TimeUnit.MILLISECONDS);
+    refreshServiceAddressService
+        .schedule(new RefreshAdminServerAddressTask(), 1, TimeUnit.MILLISECONDS);
   }
 
   public List<ServiceDTO> getServiceList(Env env) {
@@ -71,6 +66,36 @@ public class AdminServiceAddressLocator {
     List<ServiceDTO> randomConfigServices = Lists.newArrayList(services);
     Collections.shuffle(randomConfigServices);
     return randomConfigServices;
+  }
+
+  private boolean refreshServerAddressCache(Env env) {
+
+    for (int i = 0; i < RETRY_TIMES; i++) {
+
+      try {
+        ServiceDTO[] services = getAdminServerAddress(env);
+        if (services == null || services.length == 0) {
+          continue;
+        }
+        cache.put(env, Arrays.asList(services));
+        return true;
+      } catch (Throwable e) {
+        logger.error(String.format(
+            "Get admin server address from meta server failed. env: %s, meta server address:%s",
+            env, MetaDomainConsts.getDomain(env)), e);
+        Tracer
+            .logError(String.format(
+                "Get admin server address from meta server failed. env: %s, meta server address:%s",
+                env, MetaDomainConsts.getDomain(env)), e);
+      }
+    }
+    return false;
+  }
+
+  private ServiceDTO[] getAdminServerAddress(Env env) {
+    String domainName = MetaDomainConsts.getDomain(env);
+    String url = domainName + ADMIN_SERVICE_URL_PATH;
+    return restTemplate.getForObject(url, ServiceDTO[].class);
   }
 
   //maintain admin server address
@@ -87,40 +112,14 @@ public class AdminServiceAddressLocator {
 
       if (refreshSuccess) {
         refreshServiceAddressService
-            .schedule(new RefreshAdminServerAddressTask(), NORMAL_REFRESH_INTERVAL, TimeUnit.MILLISECONDS);
+            .schedule(new RefreshAdminServerAddressTask(), NORMAL_REFRESH_INTERVAL,
+                TimeUnit.MILLISECONDS);
       } else {
         refreshServiceAddressService
-            .schedule(new RefreshAdminServerAddressTask(), OFFLINE_REFRESH_INTERVAL, TimeUnit.MILLISECONDS);
+            .schedule(new RefreshAdminServerAddressTask(), OFFLINE_REFRESH_INTERVAL,
+                TimeUnit.MILLISECONDS);
       }
     }
-  }
-
-  private boolean refreshServerAddressCache(Env env) {
-
-    for (int i = 0; i < RETRY_TIMES; i++) {
-
-      try {
-        ServiceDTO[] services = getAdminServerAddress(env);
-        if (services == null || services.length == 0) {
-          continue;
-        }
-        cache.put(env, Arrays.asList(services));
-        return true;
-      } catch (Throwable e) {
-        logger.error(String.format("Get admin server address from meta server failed. env: %s, meta server address:%s",
-                                   env, MetaDomainConsts.getDomain(env)), e);
-        Tracer
-            .logError(String.format("Get admin server address from meta server failed. env: %s, meta server address:%s",
-                                    env, MetaDomainConsts.getDomain(env)), e);
-      }
-    }
-    return false;
-  }
-
-  private ServiceDTO[] getAdminServerAddress(Env env) {
-    String domainName = MetaDomainConsts.getDomain(env);
-    String url = domainName + ADMIN_SERVICE_URL_PATH;
-    return restTemplate.getForObject(url, ServiceDTO[].class);
   }
 
 

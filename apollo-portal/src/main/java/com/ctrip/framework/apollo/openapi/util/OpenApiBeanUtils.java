@@ -1,10 +1,5 @@
 package com.ctrip.framework.apollo.openapi.util;
 
-import com.google.common.base.Preconditions;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-
-import com.ctrip.framework.apollo.common.dto.AppNamespaceDTO;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceLockDTO;
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
@@ -17,15 +12,16 @@ import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceLockDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenReleaseDTO;
 import com.ctrip.framework.apollo.portal.entity.bo.ItemBO;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
-
-import org.springframework.util.CollectionUtils;
-
+import com.google.common.base.Preconditions;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.util.CollectionUtils;
 
 public class OpenApiBeanUtils {
 
@@ -88,7 +84,7 @@ public class OpenApiBeanUtils {
   }
 
   public static List<OpenNamespaceDTO> batchTransformFromNamespaceBOs(List<NamespaceBO>
-                                                                          namespaceBOs) {
+      namespaceBOs) {
     if (CollectionUtils.isEmpty(namespaceBOs)) {
       return Collections.emptyList();
     }
@@ -101,8 +97,8 @@ public class OpenApiBeanUtils {
   }
 
   public static OpenNamespaceLockDTO transformFromNamespaceLockDTO(String namespaceName,
-                                                                   NamespaceLockDTO
-                                                                       namespaceLock) {
+      NamespaceLockDTO
+          namespaceLock) {
     OpenNamespaceLockDTO lock = new OpenNamespaceLockDTO();
 
     lock.setNamespaceName(namespaceName);

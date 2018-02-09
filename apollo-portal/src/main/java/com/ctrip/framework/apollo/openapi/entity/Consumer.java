@@ -1,13 +1,11 @@
 package com.ctrip.framework.apollo.openapi.entity;
 
 import com.ctrip.framework.apollo.common.entity.BaseEntity;
-
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Table(name = "Consumer")
@@ -37,44 +35,44 @@ public class Consumer extends BaseEntity {
     return appId;
   }
 
-  public String getName() {
-    return name;
-  }
-
-  public String getOrgId() {
-    return orgId;
-  }
-
-  public String getOrgName() {
-    return orgName;
-  }
-
-  public String getOwnerEmail() {
-    return ownerEmail;
-  }
-
-  public String getOwnerName() {
-    return ownerName;
-  }
-
   public void setAppId(String appId) {
     this.appId = appId;
+  }
+
+  public String getName() {
+    return name;
   }
 
   public void setName(String name) {
     this.name = name;
   }
 
+  public String getOrgId() {
+    return orgId;
+  }
+
   public void setOrgId(String orgId) {
     this.orgId = orgId;
+  }
+
+  public String getOrgName() {
+    return orgName;
   }
 
   public void setOrgName(String orgName) {
     this.orgName = orgName;
   }
 
+  public String getOwnerEmail() {
+    return ownerEmail;
+  }
+
   public void setOwnerEmail(String ownerEmail) {
     this.ownerEmail = ownerEmail;
+  }
+
+  public String getOwnerName() {
+    return ownerName;
   }
 
   public void setOwnerName(String ownerName) {

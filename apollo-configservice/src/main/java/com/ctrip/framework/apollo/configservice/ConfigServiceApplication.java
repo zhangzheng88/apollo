@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.configservice;
 import com.ctrip.framework.apollo.biz.ApolloBizConfig;
 import com.ctrip.framework.apollo.common.ApolloCommonConfig;
 import com.ctrip.framework.apollo.metaservice.ApolloMetaServiceConfig;
-
 import org.springframework.boot.actuate.system.ApplicationPidFileWriter;
 import org.springframework.boot.actuate.system.EmbeddedServerPortFileWriter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

@@ -1,26 +1,22 @@
 package com.ctrip.framework.apollo.foundation.internals.provider;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
 
+import com.ctrip.framework.foundation.internals.provider.DefaultServerProvider;
 import java.io.File;
 import java.io.FileInputStream;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.ctrip.framework.foundation.internals.provider.DefaultServerProvider;
-
 
 public class DefaultServerProviderTest {
+
   private DefaultServerProvider defaultServerProvider;
-  private String PREDEFINED_ENV="dev";
-  private String PREDEFINED_CLUSTER="default";
+  private String PREDEFINED_ENV = "dev";
+  private String PREDEFINED_CLUSTER = "default";
 
   @Before
   public void setUp() throws Exception {
@@ -72,14 +68,12 @@ public class DefaultServerProviderTest {
   }
 
 
-
   @Test
   public void testWithPropertiesStreamAndEnvFromSystemProperty() throws Exception {
     String prodEnv = "pro";
     System.setProperty("apollo.env", prodEnv);
 
     defaultServerProvider.initialize();
-
 
     assertEquals(PREDEFINED_CLUSTER, defaultServerProvider.getDataCenter());
     assertTrue(defaultServerProvider.isEnvTypeSet());
@@ -91,7 +85,7 @@ public class DefaultServerProviderTest {
     defaultServerProvider.initialize(null);
 
     assertNull(defaultServerProvider.getDataCenter());
-    assertEquals("daily",defaultServerProvider.getEnvType());
+    assertEquals("daily", defaultServerProvider.getEnvType());
   }
 
 

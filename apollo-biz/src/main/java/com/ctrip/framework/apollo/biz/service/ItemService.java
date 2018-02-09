@@ -10,15 +10,13 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ItemService {
@@ -93,7 +91,8 @@ public class ItemService {
     return items;
   }
 
-  public List<Item> findItemsWithoutOrdered(String appId, String clusterName, String namespaceName) {
+  public List<Item> findItemsWithoutOrdered(String appId, String clusterName,
+      String namespaceName) {
     Namespace namespace = namespaceService.findOne(appId, clusterName, namespaceName);
     if (namespace != null) {
       return findItemsWithoutOrdered(namespace.getId());
@@ -120,7 +119,8 @@ public class ItemService {
   }
 
   public List<Item> findItemsModifiedAfterDate(long namespaceId, Date date) {
-    return itemRepository.findByNamespaceIdAndDataChangeLastModifiedTimeGreaterThan(namespaceId, date);
+    return itemRepository
+        .findByNamespaceIdAndDataChangeLastModifiedTimeGreaterThan(namespaceId, date);
   }
 
   @Transactional
@@ -139,7 +139,7 @@ public class ItemService {
     Item item = itemRepository.save(entity);
 
     auditService.audit(Item.class.getSimpleName(), item.getId(), Audit.OP.INSERT,
-                       item.getDataChangeCreatedBy());
+        item.getDataChangeCreatedBy());
 
     return item;
   }
@@ -152,7 +152,7 @@ public class ItemService {
     managedItem = itemRepository.save(managedItem);
 
     auditService.audit(Item.class.getSimpleName(), managedItem.getId(), Audit.OP.UPDATE,
-                       managedItem.getDataChangeLastModifiedBy());
+        managedItem.getDataChangeLastModifiedBy());
 
     return managedItem;
   }
@@ -174,7 +174,8 @@ public class ItemService {
 
   private int getItemValueLengthLimit(long namespaceId) {
     Map<Long, Integer> namespaceValueLengthOverride = bizConfig.namespaceValueLengthLimitOverride();
-    if (namespaceValueLengthOverride != null && namespaceValueLengthOverride.containsKey(namespaceId)) {
+    if (namespaceValueLengthOverride != null && namespaceValueLengthOverride
+        .containsKey(namespaceId)) {
       return namespaceValueLengthOverride.get(namespaceId);
     }
     return bizConfig.itemValueLengthLimit();

@@ -12,23 +12,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
-
 import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.dto.ApolloConfig;
 import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
@@ -45,22 +28,37 @@ import com.google.common.collect.Maps;
 import com.google.common.net.UrlEscapers;
 import com.google.common.util.concurrent.SettableFuture;
 import com.google.gson.Gson;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import javax.servlet.http.HttpServletResponse;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 /**
  * Created by Jason on 4/9/16.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class RemoteConfigRepositoryTest {
+
+  @Mock
+  private static HttpResponse<ApolloConfig> someResponse;
+  @Mock
+  private static HttpResponse<List<ApolloConfigNotification>> pollResponse;
   @Mock
   private ConfigServiceLocator configServiceLocator;
   private String someNamespace;
   private String someServerUrl;
   private ConfigUtil configUtil;
   private HttpUtil httpUtil;
-  @Mock
-  private static HttpResponse<ApolloConfig> someResponse;
-  @Mock
-  private static HttpResponse<List<ApolloConfigNotification>> pollResponse;
   private RemoteConfigLongPollService remoteConfigLongPollService;
 
   @Before
@@ -195,7 +193,8 @@ public class RemoteConfigRepositoryTest {
     verify(someListener, times(1)).onRepositoryChange(eq(someNamespace), captor.capture());
     assertEquals(newConfigurations, captor.getValue());
 
-    final ArgumentCaptor<HttpRequest> httpRequestArgumentCaptor = ArgumentCaptor.forClass(HttpRequest.class);
+    final ArgumentCaptor<HttpRequest> httpRequestArgumentCaptor = ArgumentCaptor
+        .forClass(HttpRequest.class);
     verify(httpUtil, atLeast(2)).doGet(httpRequestArgumentCaptor.capture(), eq(ApolloConfig.class));
 
     HttpRequest request = httpRequestArgumentCaptor.getValue();
@@ -224,7 +223,8 @@ public class RemoteConfigRepositoryTest {
     when(someApolloConfig.getReleaseKey()).thenReturn(someReleaseKey);
 
     String queryConfigUrl = remoteConfigRepository
-        .assembleQueryConfigUrl(someUri, someAppId, someCluster, someNamespace, null, notificationMessages,
+        .assembleQueryConfigUrl(someUri, someAppId, someCluster, someNamespace, null,
+            notificationMessages,
             someApolloConfig);
 
     remoteConfigLongPollService.stopLongPollingRefresh();
@@ -234,7 +234,8 @@ public class RemoteConfigRepositoryTest {
     assertTrue(queryConfigUrl
         .contains("releaseKey=20160705193346-583078ef5716c055%2B20160705193308-31c471ddf9087c3f"));
     assertTrue(queryConfigUrl
-        .contains("messages=" + UrlEscapers.urlFormParameterEscaper().escape(gson.toJson(notificationMessages))));
+        .contains("messages=" + UrlEscapers.urlFormParameterEscaper()
+            .escape(gson.toJson(notificationMessages))));
   }
 
   private ApolloConfig assembleApolloConfig(Map<String, String> configurations) {
@@ -250,6 +251,7 @@ public class RemoteConfigRepositoryTest {
   }
 
   public static class MockConfigUtil extends ConfigUtil {
+
     @Override
     public String getAppId() {
       return "someApp";
@@ -292,9 +294,10 @@ public class RemoteConfigRepositoryTest {
   }
 
   public static class MockHttpUtil extends HttpUtil {
+
     @Override
     public <T> HttpResponse<T> doGet(HttpRequest httpRequest, Class<T> responseType) {
-      if (someResponse.getStatusCode() == 200 || someResponse.getStatusCode() == 304 ) {
+      if (someResponse.getStatusCode() == 200 || someResponse.getStatusCode() == 304) {
         return (HttpResponse<T>) someResponse;
       }
       throw new ApolloConfigException(String.format("Http request failed due to status code: %d",

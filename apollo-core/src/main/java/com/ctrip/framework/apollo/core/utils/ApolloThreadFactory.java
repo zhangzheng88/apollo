@@ -1,25 +1,26 @@
 package com.ctrip.framework.apollo.core.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApolloThreadFactory implements ThreadFactory {
-  private static Logger log = LoggerFactory.getLogger(ApolloThreadFactory.class);
-
-  private final AtomicLong threadNumber = new AtomicLong(1);
-
-  private final String namePrefix;
-
-  private final boolean daemon;
 
   private static final ThreadGroup threadGroup = new ThreadGroup("Apollo");
+  private static Logger log = LoggerFactory.getLogger(ApolloThreadFactory.class);
+  private final AtomicLong threadNumber = new AtomicLong(1);
+  private final String namePrefix;
+  private final boolean daemon;
+
+  private ApolloThreadFactory(String namePrefix, boolean daemon) {
+    this.namePrefix = namePrefix;
+    this.daemon = daemon;
+  }
 
   public static ThreadGroup getThreadGroup() {
     return threadGroup;
@@ -61,10 +62,6 @@ public class ApolloThreadFactory implements ThreadFactory {
     return false;
   }
 
-  private static interface ClassifyStandard<T> {
-    boolean satisfy(T thread);
-  }
-
   private static <T> void classify(Set<T> src, Set<T> des, ClassifyStandard<T> standard) {
     Set<T> set = new HashSet<>();
     for (T t : src) {
@@ -76,11 +73,6 @@ public class ApolloThreadFactory implements ThreadFactory {
     des.addAll(set);
   }
 
-  private ApolloThreadFactory(String namePrefix, boolean daemon) {
-    this.namePrefix = namePrefix;
-    this.daemon = daemon;
-  }
-
   public Thread newThread(Runnable runnable) {
     Thread thread = new Thread(threadGroup, runnable,//
         threadGroup.getName() + "-" + namePrefix + "-" + threadNumber.getAndIncrement());
@@ -89,5 +81,10 @@ public class ApolloThreadFactory implements ThreadFactory {
       thread.setPriority(Thread.NORM_PRIORITY);
     }
     return thread;
+  }
+
+  private static interface ClassifyStandard<T> {
+
+    boolean satisfy(T thread);
   }
 }

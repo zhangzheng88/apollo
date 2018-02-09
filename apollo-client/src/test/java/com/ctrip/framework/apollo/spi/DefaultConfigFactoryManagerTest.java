@@ -5,18 +5,18 @@ import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigFile;
 import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class DefaultConfigFactoryManagerTest {
+
   private DefaultConfigFactoryManager defaultConfigFactoryManager;
 
   @Before
@@ -70,6 +70,7 @@ public class DefaultConfigFactoryManagerTest {
   }
 
   public static class MockConfigRegistry implements ConfigRegistry {
+
     public static String NAMESPACE_REGISTERED = "some-namespace-registered";
     public static ConfigFactory REGISTERED_CONFIGFACTORY = new ConfigFactory() {
       @Override
@@ -99,6 +100,7 @@ public class DefaultConfigFactoryManagerTest {
   }
 
   public static class SomeConfigFactory implements ConfigFactory {
+
     @Override
     public Config create(String namespace) {
       return null;
@@ -111,6 +113,7 @@ public class DefaultConfigFactoryManagerTest {
   }
 
   public static class AnotherConfigFactory implements ConfigFactory {
+
     @Override
     public Config create(String namespace) {
       return null;

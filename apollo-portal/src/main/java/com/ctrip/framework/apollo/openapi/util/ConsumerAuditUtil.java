@@ -1,18 +1,12 @@
 package com.ctrip.framework.apollo.openapi.util;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Queues;
-
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.openapi.entity.ConsumerAudit;
 import com.ctrip.framework.apollo.openapi.service.ConsumerService;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Queues;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -20,18 +14,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @Service
 public class ConsumerAuditUtil implements InitializingBean {
+
   private static final int CONSUMER_AUDIT_MAX_SIZE = 10000;
-  private BlockingQueue<ConsumerAudit> audits = Queues.newLinkedBlockingQueue(CONSUMER_AUDIT_MAX_SIZE);
   private final ExecutorService auditExecutorService;
   private final AtomicBoolean auditStopped;
+  private BlockingQueue<ConsumerAudit> audits = Queues
+      .newLinkedBlockingQueue(CONSUMER_AUDIT_MAX_SIZE);
   private int BATCH_SIZE = 100;
   private long BATCH_TIMEOUT = 5;
   private TimeUnit BATCH_TIMEUNIT = TimeUnit.SECONDS;

@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 
 public class ServiceBootstrap {
+
   public static <S> S loadFirst(Class<S> clazz) {
     Iterator<S> iterator = loadAll(clazz);
     if (!iterator.hasNext()) {

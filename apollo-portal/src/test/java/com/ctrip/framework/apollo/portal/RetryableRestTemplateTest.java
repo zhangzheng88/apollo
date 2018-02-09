@@ -1,11 +1,18 @@
 package com.ctrip.framework.apollo.portal;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.component.AdminServiceAddressLocator;
 import com.ctrip.framework.apollo.portal.component.RetryableRestTemplate;
-
+import java.net.SocketTimeoutException;
+import java.util.Arrays;
+import java.util.Collections;
 import org.apache.http.HttpHost;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
@@ -18,15 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-
-import java.net.SocketTimeoutException;
-import java.util.Arrays;
-import java.util.Collections;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class RetryableRestTemplateTest extends AbstractUnitTest {
 
@@ -53,7 +51,8 @@ public class RetryableRestTemplateTest extends AbstractUnitTest {
     socketTimeoutException.initCause(new SocketTimeoutException());
 
     httpHostConnectException
-        .initCause(new HttpHostConnectException(new ConnectTimeoutException(), new HttpHost(serviceOne, 80)));
+        .initCause(new HttpHostConnectException(new ConnectTimeoutException(),
+            new HttpHost(serviceOne, 80)));
     connectTimeoutException.initCause(new ConnectTimeoutException());
   }
 
@@ -69,10 +68,14 @@ public class RetryableRestTemplateTest extends AbstractUnitTest {
   public void testAllServerDown() {
 
     when(serviceAddressLocator.getServiceList(any()))
-        .thenReturn(Arrays.asList(mockService(serviceOne), mockService(serviceTwo), mockService(serviceThree)));
-    when(restTemplate.getForObject(serviceOne + "/" + path, Object.class)).thenThrow(socketTimeoutException);
-    when(restTemplate.getForObject(serviceTwo + "/" + path, Object.class)).thenThrow(httpHostConnectException);
-    when(restTemplate.getForObject(serviceThree + "/" + path, Object.class)).thenThrow(connectTimeoutException);
+        .thenReturn(Arrays
+            .asList(mockService(serviceOne), mockService(serviceTwo), mockService(serviceThree)));
+    when(restTemplate.getForObject(serviceOne + "/" + path, Object.class))
+        .thenThrow(socketTimeoutException);
+    when(restTemplate.getForObject(serviceTwo + "/" + path, Object.class))
+        .thenThrow(httpHostConnectException);
+    when(restTemplate.getForObject(serviceThree + "/" + path, Object.class))
+        .thenThrow(connectTimeoutException);
 
     retryableRestTemplate.get(Env.DEV, path, Object.class);
 
@@ -88,10 +91,13 @@ public class RetryableRestTemplateTest extends AbstractUnitTest {
 
     Object result = new Object();
     when(serviceAddressLocator.getServiceList(any()))
-        .thenReturn(Arrays.asList(mockService(serviceOne), mockService(serviceTwo), mockService(serviceThree)));
-    when(restTemplate.getForObject(serviceOne + "/" + path, Object.class)).thenThrow(socketTimeoutException);
+        .thenReturn(Arrays
+            .asList(mockService(serviceOne), mockService(serviceTwo), mockService(serviceThree)));
+    when(restTemplate.getForObject(serviceOne + "/" + path, Object.class))
+        .thenThrow(socketTimeoutException);
     when(restTemplate.getForObject(serviceTwo + "/" + path, Object.class)).thenReturn(result);
-    when(restTemplate.getForObject(serviceThree + "/" + path, Object.class)).thenThrow(connectTimeoutException);
+    when(restTemplate.getForObject(serviceThree + "/" + path, Object.class))
+        .thenThrow(connectTimeoutException);
 
     Object o = retryableRestTemplate.get(Env.DEV, path, Object.class);
 
@@ -102,12 +108,15 @@ public class RetryableRestTemplateTest extends AbstractUnitTest {
   }
 
   @Test(expected = ResourceAccessException.class)
-  public void testPostSocketTimeoutNotRetry(){
+  public void testPostSocketTimeoutNotRetry() {
     when(serviceAddressLocator.getServiceList(any()))
-        .thenReturn(Arrays.asList(mockService(serviceOne), mockService(serviceTwo), mockService(serviceThree)));
+        .thenReturn(Arrays
+            .asList(mockService(serviceOne), mockService(serviceTwo), mockService(serviceThree)));
 
-    when(restTemplate.postForEntity(serviceOne + "/" + path, request, Object.class)).thenThrow(socketTimeoutException);
-    when(restTemplate.postForEntity(serviceTwo + "/" + path, request, Object.class)).thenReturn(entity);
+    when(restTemplate.postForEntity(serviceOne + "/" + path, request, Object.class))
+        .thenThrow(socketTimeoutException);
+    when(restTemplate.postForEntity(serviceTwo + "/" + path, request, Object.class))
+        .thenReturn(entity);
 
     retryableRestTemplate.post(Env.DEV, path, request, Object.class);
 
@@ -117,9 +126,10 @@ public class RetryableRestTemplateTest extends AbstractUnitTest {
 
 
   @Test
-  public void testDelete(){
+  public void testDelete() {
     when(serviceAddressLocator.getServiceList(any()))
-        .thenReturn(Arrays.asList(mockService(serviceOne), mockService(serviceTwo), mockService(serviceThree)));
+        .thenReturn(Arrays
+            .asList(mockService(serviceOne), mockService(serviceTwo), mockService(serviceThree)));
 
     retryableRestTemplate.delete(Env.DEV, path);
 
@@ -128,9 +138,10 @@ public class RetryableRestTemplateTest extends AbstractUnitTest {
   }
 
   @Test
-  public void testPut(){
+  public void testPut() {
     when(serviceAddressLocator.getServiceList(any()))
-        .thenReturn(Arrays.asList(mockService(serviceOne), mockService(serviceTwo), mockService(serviceThree)));
+        .thenReturn(Arrays
+            .asList(mockService(serviceOne), mockService(serviceTwo), mockService(serviceThree)));
 
     retryableRestTemplate.put(Env.DEV, path, request);
 
