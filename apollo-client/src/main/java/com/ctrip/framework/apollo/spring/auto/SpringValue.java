@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Spring @Value or @ApolloValue field or method info
+ * Spring @Value or @ApolloJSONValue field or method info
  *
  * @author github.com/zhegexiaohuozi [wanghaomiao@huli.com]
  * @since 2017/12/20.

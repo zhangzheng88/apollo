@@ -32,11 +32,11 @@ public class ApolloValueProcessor extends ApolloProcessor implements Environment
 
   @Override
   protected void processField(Object bean, Field field) {
-    ApolloValue apolloValue = AnnotationUtils.getAnnotation(field, ApolloValue.class);
-    if (apolloValue == null) {
+    ApolloJSONValue apolloJSONValue = AnnotationUtils.getAnnotation(field, ApolloJSONValue.class);
+    if (apolloJSONValue == null) {
       return;
     }
-    Matcher matcher = pattern.matcher(apolloValue.value());
+    Matcher matcher = pattern.matcher(apolloJSONValue.value());
     Preconditions.checkArgument(matcher.matches(),
         String.format("the apollo value annotation for field:%s is not correct," +
             "please use ${somekey} pattern", field.getType()));
@@ -58,11 +58,11 @@ public class ApolloValueProcessor extends ApolloProcessor implements Environment
   @Override
   protected void processMethod(Object bean, Method method) {
 
-    ApolloValue apolloValue = AnnotationUtils.getAnnotation(method, ApolloValue.class);
-    if (apolloValue == null) {
+    ApolloJSONValue apolloJSONValue = AnnotationUtils.getAnnotation(method, ApolloJSONValue.class);
+    if (apolloJSONValue == null) {
       return;
     }
-    Matcher matcher = pattern.matcher(apolloValue.value());
+    Matcher matcher = pattern.matcher(apolloJSONValue.value());
     Preconditions.checkArgument(matcher.matches(),
         String.format("the apollo value annotation for field:%s is not correct," +
             "please use ${somekey} pattern", method.getName()));

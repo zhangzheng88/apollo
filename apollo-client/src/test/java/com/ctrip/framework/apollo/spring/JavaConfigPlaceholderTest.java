@@ -10,7 +10,7 @@ import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.internals.ConfigRepository;
 import com.ctrip.framework.apollo.internals.DefaultConfig;
-import com.ctrip.framework.apollo.spring.annotation.ApolloValue;
+import com.ctrip.framework.apollo.spring.annotation.ApolloJSONValue;
 import com.ctrip.framework.apollo.spring.annotation.ApolloValueProcessor;
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import com.ctrip.framework.apollo.spring.annotation.SpringValueProcessor;
@@ -345,7 +345,7 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
 
   static class TestJavaConfigBean3 {
 
-    @ApolloValue("${jsonProperty}")
+    @ApolloJSONValue("${jsonProperty}")
     private List<JsonBean> jsonBeanList;
 
     public List<JsonBean> getJsonBeanList() {

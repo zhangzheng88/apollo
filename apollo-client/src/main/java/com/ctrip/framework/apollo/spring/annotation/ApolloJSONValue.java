@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Documented
-public @interface ApolloValue {
+public @interface ApolloJSONValue {
 
   String value();
 
