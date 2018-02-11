@@ -107,6 +107,14 @@ public class DefaultApplicationProvider implements ApplicationProvider {
       return;
     }
 
+    //3. Try to get app id from os file
+    m_appId = YouzanConfigProvider.getAppId();
+    if(!Utils.isBlank(m_appId)){
+      m_appId = m_appId.trim();
+      logger.info("App ID is set to {} by os file", m_appId);
+      return;
+    }
+
     m_appId = null;
     logger.warn("app.id is not available from System Property and {}. It is set to null",
         APP_PROPERTIES_CLASSPATH);

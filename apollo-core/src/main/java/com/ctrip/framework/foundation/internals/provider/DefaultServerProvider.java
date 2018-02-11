@@ -132,6 +132,14 @@ public class DefaultServerProvider implements ServerProvider {
       return;
     }
 
+    //try to get environment from os file
+    m_env = YouzanConfigProvider.getEnv();
+    if(!Utils.isBlank(m_env)){
+      m_env = convertEnv(m_env);
+      logger.info("Environment is set to [{}] by OS file", m_env);
+      return;
+    }
+
     // 4. Set environment to default daily.
     m_env = "daily";
     logger.warn(
@@ -180,7 +188,15 @@ public class DefaultServerProvider implements ServerProvider {
     m_dc = System.getenv("APPLICATION_IDC");
     if (!Utils.isBlank(m_dc)) {
       m_dc = m_dc.trim();
-      logger.info("Data Center is set to [{}] by OS env variable 'IDC'.", m_dc);
+      logger.info("Data Center is set to [{}] by OS env variable 'APPLICATION_IDC'.", m_dc);
+      return;
+    }
+
+    // try to get idc from os file
+    m_dc = YouzanConfigProvider.getDc();
+    if(!Utils.isBlank(m_dc)){
+      m_dc = m_dc.trim();
+      logger.info("Data Center is set to [{}] by OS file ", m_dc);
       return;
     }
 

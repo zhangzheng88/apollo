@@ -44,6 +44,7 @@ public class ApolloValueProcessor extends ApolloProcessor implements Environment
     String propertyValue = environment.getProperty(key);
     SpringValue springValue = SpringValue.create(bean, field);
     if (!Utils.isBlank(propertyValue)) {
+      logger.info("set apollo property value:{}={}",key, propertyValue);
       springValue.updateVal(propertyValue);
     }
 
