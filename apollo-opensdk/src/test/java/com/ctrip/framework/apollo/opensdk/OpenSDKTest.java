@@ -61,7 +61,7 @@ public class OpenSDKTest {
     String someNamespaceName = "application";
     String token = "2bad744d24dc974adb0556052fc158c9264ec42d";
     NamespaceManager instance = NamespaceManager.builder().appId(someAppId).cluster(someClustername)
-        .namespace(someNamespaceName).token(token).dataChangedBy("张正").build();
+        .namespace(someNamespaceName).token(token).dataChangedBy("陈龙").build();
     OpenItemDTO itemCreated = instance.createItem("testKey", "testValue", "comment");
     assertNotNull(itemCreated);
   }
@@ -73,7 +73,7 @@ public class OpenSDKTest {
     String someNamespaceName = "application";
     String token = "2bad744d24dc974adb0556052fc158c9264ec42d";
     NamespaceManager instance = NamespaceManager.builder().appId(someAppId).cluster(someClustername)
-        .namespace(someNamespaceName).token(token).dataChangedBy("张正").build();
+        .namespace(someNamespaceName).token(token).dataChangedBy("陈龙").build();
     String key = "testKey";
     String newValue = "newValue";
     String comment = "openapiUpdateItem";
@@ -89,7 +89,7 @@ public class OpenSDKTest {
     String someNamespaceName = "application";
     String token = "2bad744d24dc974adb0556052fc158c9264ec42d";
     NamespaceManager instance = NamespaceManager.builder().appId(someAppId).cluster(someClustername)
-        .namespace(someNamespaceName).token(token).dataChangedBy("张正").build();
+        .namespace(someNamespaceName).token(token).dataChangedBy("陈龙").build();
     OpenApiResult result = instance.deleteItem("testKey");
     assertEquals(result.code, OpenApiResult.SUCCESS);
     assertNull(result.errmsg);
@@ -102,7 +102,7 @@ public class OpenSDKTest {
     String someNamespaceName = "application";
     String token = "2bad744d24dc974adb0556052fc158c9264ec42d";
     NamespaceManager instance = NamespaceManager.builder().appId(someAppId).cluster(someClustername)
-        .namespace(someNamespaceName).token(token).dataChangedBy("张正").build();
+        .namespace(someNamespaceName).token(token).dataChangedBy("陈龙").build();
     OpenApiResult<OpenReleaseDTO> result = instance.release("openapi Release");
     assertEquals(OpenApiResult.SUCCESS, result.code);
     assertNotNull(result.body);
