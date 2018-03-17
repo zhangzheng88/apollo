@@ -2,21 +2,17 @@ package com.ctrip.framework.apollo.opensdk;
 
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.opensdk.dto.OpenItemDTO;
-import com.ctrip.framework.apollo.opensdk.dto.OpenNamespaceLockDTO;
 import com.ctrip.framework.apollo.opensdk.dto.OpenReleaseDTO;
 import com.ctrip.framework.foundation.Foundation;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
 import java.util.Map;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Create by zhangzheng on 2018/3/10
@@ -29,64 +25,26 @@ public class NamespaceManager {
   protected String namespaceName;
   protected String token;
   protected String dataChangedBy;
-  private RestTemplate restTemplate = injector.getInstance(RestTemplate.class);
 
-  private static Injector injector = Guice.createInjector(new ApolloModule());
-
+  private static OkHttpClient client = new OkHttpClient.Builder().build();
+  private static Gson gson = new Gson();
   private static final String PORTAL_URL = "apollo-portal.prod.qima-inc.com";
 
   private NamespaceManager(){}
 
-
-
-
-  /**
-   * Apollo在生产环境（PRO）有限制规则：每次发布只能有一个人编辑配置，且该次发布的人不能是该次发布的编辑人。
-   * 也就是说如果一个用户A修改了某个namespace的配置，那么在这个namespace发布前，只能由A修改，其它用户无法修改。
-   * 同时，该用户A无法发布自己修改的配置，必须找另一个有发布权限的人操作。 这个接口就是用来获取当前namespace是否有人锁定的接口。
-   * 在非生产环境（FAT、UAT），该接口始终返回没有人锁定。
-   * @return
-   */
-  private OpenNamespaceLockDTO getLock(){
-    Map<String,String> uriVariables = ImmutableMap.of("appId",appId,"clusterName",clusterName,"namespaceName", namespaceName,
-        "portal_address", PORTAL_URL, "env",env.name());
-    String url = "http://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/lock";
-
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.add("Authorization", "2bad744d24dc974adb0556052fc158c9264ec42d");
-    httpHeaders.add("Content-Type","application/json;charset=UTF-8");
-    HttpEntity httpEntity = new HttpEntity(httpHeaders);
-
-    ResponseEntity<OpenNamespaceLockDTO> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, OpenNamespaceLockDTO.class, uriVariables);
-
-    if(responseEntity.getStatusCode().is2xxSuccessful()){
-      return responseEntity.getBody();
-    }else{
-      return null;
-    }
+  private Headers headers(){
+    return Headers.of("Authorization",token,"Content-Type", "application/json;charset=UTF-8");
   }
 
-  private HttpEntity httpEntity(){
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.add("Authorization", token);
-    httpHeaders.add("Content-Type","application/json;charset=UTF-8");
-    HttpEntity httpEntity = new HttpEntity(httpHeaders);
-    return httpEntity;
-  }
-
-  private <T> HttpEntity<T> httpEntity(T body){
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.add("Authorization", token);
-    httpHeaders.add("Content-Type","application/json;charset=UTF-8");
-    HttpEntity<T> httpEntity = new HttpEntity(body, httpHeaders);
-    return httpEntity;
+  private RequestBody jsonBody(Object body){
+    return RequestBody.create(MediaType.parse("application/json;charset=UTF-8"), gson.toJson(body));
   }
 
   /**
    * 新增配置接口
    * @return
    */
-  public OpenItemDTO createItem(String key,String value,String comment){
+  public OpenApiResult<OpenItemDTO> createItem(String key,String value,String comment){
     Map<String,String> uriVariables = ImmutableMap.of("appId",appId,"clusterName",clusterName,"namespaceName", namespaceName,
         "portal_address", PORTAL_URL, "env",env.name());
     String url = "http://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items";
@@ -97,12 +55,23 @@ public class NamespaceManager {
     itemDTO.setComment(comment);
     itemDTO.setDataChangeCreatedBy(dataChangedBy);
 
-    ResponseEntity<OpenItemDTO> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity(itemDTO), OpenItemDTO.class, uriVariables);
-    if(responseEntity.getStatusCode().is2xxSuccessful()){
-      return responseEntity.getBody();
-    }else{
-      return null;
+    Request request = new Request.Builder().post(jsonBody(itemDTO)).url(HttpUtil.parseUrlTemplate(url, uriVariables)).headers(headers()).build();
+
+    OpenApiResult result = new OpenApiResult();
+    try {
+      Response response = client.newCall(request).execute();
+      if(response.isSuccessful()){
+        result.code = OpenApiResult.SUCCESS;
+        result.body = gson.fromJson(response.body().string(), OpenItemDTO.class);
+      }else{
+        result.code = OpenApiResult.FAIL;
+        result.errmsg = response.body().string();
+      }
+    } catch (Exception e) {
+      result.code = OpenApiResult.FAIL;
+      result.errmsg = e.getMessage();
     }
+    return result;
   }
 
   /**
@@ -116,16 +85,18 @@ public class NamespaceManager {
         .put("namespaceName", namespaceName).put("portal_address", PORTAL_URL).put("env",env.name()).put("key", key).build();
 
     Map body = ImmutableMap.of("key",key, "value",newValue, "comment", comment, "dataChangeLastModifiedBy", dataChangedBy);
-    HttpEntity httpEntity = httpEntity(body);
+
     OpenApiResult result = new OpenApiResult();
 
     try {
-      ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class, uriVariables);
-      if(responseEntity.getStatusCode().is2xxSuccessful()) {
+      Request request = new Request.Builder().put(jsonBody(body))
+          .url(HttpUtil.parseUrlTemplate(url, uriVariables)).headers(headers()).build();
+      Response response = client.newCall(request).execute();
+      if(response.isSuccessful()) {
         result.code = OpenApiResult.SUCCESS;
       }else{
         result.code = OpenApiResult.FAIL;
-        result.errmsg = responseEntity.getBody();
+        result.errmsg = response.body().string();
       }
     } catch (Exception e) {
       result.code = OpenApiResult.FAIL;
@@ -145,12 +116,13 @@ public class NamespaceManager {
         .put("operator",dataChangedBy).build();
     OpenApiResult result = new OpenApiResult();
     try {
-      ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity(), String.class, uriVariables);
-      if(responseEntity.getStatusCode().is2xxSuccessful()) {
+      Request request = new Request.Builder().delete().headers(headers()).url(HttpUtil.parseUrlTemplate(url, uriVariables)).build();
+      Response response = client.newCall(request).execute();
+      if(response.isSuccessful()) {
         result.code = OpenApiResult.SUCCESS;
       }else{
         result.code = OpenApiResult.FAIL;
-        result.errmsg = responseEntity.getBody();
+        result.errmsg = response.body().string();
       }
 
     } catch (Exception e) {
@@ -171,17 +143,17 @@ public class NamespaceManager {
     String url = "http://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases";
 
     Map body = ImmutableMap.of("releaseTitle",releaseTitle, "releaseComment",releaseTitle, "releasedBy", dataChangedBy);
-    HttpEntity httpEntity = httpEntity(body);
     OpenApiResult<OpenReleaseDTO> result = new OpenApiResult();
     try {
-      ResponseEntity<OpenReleaseDTO> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, OpenReleaseDTO.class, uriVariables);
 
-      if(responseEntity.getStatusCode().is2xxSuccessful()){
-        result.body = responseEntity.getBody();
+      Request request = new Request.Builder().post(jsonBody(body)).headers(headers()).url(HttpUtil.parseUrlTemplate(url, uriVariables)).build();
+      Response response = client.newCall(request).execute();
+      if(response.isSuccessful()){
+        result.body = gson.fromJson(response.body().string(), OpenReleaseDTO.class);
         result.code = OpenApiResult.SUCCESS;
       }else{
         result.code = OpenApiResult.FAIL;
-        result.errmsg = responseEntity.getStatusCode().getReasonPhrase();
+        result.errmsg = response.body().string();
       }
     } catch (Exception e) {
       result.code = OpenApiResult.FAIL;
@@ -189,15 +161,6 @@ public class NamespaceManager {
     }
     return result;
   }
-
-  /**
-   * 获取某个Namespace当前生效的已发布配置接口
-   * @return
-   */
-  public OpenReleaseDTO getLastestRelease(){
-    return null;
-  }
-
 
 
 
@@ -239,20 +202,6 @@ public class NamespaceManager {
       return namespaceManager;
     }
 
-  }
-
-
-  private static class ApolloModule extends AbstractModule {
-
-    @Override
-    protected void configure() {
-      bind(RestTemplate.class).in(Singleton.class);
-    }
-  }
-
-  protected void setRestTemplate(RestTemplate restTemplate){
-    //for test
-    this.restTemplate = restTemplate;
   }
 
 

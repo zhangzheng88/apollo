@@ -7,8 +7,6 @@ import static org.junit.Assert.assertNull;
 import com.ctrip.framework.apollo.opensdk.dto.OpenItemDTO;
 import com.ctrip.framework.apollo.opensdk.dto.OpenReleaseDTO;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Create by zhangzheng on 2018/3/10
@@ -43,7 +41,7 @@ public class OpenSDKTest {
     String someNamespaceName = "application";
     NamespaceManager instance = NamespaceManager.builder().appId(someAppId).cluster(someClustername)
         .namespace(someNamespaceName).build();
-    OpenItemDTO itemCreated = instance.createItem("testKey","testValue","comment");
+    OpenApiResult<OpenItemDTO> result = instance.createItem("testKey","testValue","comment");
   }
 
   @Test
@@ -62,8 +60,10 @@ public class OpenSDKTest {
     String token = "2bad744d24dc974adb0556052fc158c9264ec42d";
     NamespaceManager instance = NamespaceManager.builder().appId(someAppId).cluster(someClustername)
         .namespace(someNamespaceName).token(token).dataChangedBy("陈龙").build();
-    OpenItemDTO itemCreated = instance.createItem("testKey", "testValue", "comment");
-    assertNotNull(itemCreated);
+    OpenApiResult<OpenItemDTO> result = instance.createItem("testKey", "testValue", "comment");
+    assertEquals(result.code, OpenApiResult.SUCCESS);
+    assertNotNull(result.body);
+    assertNull(result.errmsg);
   }
 
 
