@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.opensdk;
 
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.opensdk.dto.OpenItemDTO;
+import com.ctrip.framework.apollo.opensdk.dto.OpenNamespaceDTO;
 import com.ctrip.framework.apollo.opensdk.dto.OpenReleaseDTO;
 import com.ctrip.framework.foundation.Foundation;
 import com.google.common.collect.ImmutableMap;
@@ -40,6 +41,29 @@ public class NamespaceManager {
     return RequestBody.create(MediaType.parse("application/json;charset=UTF-8"), gson.toJson(body));
   }
 
+  public OpenApiResult<OpenNamespaceDTO> info(){
+    Map<String,String> uriVariables = ImmutableMap.of("appId",appId,"clusterName",clusterName,"namespaceName", namespaceName,
+        "portal_address", PORTAL_URL, "env",env.name());
+    String url = "http://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}";
+
+    OpenApiResult<OpenNamespaceDTO> result = new OpenApiResult();
+    try {
+      Request request = new Request.Builder().get().url(HttpUtil.parseUrlTemplate(url, uriVariables)).headers(headers()).build();
+      Response response = client.newCall(request).execute();
+      if(response.isSuccessful()){
+        result.code = OpenApiResult.SUCCESS;
+        result.body = gson.fromJson(response.body().string(), OpenNamespaceDTO.class);
+      }else{
+        result.code = OpenApiResult.FAIL;
+        result.errmsg = response.body().string();
+      }
+    } catch (Exception e) {
+      result.code = OpenApiResult.FAIL;
+      result.errmsg = e.getMessage();
+    }
+    return result;
+  }
+
   /**
    * 新增配置接口
    * @return
@@ -56,7 +80,6 @@ public class NamespaceManager {
     itemDTO.setDataChangeCreatedBy(dataChangedBy);
 
     Request request = new Request.Builder().post(jsonBody(itemDTO)).url(HttpUtil.parseUrlTemplate(url, uriVariables)).headers(headers()).build();
-
     OpenApiResult result = new OpenApiResult();
     try {
       Response response = client.newCall(request).execute();
