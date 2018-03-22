@@ -5,7 +5,7 @@
 
 	<groupId>com.ctrip.framework.apollo</groupId>
 	<artifactId>apollo</artifactId>
-	<version>1.0.0-RELEASE</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<name>Apollo</name>
 	<packaging>pom</packaging>
 	<description>Ctrip Configuration Center</description>
@@ -101,6 +101,7 @@
 		<module>apollo-portal</module>
 		<!--<module>apollo-assembly</module>-->
 		<module>apollo-demo</module>
+		<module>apollo-opensdk</module>
 	</modules>
 
 	<dependencyManagement>
