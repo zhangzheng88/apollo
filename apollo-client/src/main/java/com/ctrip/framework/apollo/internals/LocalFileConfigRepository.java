@@ -30,7 +30,7 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
     implements RepositoryChangeListener {
 
   private static final Logger logger = LoggerFactory.getLogger(LocalFileConfigRepository.class);
-  private static final String CONFIG_DIR = "/config-cache";
+  private static final String CONFIG_DIR = "/data";
   private final String m_namespace;
   private final ConfigUtil m_configUtil;
   private File m_baseDir;
