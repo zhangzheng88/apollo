@@ -1,5 +1,9 @@
 package com.ctrip.framework.apollo.portal.spi.defaultimpl;
 
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.portal.constant.PermissionType;
@@ -10,12 +14,11 @@ import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
 import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Set;
 
 /**
  * Created by timothy on 2017/4/26.
@@ -43,20 +46,17 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
 
     //assign master role to user
     rolePermissionService
-        .assignRoleToUsers(RoleUtils.buildAppMasterRoleName(appId),
-            Sets.newHashSet(app.getOwnerName()),
-            operator);
+        .assignRoleToUsers(RoleUtils.buildAppMasterRoleName(appId), Sets.newHashSet(app.getOwnerName()),
+                           operator);
 
     initNamespaceRoles(appId, ConfigConsts.NAMESPACE_APPLICATION, operator);
 
     //assign modify、release namespace role to user
     rolePermissionService.assignRoleToUsers(
-        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION,
-            RoleType.MODIFY_NAMESPACE),
+        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.MODIFY_NAMESPACE),
         Sets.newHashSet(operator), operator);
     rolePermissionService.assignRoleToUsers(
-        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION,
-            RoleType.RELEASE_NAMESPACE),
+        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.RELEASE_NAMESPACE),
         Sets.newHashSet(operator), operator);
 
   }
@@ -67,27 +67,25 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
     String modifyNamespaceRoleName = RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName);
     if (rolePermissionService.findRoleByRoleName(modifyNamespaceRoleName) == null) {
       createNamespaceRole(appId, namespaceName, PermissionType.MODIFY_NAMESPACE,
-          RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName), operator);
+                          RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName), operator);
     }
 
     String releaseNamespaceRoleName = RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName);
     if (rolePermissionService.findRoleByRoleName(releaseNamespaceRoleName) == null) {
       createNamespaceRole(appId, namespaceName, PermissionType.RELEASE_NAMESPACE,
-          RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName), operator);
+                          RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName), operator);
     }
   }
 
   private void createAppMasterRole(String appId, String operator) {
     Set<Permission> appPermissions =
         FluentIterable.from(Lists.newArrayList(
-            PermissionType.CREATE_CLUSTER, PermissionType.CREATE_NAMESPACE,
-            PermissionType.ASSIGN_ROLE))
+            PermissionType.CREATE_CLUSTER, PermissionType.CREATE_NAMESPACE, PermissionType.ASSIGN_ROLE))
             .transform(permissionType -> createPermission(appId, permissionType, operator)).toSet();
     Set<Permission> createdAppPermissions = rolePermissionService.createPermissions(appPermissions);
     Set<Long>
         appPermissionIds =
-        FluentIterable.from(createdAppPermissions).transform(permission -> permission.getId())
-            .toSet();
+        FluentIterable.from(createdAppPermissions).transform(permission -> permission.getId()).toSet();
 
     //create app master role
     Role appMasterRole = createRole(RoleUtils.buildAppMasterRoleName(appId), operator);
@@ -113,11 +111,10 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
   }
 
   private void createNamespaceRole(String appId, String namespaceName, String permissionType,
-      String roleName, String operator) {
+                                   String roleName, String operator) {
 
     Permission permission =
-        createPermission(RoleUtils.buildNamespaceTargetId(appId, namespaceName), permissionType,
-            operator);
+        createPermission(RoleUtils.buildNamespaceTargetId(appId, namespaceName), permissionType, operator);
     Permission createdPermission = rolePermissionService.createPermission(permission);
 
     Role role = createRole(roleName, operator);

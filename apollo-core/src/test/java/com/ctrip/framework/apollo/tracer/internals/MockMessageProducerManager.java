@@ -7,7 +7,6 @@ import com.ctrip.framework.apollo.tracer.spi.MessageProducerManager;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class MockMessageProducerManager implements MessageProducerManager {
-
   private static MessageProducer s_producer;
 
   @Override

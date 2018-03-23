@@ -1,7 +1,9 @@
 package com.ctrip.framework.apollo.biz.entity;
 
 import com.google.common.base.MoreObjects;
+
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,7 +17,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "ReleaseMessage")
 public class ReleaseMessage {
-
   @Id
   @GeneratedValue
   @Column(name = "Id")
@@ -27,18 +28,18 @@ public class ReleaseMessage {
   @Column(name = "updated_at", nullable = false)
   private Date dataChangeLastModifiedTime = new Date();
 
-  public ReleaseMessage() {
-  }
-
-  public ReleaseMessage(String message) {
-    this.message = message;
-  }
-
   @PrePersist
   protected void prePersist() {
     if (this.dataChangeLastModifiedTime == null) {
       dataChangeLastModifiedTime = new Date();
     }
+  }
+
+  public ReleaseMessage() {
+  }
+
+  public ReleaseMessage(String message) {
+    this.message = message;
   }
 
   public long getId() {

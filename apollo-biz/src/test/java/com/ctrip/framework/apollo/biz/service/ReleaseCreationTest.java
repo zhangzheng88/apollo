@@ -1,5 +1,8 @@
 package com.ctrip.framework.apollo.biz.service;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import com.ctrip.framework.apollo.biz.AbstractIntegrationTest;
 import com.ctrip.framework.apollo.biz.entity.GrayReleaseRule;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
@@ -7,8 +10,7 @@ import com.ctrip.framework.apollo.biz.entity.Release;
 import com.ctrip.framework.apollo.biz.entity.ReleaseHistory;
 import com.ctrip.framework.apollo.common.constants.GsonType;
 import com.ctrip.framework.apollo.common.constants.ReleaseOperation;
-import com.google.gson.Gson;
-import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.jdbc.Sql;
+
+import java.lang.reflect.Type;
+import java.util.Map;
 
 public class ReleaseCreationTest extends AbstractIntegrationTest {
 
@@ -66,12 +71,15 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
 
 
   /**
-   * Master     |      Branch ------------------------------
-   * Master    |    Branch Items      k1=v1     |
-   * ---------------------------- k2=v2     |
-   * k1=v1    |    k1=v1 k3=v3                            publish master                 k2=v2    |
-   *   k2=v2 ------------------------------        ===========>>      Result      k3=v3    |
-   * k3=v3 Release               | | |
+   *               Master     |      Branch
+   *           ------------------------------                                      Master    |    Branch
+   *     Items      k1=v1     |                                                 ----------------------------
+   *                k2=v2     |                                                     k1=v1    |    k1=v1
+   *                k3=v3                            publish master                 k2=v2    |    k2=v2
+   *           ------------------------------        ===========>>      Result      k3=v3    |    k3=v3
+   *    Release               |
+   *                          |
+   *                          |
    */
   @Test
   @Sql(scripts = "/sql/release-creation-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -90,8 +98,7 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
     //assert parent namespace
     Assert.assertNotNull(latestParentNamespaceRelease);
 
-    Map<String, String> parentNamespaceConfiguration = parseConfiguration(
-        latestParentNamespaceRelease.getConfigurations());
+    Map<String, String> parentNamespaceConfiguration = parseConfiguration(latestParentNamespaceRelease.getConfigurations());
     Assert.assertEquals(3, parentNamespaceConfiguration.size());
     Assert.assertEquals("v1", parentNamespaceConfiguration.get("k1"));
     Assert.assertEquals("v2", parentNamespaceConfiguration.get("k2"));
@@ -104,15 +111,14 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
     //assert parent namespace
     Assert.assertNotNull(latestChildNamespaceRelease);
 
-    Map<String, String> childNamespaceConfiguration = parseConfiguration(
-        latestChildNamespaceRelease.getConfigurations());
+    Map<String, String> childNamespaceConfiguration = parseConfiguration(latestChildNamespaceRelease.getConfigurations());
     Assert.assertEquals(3, childNamespaceConfiguration.size());
     Assert.assertEquals("v1", childNamespaceConfiguration.get("k1"));
     Assert.assertEquals("v2", childNamespaceConfiguration.get("k2"));
     Assert.assertEquals("v3", childNamespaceConfiguration.get("k3"));
 
-    GrayReleaseRule rule = namespaceBranchService.findBranchGrayRules(testApp, parentClusterName,
-        testNamespace, childClusterName);
+    GrayReleaseRule rule= namespaceBranchService.findBranchGrayRules(testApp, parentClusterName,
+                                                                     testNamespace, childClusterName);
     Assert.assertNotNull(rule);
     Assert.assertEquals(1, rule.getBranchStatus());
     Assert.assertEquals(Long.valueOf(latestChildNamespaceRelease.getId()), rule.getReleaseId());
@@ -139,12 +145,15 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
 
 
   /**
-   * Master     |      Branch ------------------------------
-   * Master    |    Branch Items      k1=v1     |      k1=v1-2
-   * ------------------------- k2=v2     |                                                     k1=v1
-   *    |    k1=v1 k3=v3                            publish master                 k2=v2    |
-   * k2=v2 ------------------------------        ===========>>      Result      k3=v3    |    k3=v3
-   * Release               | | |
+   *               Master     |      Branch
+   *           ------------------------------                                      Master    |    Branch
+   *     Items      k1=v1     |      k1=v1-2                                      -------------------------
+   *                k2=v2     |                                                     k1=v1    |    k1=v1
+   *                k3=v3                            publish master                 k2=v2    |    k2=v2
+   *           ------------------------------        ===========>>      Result      k3=v3    |    k3=v3
+   *    Release               |
+   *                          |
+   *                          |
    */
   @Test
   @Sql(scripts = "/sql/release-creation-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -163,8 +172,7 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
     //assert parent namespace
     Assert.assertNotNull(latestParentNamespaceRelease);
 
-    Map<String, String> parentNamespaceConfiguration = parseConfiguration(
-        latestParentNamespaceRelease.getConfigurations());
+    Map<String, String> parentNamespaceConfiguration = parseConfiguration(latestParentNamespaceRelease.getConfigurations());
     Assert.assertEquals(3, parentNamespaceConfiguration.size());
     Assert.assertEquals("v1", parentNamespaceConfiguration.get("k1"));
     Assert.assertEquals("v2", parentNamespaceConfiguration.get("k2"));
@@ -176,15 +184,14 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
 
     Assert.assertNotNull(latestChildNamespaceRelease);
 
-    Map<String, String> childNamespaceConfiguration = parseConfiguration(
-        latestChildNamespaceRelease.getConfigurations());
+    Map<String, String> childNamespaceConfiguration = parseConfiguration(latestChildNamespaceRelease.getConfigurations());
     Assert.assertEquals(3, childNamespaceConfiguration.size());
     Assert.assertEquals("v1", childNamespaceConfiguration.get("k1"));
     Assert.assertEquals("v2", childNamespaceConfiguration.get("k2"));
     Assert.assertEquals("v3", childNamespaceConfiguration.get("k3"));
 
-    GrayReleaseRule rule = namespaceBranchService.findBranchGrayRules(testApp, parentClusterName,
-        testNamespace, childClusterName);
+    GrayReleaseRule rule= namespaceBranchService.findBranchGrayRules(testApp, parentClusterName,
+                                                                     testNamespace, childClusterName);
     Assert.assertNotNull(rule);
     Assert.assertEquals(1, rule.getBranchStatus());
     Assert.assertEquals(Long.valueOf(latestChildNamespaceRelease.getId()), rule.getReleaseId());
@@ -210,12 +217,14 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
 
 
   /**
-   * Master     |      Branch ------------------------------
-   * Master    |    Branch Items      k1=v1     |      k1=v1-2
-   * ---------------------------- k2=v2-2    |                      publish master
-   * k1=v1    |    k1=v1-1 ------------------------------        ===========>>      Result
-   * k2=v2-2  |    k2=v2-2 Release     k1=v1     |      k1=v1-1
-   * | k2=v2     |      k2=v3 k3=v3     |      k3=v3
+   *               Master     |      Branch
+   *           ------------------------------                                      Master    |    Branch
+   *     Items      k1=v1     |      k1=v1-2                                    ----------------------------
+   *               k2=v2-2    |                      publish master                 k1=v1    |    k1=v1-1
+   *           ------------------------------        ===========>>      Result      k2=v2-2  |    k2=v2-2
+   *    Release     k1=v1     |      k1=v1-1                                                 |
+   *                k2=v2     |      k2=v3
+   *                k3=v3     |      k3=v3
    */
   @Test
   @Sql(scripts = "/sql/release-creation-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -234,8 +243,7 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
     //assert parent namespace
     Assert.assertNotNull(latestParentNamespaceRelease);
 
-    Map<String, String> parentNamespaceConfiguration = parseConfiguration(
-        latestParentNamespaceRelease.getConfigurations());
+    Map<String, String> parentNamespaceConfiguration = parseConfiguration(latestParentNamespaceRelease.getConfigurations());
     Assert.assertEquals(2, parentNamespaceConfiguration.size());
     Assert.assertEquals("v1", parentNamespaceConfiguration.get("k1"));
     Assert.assertEquals("v2-2", parentNamespaceConfiguration.get("k2"));
@@ -246,14 +254,13 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
 
     Assert.assertNotNull(latestChildNamespaceRelease);
 
-    Map<String, String> childNamespaceConfiguration = parseConfiguration(
-        latestChildNamespaceRelease.getConfigurations());
+    Map<String, String> childNamespaceConfiguration = parseConfiguration(latestChildNamespaceRelease.getConfigurations());
     Assert.assertEquals(2, childNamespaceConfiguration.size());
     Assert.assertEquals("v1-1", childNamespaceConfiguration.get("k1"));
     Assert.assertEquals("v2-2", childNamespaceConfiguration.get("k2"));
 
-    GrayReleaseRule rule = namespaceBranchService.findBranchGrayRules(testApp, parentClusterName,
-        testNamespace, childClusterName);
+    GrayReleaseRule rule= namespaceBranchService.findBranchGrayRules(testApp, parentClusterName,
+                                                                     testNamespace, childClusterName);
     Assert.assertNotNull(rule);
     Assert.assertEquals(1, rule.getBranchStatus());
     Assert.assertEquals(Long.valueOf(latestChildNamespaceRelease.getId()), rule.getReleaseId());
@@ -279,13 +286,14 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
   }
 
   /**
-   * Master     |      Branch ------------------------------
-   * Master    |    Branch Items      k1=v1     |      k1=v1-2
-   * ---------------------------- k2=v2-2    |      k4=v4           publish branch
-   * k1=v1    |    k1=v1-2 ------------------------------        ===========>>      Result
-   * k2=v2    |    k2=v2 Release     k1=v1     |
-   * k3=v3    |    k3=v3 k2=v2     |                                                              |
-   * k4=v4 k3=v3     |
+   *               Master     |      Branch
+   *           ------------------------------                                      Master    |    Branch
+   *     Items      k1=v1     |      k1=v1-2                                    ----------------------------
+   *               k2=v2-2    |      k4=v4           publish branch                 k1=v1    |    k1=v1-2
+   *           ------------------------------        ===========>>      Result      k2=v2    |    k2=v2
+   *    Release     k1=v1     |                                                     k3=v3    |    k3=v3
+   *                k2=v2     |                                                              |    k4=v4
+   *                k3=v3     |
    */
   @Test
   @Sql(scripts = "/sql/release-creation-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -303,8 +311,7 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
 
     Assert.assertNotNull(latestChildNamespaceRelease);
 
-    Map<String, String> childNamespaceConfiguration = parseConfiguration(
-        latestChildNamespaceRelease.getConfigurations());
+    Map<String, String> childNamespaceConfiguration = parseConfiguration(latestChildNamespaceRelease.getConfigurations());
     Assert.assertEquals(4, childNamespaceConfiguration.size());
     Assert.assertEquals("v1-2", childNamespaceConfiguration.get("k1"));
     Assert.assertEquals("v2", childNamespaceConfiguration.get("k2"));
@@ -318,15 +325,14 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
     //assert parent namespace
     Assert.assertNotNull(latestParentNamespaceRelease);
 
-    Map<String, String> parentNamespaceConfiguration = parseConfiguration(
-        latestParentNamespaceRelease.getConfigurations());
+    Map<String, String> parentNamespaceConfiguration = parseConfiguration(latestParentNamespaceRelease.getConfigurations());
     Assert.assertEquals(3, parentNamespaceConfiguration.size());
     Assert.assertEquals("v1", parentNamespaceConfiguration.get("k1"));
     Assert.assertEquals("v2", parentNamespaceConfiguration.get("k2"));
     Assert.assertEquals("v3", parentNamespaceConfiguration.get("k3"));
 
-    GrayReleaseRule rule = namespaceBranchService.findBranchGrayRules(testApp, parentClusterName,
-        testNamespace, childClusterName);
+    GrayReleaseRule rule= namespaceBranchService.findBranchGrayRules(testApp, parentClusterName,
+                                                                     testNamespace, childClusterName);
     Assert.assertNotNull(rule);
     Assert.assertEquals(1, rule.getBranchStatus());
     Assert.assertEquals(Long.valueOf(latestChildNamespaceRelease.getId()), rule.getReleaseId());
@@ -348,14 +354,17 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
 
 
   /**
-   * Master     |      Branch ------------------------------
-   * Master    |    Branch Items      k1=v1     |      k1=v1-2
-   * ---------------------------- k2=v2-2    |      k4=v4
-   * k1=v1    |    k1=v1-2 k6=v6           publish branch                 k2=v2    |    k2=v2
-   * ------------------------------        ===========>>      Result      k3=v3    |    k3=v3
-   * Release     k1=v1     |      k1=v1-1                                                 |    k4=v4
-   * k2=v2     |      k2=v2                                                   |    k6=v6 k3=v3     |
-   * k3=v3 |      k4=v4 |      k5=v5
+   *               Master     |      Branch
+   *           ------------------------------                                      Master    |    Branch
+   *     Items      k1=v1     |      k1=v1-2                                    ----------------------------
+   *               k2=v2-2    |      k4=v4                                          k1=v1    |    k1=v1-2
+   *                                 k6=v6           publish branch                 k2=v2    |    k2=v2
+   *           ------------------------------        ===========>>      Result      k3=v3    |    k3=v3
+   *    Release     k1=v1     |      k1=v1-1                                                 |    k4=v4
+   *                k2=v2     |      k2=v2                                                   |    k6=v6
+   *                k3=v3     |      k3=v3
+   *                          |      k4=v4
+   *                          |      k5=v5
    */
   @Test
   @Sql(scripts = "/sql/release-creation-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -373,8 +382,7 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
 
     Assert.assertNotNull(latestChildNamespaceRelease);
 
-    Map<String, String> childNamespaceConfiguration = parseConfiguration(
-        latestChildNamespaceRelease.getConfigurations());
+    Map<String, String> childNamespaceConfiguration = parseConfiguration(latestChildNamespaceRelease.getConfigurations());
     Assert.assertEquals(5, childNamespaceConfiguration.size());
     Assert.assertEquals("v1-2", childNamespaceConfiguration.get("k1"));
     Assert.assertEquals("v2", childNamespaceConfiguration.get("k2"));
@@ -389,15 +397,14 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
     //assert parent namespace
     Assert.assertNotNull(latestParentNamespaceRelease);
 
-    Map<String, String> parentNamespaceConfiguration = parseConfiguration(
-        latestParentNamespaceRelease.getConfigurations());
+    Map<String, String> parentNamespaceConfiguration = parseConfiguration(latestParentNamespaceRelease.getConfigurations());
     Assert.assertEquals(3, parentNamespaceConfiguration.size());
     Assert.assertEquals("v1", parentNamespaceConfiguration.get("k1"));
     Assert.assertEquals("v2", parentNamespaceConfiguration.get("k2"));
     Assert.assertEquals("v3", parentNamespaceConfiguration.get("k3"));
 
-    GrayReleaseRule rule = namespaceBranchService.findBranchGrayRules(testApp, parentClusterName,
-        testNamespace, childClusterName);
+    GrayReleaseRule rule= namespaceBranchService.findBranchGrayRules(testApp, parentClusterName,
+                                                                     testNamespace, childClusterName);
     Assert.assertNotNull(rule);
     Assert.assertEquals(1, rule.getBranchStatus());
     Assert.assertEquals(Long.valueOf(latestChildNamespaceRelease.getId()), rule.getReleaseId());
@@ -418,12 +425,18 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
   }
 
   /**
-   * Master     |      Branch ------------------------------
-   * Master   |    Branch Rollback Release      k1=v1     |      k1=v1-2
-   *        ---------------------------- k2=v2     |      k2=v2
-   *   k1=v1-1    |    k1=v1-2 |      k3=v3                                        k2=v2-1    |
-   * k2=v2-1 rollback                     k3=v3      |    k3=v3 ------------------------------
-   * ===========>>   New Release New  Release           k1=v1-1   | k2=v2-1   | k3=v3     |
+   *                          Master     |      Branch
+   *                       ------------------------------                                      Master   |    Branch
+   *     Rollback Release      k1=v1     |      k1=v1-2                                    ----------------------------
+   *                           k2=v2     |      k2=v2                                        k1=v1-1    |    k1=v1-2
+   *                                     |      k3=v3                                        k2=v2-1    |    k2=v2-1
+   *                                                            rollback                     k3=v3      |    k3=v3
+   *                       ------------------------------     ===========>>   New Release
+   *    New  Release           k1=v1-1   |
+   *                           k2=v2-1   |
+   *                           k3=v3     |
+   *
+   *
    */
   @Test
   @Sql(scripts = "/sql/release-creation-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -434,23 +447,18 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
     String childClusterName = "child-cluster6";
     String operator = "apollo";
 
-    Release parentNamespaceLatestRelease = releaseService
-        .findLatestActiveRelease(testApp, parentClusterName, testNamespace);
+    Release parentNamespaceLatestRelease = releaseService.findLatestActiveRelease(testApp, parentClusterName, testNamespace);
     releaseService.rollback(parentNamespaceLatestRelease.getId(), operator);
 
-    Release parentNamespaceNewLatestRelease = releaseService
-        .findLatestActiveRelease(testApp, parentClusterName, testNamespace);
-    Map<String, String> parentNamespaceConfiguration = parseConfiguration(
-        parentNamespaceNewLatestRelease.getConfigurations());
+    Release parentNamespaceNewLatestRelease = releaseService.findLatestActiveRelease(testApp, parentClusterName, testNamespace);
+    Map<String, String> parentNamespaceConfiguration = parseConfiguration(parentNamespaceNewLatestRelease.getConfigurations());
     Assert.assertEquals(3, parentNamespaceConfiguration.size());
     Assert.assertEquals("v1-1", parentNamespaceConfiguration.get("k1"));
     Assert.assertEquals("v2-1", parentNamespaceConfiguration.get("k2"));
     Assert.assertEquals("v3", parentNamespaceConfiguration.get("k3"));
 
-    Release childNamespaceNewLatestRelease = releaseService
-        .findLatestActiveRelease(testApp, childClusterName, testNamespace);
-    Map<String, String> childNamespaceConfiguration = parseConfiguration(
-        childNamespaceNewLatestRelease.getConfigurations());
+    Release childNamespaceNewLatestRelease = releaseService.findLatestActiveRelease(testApp, childClusterName, testNamespace);
+    Map<String, String> childNamespaceConfiguration = parseConfiguration(childNamespaceNewLatestRelease.getConfigurations());
     Assert.assertEquals(3, childNamespaceConfiguration.size());
     Assert.assertEquals("v1-2", childNamespaceConfiguration.get("k1"));
     Assert.assertEquals("v2-1", childNamespaceConfiguration.get("k2"));
@@ -469,8 +477,7 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
     Assert.assertEquals(7, masterReleaseHistory.getPreviousReleaseId());
     Assert.assertEquals(ReleaseOperation.MATER_ROLLBACK_MERGE_TO_GRAY,
         branchReleaseHistory.getOperation());
-    Assert
-        .assertEquals(childNamespaceNewLatestRelease.getId(), branchReleaseHistory.getReleaseId());
+    Assert.assertEquals(childNamespaceNewLatestRelease.getId(), branchReleaseHistory.getReleaseId());
     Assert.assertEquals(8, branchReleaseHistory.getPreviousReleaseId());
     Assert.assertTrue(branchReleaseHistory.getOperationContext().contains(String.format
         ("\"baseReleaseId\":%d", parentNamespaceNewLatestRelease.getId())));

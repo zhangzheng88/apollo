@@ -1,17 +1,17 @@
 package com.ctrip.framework.apollo.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import com.ctrip.framework.apollo.core.ConfigConsts;
+
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ConfigUtilTest {
-
   @After
   public void tearDown() throws Exception {
     System.clearProperty(ConfigConsts.APOLLO_CLUSTER_KEY);
@@ -157,8 +157,7 @@ public class ConfigUtilTest {
   @Test
   public void testCustomizeLongPollingInitialDelayInMills() throws Exception {
     long someLongPollingDelayInMills = 1;
-    System.setProperty("apollo.longPollingInitialDelayInMills",
-        String.valueOf(someLongPollingDelayInMills));
+    System.setProperty("apollo.longPollingInitialDelayInMills", String.valueOf(someLongPollingDelayInMills));
 
     ConfigUtil configUtil = new ConfigUtil();
 

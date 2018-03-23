@@ -4,7 +4,6 @@ package com.ctrip.framework.apollo.tracer.spi;
  * @author Jason Song(song_s@ctrip.com)
  */
 public interface Transaction {
-
   String SUCCESS = "0";
 
   /**

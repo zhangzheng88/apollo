@@ -6,16 +6,17 @@ import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.tracer.Tracer;
-import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class AppInfoChangedListener {
-
   private static final Logger logger = LoggerFactory.getLogger(AppInfoChangedListener.class);
 
   @Autowired
@@ -35,8 +36,7 @@ public class AppInfoChangedListener {
         appAPI.updateApp(env, appDTO);
       } catch (Throwable e) {
         logger.error("Update app's info failed. Env = {}, AppId = {}", env, appId, e);
-        Tracer.logError(String.format("Update app's info failed. Env = %s, AppId = %s", env, appId),
-            e);
+        Tracer.logError(String.format("Update app's info failed. Env = %s, AppId = %s", env, appId), e);
       }
     }
 

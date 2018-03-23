@@ -8,10 +8,7 @@ import com.ctrip.framework.apollo.portal.spi.LogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserService;
-import java.io.IOException;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class UserInfoController {
@@ -60,8 +63,8 @@ public class UserInfoController {
 
   @RequestMapping(value = "/users", method = RequestMethod.GET)
   public List<UserInfo> searchUsersByKeyword(@RequestParam(value = "keyword") String keyword,
-      @RequestParam(value = "offset", defaultValue = "0") int offset,
-      @RequestParam(value = "limit", defaultValue = "10") int limit) {
+                                             @RequestParam(value = "offset", defaultValue = "0") int offset,
+                                             @RequestParam(value = "limit", defaultValue = "10") int limit) {
     return userService.searchUsers(keyword, offset, limit);
   }
 

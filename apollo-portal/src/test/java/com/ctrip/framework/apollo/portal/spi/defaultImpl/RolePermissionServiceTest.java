@@ -1,35 +1,37 @@
 package com.ctrip.framework.apollo.portal.spi.defaultImpl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.ctrip.framework.apollo.portal.service.RolePermissionService;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Sets;
 
 import com.ctrip.framework.apollo.common.entity.BaseEntity;
 import com.ctrip.framework.apollo.portal.AbstractIntegrationTest;
-import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.po.Permission;
 import com.ctrip.framework.apollo.portal.entity.po.Role;
 import com.ctrip.framework.apollo.portal.entity.po.RolePermission;
+import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.po.UserRole;
 import com.ctrip.framework.apollo.portal.repository.PermissionRepository;
 import com.ctrip.framework.apollo.portal.repository.RolePermissionRepository;
 import com.ctrip.framework.apollo.portal.repository.RoleRepository;
 import com.ctrip.framework.apollo.portal.repository.UserRoleRepository;
-import com.ctrip.framework.apollo.portal.service.RolePermissionService;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Sets;
-import java.util.List;
-import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class RolePermissionServiceTest extends AbstractIntegrationTest {
-
   @Autowired
   private RolePermissionService rolePermissionService;
 
@@ -298,17 +300,12 @@ public class RolePermissionServiceTest extends AbstractIntegrationTest {
     String someUserWithNoPermission = "someUserWithNoPermission";
 
     assertTrue(rolePermissionService.userHasPermission(someUser, somePermissionType, someTargetId));
-    assertTrue(
-        rolePermissionService.userHasPermission(someUser, anotherPermissionType, anotherTargetId));
-    assertTrue(
-        rolePermissionService.userHasPermission(anotherUser, somePermissionType, someTargetId));
-    assertTrue(rolePermissionService
-        .userHasPermission(anotherUser, anotherPermissionType, anotherTargetId));
+    assertTrue(rolePermissionService.userHasPermission(someUser, anotherPermissionType, anotherTargetId));
+    assertTrue(rolePermissionService.userHasPermission(anotherUser, somePermissionType, someTargetId));
+    assertTrue(rolePermissionService.userHasPermission(anotherUser, anotherPermissionType, anotherTargetId));
 
-    assertFalse(rolePermissionService
-        .userHasPermission(someUserWithNoPermission, somePermissionType, someTargetId));
-    assertFalse(rolePermissionService
-        .userHasPermission(someUserWithNoPermission, anotherPermissionType, anotherTargetId));
+    assertFalse(rolePermissionService.userHasPermission(someUserWithNoPermission, somePermissionType, someTargetId));
+    assertFalse(rolePermissionService.userHasPermission(someUserWithNoPermission, anotherPermissionType, anotherTargetId));
 
   }
 

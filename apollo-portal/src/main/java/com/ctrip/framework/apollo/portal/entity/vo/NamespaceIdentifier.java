@@ -5,7 +5,6 @@ import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.entity.model.Verifiable;
 
 public class NamespaceIdentifier implements Verifiable {
-
   private String appId;
   private String env;
   private String clusterName;

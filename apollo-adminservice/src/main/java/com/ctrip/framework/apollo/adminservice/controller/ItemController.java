@@ -12,7 +12,7 @@ import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class ItemController {
@@ -34,8 +36,8 @@ public class ItemController {
   @PreAcquireNamespaceLock
   @RequestMapping(path = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items", method = RequestMethod.POST)
   public ItemDTO create(@PathVariable("appId") String appId,
-      @PathVariable("clusterName") String clusterName,
-      @PathVariable("namespaceName") String namespaceName, @RequestBody ItemDTO dto) {
+                        @PathVariable("clusterName") String clusterName,
+                        @PathVariable("namespaceName") String namespaceName, @RequestBody ItemDTO dto) {
     Item entity = BeanUtils.transfrom(Item.class, dto);
 
     ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
@@ -63,10 +65,10 @@ public class ItemController {
   @PreAcquireNamespaceLock
   @RequestMapping(path = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{itemId}", method = RequestMethod.PUT)
   public ItemDTO update(@PathVariable("appId") String appId,
-      @PathVariable("clusterName") String clusterName,
-      @PathVariable("namespaceName") String namespaceName,
-      @PathVariable("itemId") long itemId,
-      @RequestBody ItemDTO itemDTO) {
+                        @PathVariable("clusterName") String clusterName,
+                        @PathVariable("namespaceName") String namespaceName,
+                        @PathVariable("itemId") long itemId,
+                        @RequestBody ItemDTO itemDTO) {
 
     Item entity = BeanUtils.transfrom(Item.class, itemDTO);
 
@@ -125,10 +127,9 @@ public class ItemController {
 
   @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items", method = RequestMethod.GET)
   public List<ItemDTO> findItems(@PathVariable("appId") String appId,
-      @PathVariable("clusterName") String clusterName,
-      @PathVariable("namespaceName") String namespaceName) {
-    return BeanUtils.batchTransform(ItemDTO.class,
-        itemService.findItemsWithOrdered(appId, clusterName, namespaceName));
+                                 @PathVariable("clusterName") String clusterName,
+                                 @PathVariable("namespaceName") String namespaceName) {
+    return BeanUtils.batchTransform(ItemDTO.class, itemService.findItemsWithOrdered(appId, clusterName, namespaceName));
   }
 
   @RequestMapping(value = "/items/{itemId}", method = RequestMethod.GET)
@@ -142,8 +143,8 @@ public class ItemController {
 
   @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key:.+}", method = RequestMethod.GET)
   public ItemDTO get(@PathVariable("appId") String appId,
-      @PathVariable("clusterName") String clusterName,
-      @PathVariable("namespaceName") String namespaceName, @PathVariable("key") String key) {
+                     @PathVariable("clusterName") String clusterName,
+                     @PathVariable("namespaceName") String namespaceName, @PathVariable("key") String key) {
     Item item = itemService.findOne(appId, clusterName, namespaceName, key);
     if (item == null) {
       throw new NotFoundException(

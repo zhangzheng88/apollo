@@ -2,7 +2,9 @@ package com.ctrip.framework.apollo.common.entity;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -17,19 +19,21 @@ import javax.persistence.PreUpdate;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class BaseEntity {
 
-  @Column(name = "IsDeleted", columnDefinition = "TINYINT default 0", nullable = false)
-  protected boolean isDeleted = false;
   @Id
   @GeneratedValue
   @Column(name = "Id")
   private long id;
+
+  @Column(name = "IsDeleted", columnDefinition = "TINYINT default 0", nullable = false)
+  protected boolean isDeleted = false;
+
   @Column(name = "DataChange_CreatedBy", nullable = false)
   private String dataChangeCreatedBy = "";
 
   @Column(name = "created_at", nullable = false, updatable = false)
   private Date dataChangeCreatedTime = new Date();
 
-  @Column(name = "DataChange_LastModifiedBy", nullable = false)
+  @Column(name = "DataChange_LastModifiedBy",nullable = false)
   private String dataChangeLastModifiedBy = "";
 
   @Column(name = "updated_at", nullable = false)
@@ -39,58 +43,54 @@ public abstract class BaseEntity {
     return dataChangeCreatedBy;
   }
 
-  public void setDataChangeCreatedBy(String dataChangeCreatedBy) {
-    this.dataChangeCreatedBy = dataChangeCreatedBy;
-  }
-
   public Date getDataChangeCreatedTime() {
     return dataChangeCreatedTime;
-  }
-
-  public void setDataChangeCreatedTime(Date dataChangeCreatedTime) {
-    this.dataChangeCreatedTime = dataChangeCreatedTime;
   }
 
   public String getDataChangeLastModifiedBy() {
     return dataChangeLastModifiedBy;
   }
 
-  public void setDataChangeLastModifiedBy(String dataChangeLastModifiedBy) {
-    this.dataChangeLastModifiedBy = dataChangeLastModifiedBy;
-  }
-
   public Date getDataChangeLastModifiedTime() {
     return dataChangeLastModifiedTime;
-  }
-
-  public void setDataChangeLastModifiedTime(Date dataChangeLastModifiedTime) {
-    this.dataChangeLastModifiedTime = dataChangeLastModifiedTime;
   }
 
   public long getId() {
     return id;
   }
 
-  public void setId(long id) {
-    this.id = id;
-  }
-
   public boolean isDeleted() {
     return isDeleted;
+  }
+
+  public void setDataChangeCreatedBy(String dataChangeCreatedBy) {
+    this.dataChangeCreatedBy = dataChangeCreatedBy;
+  }
+
+  public void setDataChangeCreatedTime(Date dataChangeCreatedTime) {
+    this.dataChangeCreatedTime = dataChangeCreatedTime;
+  }
+
+  public void setDataChangeLastModifiedBy(String dataChangeLastModifiedBy) {
+    this.dataChangeLastModifiedBy = dataChangeLastModifiedBy;
+  }
+
+  public void setDataChangeLastModifiedTime(Date dataChangeLastModifiedTime) {
+    this.dataChangeLastModifiedTime = dataChangeLastModifiedTime;
   }
 
   public void setDeleted(boolean deleted) {
     isDeleted = deleted;
   }
 
+  public void setId(long id) {
+    this.id = id;
+  }
+
   @PrePersist
   protected void prePersist() {
-    if (this.dataChangeCreatedTime == null) {
-      dataChangeCreatedTime = new Date();
-    }
-    if (this.dataChangeLastModifiedTime == null) {
-      dataChangeLastModifiedTime = new Date();
-    }
+    if (this.dataChangeCreatedTime == null) dataChangeCreatedTime = new Date();
+    if (this.dataChangeLastModifiedTime == null) dataChangeLastModifiedTime = new Date();
   }
 
   @PreUpdate
@@ -111,7 +111,7 @@ public abstract class BaseEntity {
         .add("dataChangeLastModifiedTime", dataChangeLastModifiedTime);
   }
 
-  public String toString() {
+  public String toString(){
     return toStringHelper().toString();
   }
 }

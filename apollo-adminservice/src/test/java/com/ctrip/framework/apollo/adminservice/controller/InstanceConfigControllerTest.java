@@ -1,10 +1,8 @@
 package com.ctrip.framework.apollo.adminservice.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.ctrip.framework.apollo.biz.entity.Instance;
 import com.ctrip.framework.apollo.biz.entity.InstanceConfig;
@@ -14,13 +12,7 @@ import com.ctrip.framework.apollo.biz.service.ReleaseService;
 import com.ctrip.framework.apollo.common.dto.InstanceDTO;
 import com.ctrip.framework.apollo.common.dto.PageDTO;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,12 +23,22 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @RunWith(MockitoJUnitRunner.class)
 public class InstanceConfigControllerTest {
-
   private InstanceConfigController instanceConfigController;
 
   @Mock
@@ -115,12 +117,10 @@ public class InstanceConfigControllerTest {
     verifyInstance(anotherInstance, anotherInstanceDto);
 
     assertEquals(1, someInstanceDto.getConfigs().size());
-    assertEquals(someReleaseDeliveryTime,
-        someInstanceDto.getConfigs().get(0).getReleaseDeliveryTime());
+    assertEquals(someReleaseDeliveryTime, someInstanceDto.getConfigs().get(0).getReleaseDeliveryTime());
 
     assertEquals(1, anotherInstanceDto.getConfigs().size());
-    assertEquals(anotherReleaseDeliveryTime,
-        anotherInstanceDto.getConfigs().get(0).getReleaseDeliveryTime());
+    assertEquals(anotherReleaseDeliveryTime, anotherInstanceDto.getConfigs().get(0).getReleaseDeliveryTime());
   }
 
   @Test(expected = NotFoundException.class)
@@ -217,8 +217,7 @@ public class InstanceConfigControllerTest {
         .getRelease()
         .getReleaseKey());
 
-    assertEquals(someReleaseDeliveryTime,
-        someInstanceDto.getConfigs().get(0).getReleaseDeliveryTime());
+    assertEquals(someReleaseDeliveryTime, someInstanceDto.getConfigs().get(0).getReleaseDeliveryTime());
     assertEquals(anotherReleaseDeliveryTime, anotherInstanceDto.getConfigs().get(0)
         .getReleaseDeliveryTime());
   }

@@ -1,6 +1,5 @@
 package com.ctrip.framework.apollo.common.controller;
 
-import java.util.List;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.MimeMappings;
@@ -12,14 +11,15 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import java.util.List;
+
 @Configuration
-public class WebMvcConfig extends WebMvcConfigurerAdapter implements
-    EmbeddedServletContainerCustomizer {
+public class WebMvcConfig extends WebMvcConfigurerAdapter implements EmbeddedServletContainerCustomizer {
 
   @Override
   public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
     PageableHandlerMethodArgumentResolver pageResolver =
-        new PageableHandlerMethodArgumentResolver();
+            new PageableHandlerMethodArgumentResolver();
     pageResolver.setFallbackPageable(new PageRequest(0, 10));
 
     argumentResolvers.add(pageResolver);
@@ -35,6 +35,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter implements
   public void customize(ConfigurableEmbeddedServletContainer container) {
     MimeMappings mappings = new MimeMappings(MimeMappings.DEFAULT);
     mappings.add("html", "text/html;charset=utf-8");
-    container.setMimeMappings(mappings);
+    container.setMimeMappings(mappings );
   }
 }

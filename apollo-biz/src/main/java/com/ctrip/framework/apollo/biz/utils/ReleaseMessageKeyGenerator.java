@@ -1,8 +1,9 @@
 package com.ctrip.framework.apollo.biz.utils;
 
 
-import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.google.common.base.Joiner;
+
+import com.ctrip.framework.apollo.core.ConfigConsts;
 
 public class ReleaseMessageKeyGenerator {
 

@@ -1,16 +1,16 @@
 package com.ctrip.framework.apollo.foundation.internals;
 
-import static org.junit.Assert.assertTrue;
-
 import com.ctrip.framework.foundation.internals.ServiceBootstrap;
-import java.util.ServiceConfigurationError;
 import org.junit.Test;
+
+import java.util.ServiceConfigurationError;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ServiceBootstrapTest {
-
   @Test
   public void loadFirstSuccessfully() throws Exception {
     Interface1 service = ServiceBootstrap.loadFirst(Interface1.class);
@@ -38,26 +38,20 @@ public class ServiceBootstrapTest {
   }
 
   private interface Interface1 {
-
-  }
-
-  private interface Interface2 {
-
-  }
-
-  private interface Interface3 {
-
-  }
-
-  private interface Interface4 {
-
-  }
-
-  private interface Interface5 {
-
   }
 
   public static class Interface1Impl implements Interface1 {
+  }
 
+  private interface Interface2 {
+  }
+
+  private interface Interface3 {
+  }
+
+  private interface Interface4 {
+  }
+
+  private interface Interface5 {
   }
 }

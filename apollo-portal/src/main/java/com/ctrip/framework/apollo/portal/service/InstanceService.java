@@ -4,10 +4,12 @@ import com.ctrip.framework.apollo.common.dto.InstanceDTO;
 import com.ctrip.framework.apollo.common.dto.PageDTO;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
-import java.util.List;
-import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class InstanceService {
@@ -16,26 +18,23 @@ public class InstanceService {
   @Autowired
   private AdminServiceAPI.InstanceAPI instanceAPI;
 
-  public PageDTO<InstanceDTO> getByRelease(Env env, long releaseId, int page, int size) {
+  public PageDTO<InstanceDTO> getByRelease(Env env, long releaseId, int page, int size){
     return instanceAPI.getByRelease(env, releaseId, page, size);
   }
 
-  public PageDTO<InstanceDTO> getByNamespace(Env env, String appId, String clusterName,
-      String namespaceName,
-      String instanceAppId, int page, int size) {
-    return instanceAPI
-        .getByNamespace(appId, env, clusterName, namespaceName, instanceAppId, page, size);
+  public PageDTO<InstanceDTO> getByNamespace(Env env, String appId, String clusterName, String namespaceName,
+                                             String instanceAppId, int page, int size){
+    return instanceAPI.getByNamespace(appId, env, clusterName, namespaceName, instanceAppId, page, size);
   }
 
-  public int getInstanceCountByNamepsace(String appId, Env env, String clusterName,
-      String namespaceName) {
+  public int getInstanceCountByNamepsace(String appId, Env env, String clusterName, String namespaceName){
     return instanceAPI.getInstanceCountByNamespace(appId, env, clusterName, namespaceName);
   }
 
-  public List<InstanceDTO> getByReleasesNotIn(Env env, String appId, String clusterName,
-      String namespaceName, Set<Long> releaseIds) {
+  public List<InstanceDTO> getByReleasesNotIn(Env env, String appId, String clusterName, String namespaceName, Set<Long> releaseIds){
     return instanceAPI.getByReleasesNotIn(appId, env, clusterName, namespaceName, releaseIds);
   }
+
 
 
 }

@@ -18,7 +18,7 @@ public class RequestPrecondition {
     checkArguments(!StringUtils.isContainEmpty(args), CONTAIN_EMPTY_ARGUMENT);
   }
 
-  public static void checkModel(boolean valid) {
+  public static void checkModel(boolean valid){
     checkArguments(valid, ILLEGAL_MODEL);
   }
 
@@ -28,29 +28,30 @@ public class RequestPrecondition {
     }
   }
 
-  public static void checkNumberPositive(int... args) {
-    for (int num : args) {
-      if (num <= 0) {
+  public static void checkNumberPositive(int... args){
+    for (int num: args){
+      if (num <= 0){
         throw new BadRequestException(ILLEGAL_NUMBER);
       }
     }
   }
 
-  public static void checkNumberPositive(long... args) {
-    for (long num : args) {
-      if (num <= 0) {
+  public static void checkNumberPositive(long... args){
+    for (long num: args){
+      if (num <= 0){
         throw new BadRequestException(ILLEGAL_NUMBER);
       }
     }
   }
 
-  public static void checkNumberNotNegative(int... args) {
-    for (int num : args) {
-      if (num < 0) {
+  public static void checkNumberNotNegative(int... args){
+    for (int num: args){
+      if (num < 0){
         throw new BadRequestException(ILLEGAL_NUMBER);
       }
     }
   }
+
 
 
 }

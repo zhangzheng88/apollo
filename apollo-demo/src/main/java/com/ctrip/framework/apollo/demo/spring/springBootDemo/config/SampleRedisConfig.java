@@ -4,12 +4,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 /**
  * You may set up data like the following in Apollo:
@@ -70,6 +71,6 @@ public class SampleRedisConfig {
   public String toString() {
     return String.format(
         "[SampleRedisConfig] expireSeconds: %d, clusterNodes: %s, commandTimeout: %d, someMap: %s, someList: %s",
-        expireSeconds, clusterNodes, commandTimeout, someMap, someList);
+            expireSeconds, clusterNodes, commandTimeout, someMap, someList);
   }
 }

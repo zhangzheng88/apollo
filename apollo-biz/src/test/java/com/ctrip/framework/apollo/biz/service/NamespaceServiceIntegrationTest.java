@@ -1,10 +1,5 @@
 package com.ctrip.framework.apollo.biz.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import com.ctrip.framework.apollo.biz.AbstractIntegrationTest;
 import com.ctrip.framework.apollo.biz.entity.Cluster;
 import com.ctrip.framework.apollo.biz.entity.Commit;
@@ -15,12 +10,19 @@ import com.ctrip.framework.apollo.biz.entity.Release;
 import com.ctrip.framework.apollo.biz.entity.ReleaseHistory;
 import com.ctrip.framework.apollo.biz.repository.InstanceConfigRepository;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
-import java.util.List;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class NamespaceServiceIntegrationTest extends AbstractIntegrationTest {
 
@@ -61,24 +63,20 @@ public class NamespaceServiceIntegrationTest extends AbstractIntegrationTest {
 
     namespaceService.deleteNamespace(namespace, testUser);
 
-    List<Item> items = itemService
-        .findItemsWithoutOrdered(testApp, testCluster, testPrivateNamespace);
-    List<Commit> commits = commitService
-        .find(testApp, testCluster, testPrivateNamespace, new PageRequest(0, 10));
+    List<Item> items = itemService.findItemsWithoutOrdered(testApp, testCluster, testPrivateNamespace);
+    List<Commit> commits = commitService.find(testApp, testCluster, testPrivateNamespace, new PageRequest(0, 10));
     AppNamespace appNamespace = appNamespaceService.findOne(testApp, testPrivateNamespace);
     List<Cluster> childClusters = clusterService.findChildClusters(testApp, testCluster);
     InstanceConfig instanceConfig = instanceConfigRepository.findOne(1L);
     List<Release> parentNamespaceReleases = releaseService.findActiveReleases(testApp, testCluster,
-        testPrivateNamespace,
-        new PageRequest(0, 10));
-    List<Release> childNamespaceReleases = releaseService
-        .findActiveReleases(testApp, testChildCluster,
-            testPrivateNamespace,
-            new PageRequest(0, 10));
+                                                                              testPrivateNamespace,
+                                                                              new PageRequest(0, 10));
+    List<Release> childNamespaceReleases = releaseService.findActiveReleases(testApp, testChildCluster,
+                                                                             testPrivateNamespace,
+                                                                             new PageRequest(0, 10));
     Page<ReleaseHistory> releaseHistories =
         releaseHistoryService
-            .findReleaseHistoriesByNamespace(testApp, testCluster, testPrivateNamespace,
-                new PageRequest(0, 10));
+            .findReleaseHistoriesByNamespace(testApp, testCluster, testPrivateNamespace, new PageRequest(0, 10));
 
     assertEquals(0, items.size());
     assertEquals(0, commits.size());

@@ -5,6 +5,14 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 
+import java.util.List;
+
+import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.core.ConfigConsts;
@@ -12,18 +20,11 @@ import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfig;
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener;
 import com.google.common.collect.Lists;
-import java.util.List;
-import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class XMLConfigAnnotationTest extends AbstractSpringIntegrationTest {
-
   private static final String FX_APOLLO_NAMESPACE = "FX.apollo";
 
   @Test
@@ -34,8 +35,7 @@ public class XMLConfigAnnotationTest extends AbstractSpringIntegrationTest {
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, applicationConfig);
     mockConfig(FX_APOLLO_NAMESPACE, fxApolloConfig);
 
-    TestApolloConfigBean1 bean = getBean("spring/XmlConfigAnnotationTest1.xml",
-        TestApolloConfigBean1.class);
+    TestApolloConfigBean1 bean = getBean("spring/XmlConfigAnnotationTest1.xml", TestApolloConfigBean1.class);
 
     assertEquals(applicationConfig, bean.getConfig());
     assertEquals(applicationConfig, bean.getAnotherConfig());
@@ -131,7 +131,6 @@ public class XMLConfigAnnotationTest extends AbstractSpringIntegrationTest {
   }
 
   public static class TestApolloConfigBean1 {
-
     @ApolloConfig
     private Config config;
     @ApolloConfig(ConfigConsts.NAMESPACE_APPLICATION)
@@ -153,13 +152,11 @@ public class XMLConfigAnnotationTest extends AbstractSpringIntegrationTest {
   }
 
   public static class TestApolloConfigBean2 {
-
     @ApolloConfig
     private String config;
   }
 
   public static class TestApolloConfigChangeListenerBean1 {
-
     private ConfigChangeEvent changeEvent1;
     private ConfigChangeEvent changeEvent2;
     private ConfigChangeEvent changeEvent3;
@@ -193,7 +190,6 @@ public class XMLConfigAnnotationTest extends AbstractSpringIntegrationTest {
   }
 
   public static class TestApolloConfigChangeListenerBean2 {
-
     @ApolloConfigChangeListener
     private void onChange(String event) {
 
@@ -201,7 +197,6 @@ public class XMLConfigAnnotationTest extends AbstractSpringIntegrationTest {
   }
 
   public static class TestApolloConfigChangeListenerBean3 {
-
     @ApolloConfigChangeListener
     private void onChange(ConfigChangeEvent event, String someParam) {
 

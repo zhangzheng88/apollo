@@ -5,6 +5,7 @@ import com.ctrip.framework.apollo.demo.spring.xmlConfigDemo.bean.XmlBean;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfig;
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ManualRefreshUtil {
-
   private static final Logger logger = LoggerFactory.getLogger(ManualRefreshUtil.class);
 
   @ApolloConfig

@@ -1,7 +1,9 @@
 package com.ctrip.framework.apollo.biz.entity;
 
 import com.google.common.base.MoreObjects;
+
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,7 +17,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Instance")
 public class Instance {
-
   @Id
   @GeneratedValue
   @Column(name = "Id")

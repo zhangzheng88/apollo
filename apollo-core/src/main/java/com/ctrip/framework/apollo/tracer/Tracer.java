@@ -4,6 +4,7 @@ import com.ctrip.framework.apollo.tracer.internals.NullMessageProducerManager;
 import com.ctrip.framework.apollo.tracer.spi.MessageProducer;
 import com.ctrip.framework.apollo.tracer.spi.MessageProducerManager;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
+
 import com.ctrip.framework.foundation.internals.ServiceBootstrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
  * @author Jason Song(song_s@ctrip.com)
  */
 public abstract class Tracer {
-
   private static final Logger logger = LoggerFactory.getLogger(Tracer.class);
   private static final MessageProducerManager NULL_MESSAGE_PRODUCER_MANAGER =
       new NullMessageProducerManager();

@@ -9,32 +9,33 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+
 import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.io.Files;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Properties;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
 /**
  * Created by Jason on 4/9/16.
  */
 public class LocalFileConfigRepositoryTest {
-
-  private static String someAppId = "someApp";
-  private static String someCluster = "someCluster";
   private File someBaseDir;
   private String someNamespace;
   private ConfigRepository upstreamRepo;
   private Properties someProperties;
+  private static String someAppId = "someApp";
+  private static String someCluster = "someCluster";
   private String defaultKey;
   private String defaultValue;
 
@@ -105,8 +106,7 @@ public class LocalFileConfigRepositoryTest {
 
     Files.write(defaultKey + "=" + someValue, file, Charsets.UTF_8);
 
-    LocalFileConfigRepository localRepo = new LocalFileConfigRepository(someNamespace,
-        upstreamRepo);
+    LocalFileConfigRepository localRepo = new LocalFileConfigRepository(someNamespace, upstreamRepo);
     localRepo.setLocalCacheDir(someBaseDir, true);
 
     Properties properties = localRepo.getConfig();
@@ -173,6 +173,18 @@ public class LocalFileConfigRepositoryTest {
 
   }
 
+  public static class MockConfigUtil extends ConfigUtil {
+    @Override
+    public String getAppId() {
+      return someAppId;
+    }
+
+    @Override
+    public String getCluster() {
+      return someCluster;
+    }
+  }
+
   private File createLocalCachePropertyFile(Properties properties) throws IOException {
     File file = new File(someBaseDir, assembleLocalCacheFileName());
     FileOutputStream in = null;
@@ -185,18 +197,5 @@ public class LocalFileConfigRepositoryTest {
       }
     }
     return file;
-  }
-
-  public static class MockConfigUtil extends ConfigUtil {
-
-    @Override
-    public String getAppId() {
-      return someAppId;
-    }
-
-    @Override
-    public String getCluster() {
-      return someCluster;
-    }
   }
 }

@@ -1,18 +1,19 @@
 package com.ctrip.framework.apollo.internals;
 
+import java.util.List;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.util.ExceptionUtil;
 import com.google.common.collect.Lists;
-import java.util.List;
-import java.util.Properties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public abstract class AbstractConfigRepository implements ConfigRepository {
-
   private static final Logger logger = LoggerFactory.getLogger(AbstractConfigRepository.class);
   private List<RepositoryChangeListener> m_listeners = Lists.newCopyOnWriteArrayList();
 
@@ -23,9 +24,8 @@ public abstract class AbstractConfigRepository implements ConfigRepository {
     } catch (Throwable ex) {
       Tracer.logEvent("ApolloConfigException", ExceptionUtil.getDetailMessage(ex));
       logger
-          .warn("Sync config failed, will retry. Repository {}, reason: {}", this.getClass(),
-              ExceptionUtil
-                  .getDetailMessage(ex));
+          .warn("Sync config failed, will retry. Repository {}, reason: {}", this.getClass(), ExceptionUtil
+              .getDetailMessage(ex));
     }
     return false;
   }

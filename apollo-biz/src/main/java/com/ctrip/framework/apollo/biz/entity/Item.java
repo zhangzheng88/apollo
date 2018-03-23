@@ -1,12 +1,14 @@
 package com.ctrip.framework.apollo.biz.entity;
 
 import com.ctrip.framework.apollo.common.entity.BaseEntity;
+
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 @Entity
 @Table(name = "Item")
@@ -34,28 +36,28 @@ public class Item extends BaseEntity {
     return comment;
   }
 
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
   public String getKey() {
     return key;
-  }
-
-  public void setKey(String key) {
-    this.key = key;
   }
 
   public long getNamespaceId() {
     return namespaceId;
   }
 
-  public void setNamespaceId(long namespaceId) {
-    this.namespaceId = namespaceId;
-  }
-
   public String getValue() {
     return value;
+  }
+
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
+
+  public void setKey(String key) {
+    this.key = key;
+  }
+
+  public void setNamespaceId(long namespaceId) {
+    this.namespaceId = namespaceId;
   }
 
   public void setValue(String value) {

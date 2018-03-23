@@ -10,20 +10,19 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class RequestLoggingFilterConfig {
+    @Bean
+    public FilterRegistrationBean logFilter() {
 
-  @Bean
-  public FilterRegistrationBean logFilter() {
+        RequestLoggingFilterWithExcludedUris filter
+                = new RequestLoggingFilterWithExcludedUris();
+        filter.setIncludeQueryString(true);
+        filter.setIncludePayload(true);
+        filter.setMaxPayloadLength(10000);
+        filter.addExcludedUri("/health");
 
-    RequestLoggingFilterWithExcludedUris filter
-        = new RequestLoggingFilterWithExcludedUris();
-    filter.setIncludeQueryString(true);
-    filter.setIncludePayload(true);
-    filter.setMaxPayloadLength(10000);
-    filter.addExcludedUri("/health");
-
-    FilterRegistrationBean filterBean = new FilterRegistrationBean();
-    filterBean.setFilter(filter);
-    filterBean.addUrlPatterns("/*");
-    return filterBean;
-  }
+        FilterRegistrationBean filterBean = new FilterRegistrationBean();
+        filterBean.setFilter(filter);
+        filterBean.addUrlPatterns("/*");
+        return filterBean;
+    }
 }

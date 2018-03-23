@@ -1,22 +1,12 @@
 package com.ctrip.framework.apollo.configservice.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.repository.AppNamespaceRepository;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,12 +14,24 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @RunWith(MockitoJUnitRunner.class)
 public class AppNamespaceServiceWithCacheTest {
-
   private AppNamespaceServiceWithCache appNamespaceServiceWithCache;
   @Mock
   private AppNamespaceRepository appNamespaceRepository;
@@ -95,9 +97,8 @@ public class AppNamespaceServiceWithCacheTest {
     Set<String> somePublicAppIdNamespaces = Sets.newHashSet(somePublicNamespace,
         anotherPrivateNamespace);
     Set<String> publicNamespaces = Sets.newHashSet(somePublicNamespace, anotherPublicNamespace);
-    Set<String> publicNamespacesWithIncorrectCase = Sets
-        .newHashSet(somePublicNamespaceWithIncorrectCase,
-            anotherPublicNamespace);
+    Set<String> publicNamespacesWithIncorrectCase = Sets.newHashSet(somePublicNamespaceWithIncorrectCase,
+        anotherPublicNamespace);
 
     List<Long> appNamespaceIds = Lists.newArrayList(somePrivateNamespaceId,
         somePublicNamespaceId, anotherPrivateNamespaceId, yetAnotherPrivateNamespaceId,
@@ -110,36 +111,24 @@ public class AppNamespaceServiceWithCacheTest {
     appNamespaceServiceWithCache.afterPropertiesSet();
 
     // Should have no record now
-    assertNull(
-        appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, somePrivateNamespace));
-    assertNull(appNamespaceServiceWithCache
-        .findByAppIdAndNamespace(someAppId, somePrivateNamespaceWithIncorrectCase));
-    assertNull(appNamespaceServiceWithCache
-        .findByAppIdAndNamespace(someAppId, yetAnotherPrivateNamespace));
-    assertNull(
-        appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, anotherPublicNamespace));
-    assertTrue(appNamespaceServiceWithCache.findByAppIdAndNamespaces(someAppId, someAppIdNamespaces)
+    assertNull(appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, somePrivateNamespace));
+    assertNull(appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, somePrivateNamespaceWithIncorrectCase));
+    assertNull(appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, yetAnotherPrivateNamespace));
+    assertNull(appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, anotherPublicNamespace));
+    assertTrue(appNamespaceServiceWithCache.findByAppIdAndNamespaces(someAppId, someAppIdNamespaces).isEmpty());
+    assertTrue(appNamespaceServiceWithCache.findByAppIdAndNamespaces(someAppId, someAppIdNamespacesWithIncorrectCase)
         .isEmpty());
-    assertTrue(appNamespaceServiceWithCache
-        .findByAppIdAndNamespaces(someAppId, someAppIdNamespacesWithIncorrectCase)
-        .isEmpty());
-    assertNull(
-        appNamespaceServiceWithCache.findByAppIdAndNamespace(somePublicAppId, somePublicNamespace));
+    assertNull(appNamespaceServiceWithCache.findByAppIdAndNamespace(somePublicAppId, somePublicNamespace));
     assertNull(appNamespaceServiceWithCache.findByAppIdAndNamespace(somePublicAppId,
         somePublicNamespaceWithIncorrectCase));
-    assertNull(appNamespaceServiceWithCache
-        .findByAppIdAndNamespace(somePublicAppId, anotherPrivateNamespace));
+    assertNull(appNamespaceServiceWithCache.findByAppIdAndNamespace(somePublicAppId, anotherPrivateNamespace));
     assertTrue(appNamespaceServiceWithCache.findByAppIdAndNamespaces(somePublicAppId,
         somePublicAppIdNamespaces).isEmpty());
     assertNull(appNamespaceServiceWithCache.findPublicNamespaceByName(somePublicNamespace));
-    assertNull(appNamespaceServiceWithCache
-        .findPublicNamespaceByName(somePublicNamespaceWithIncorrectCase));
+    assertNull(appNamespaceServiceWithCache.findPublicNamespaceByName(somePublicNamespaceWithIncorrectCase));
     assertNull(appNamespaceServiceWithCache.findPublicNamespaceByName(anotherPublicNamespace));
-    assertTrue(
-        appNamespaceServiceWithCache.findPublicNamespacesByNames(publicNamespaces).isEmpty());
-    assertTrue(
-        appNamespaceServiceWithCache.findPublicNamespacesByNames(publicNamespacesWithIncorrectCase)
-            .isEmpty());
+    assertTrue(appNamespaceServiceWithCache.findPublicNamespacesByNames(publicNamespaces).isEmpty());
+    assertTrue(appNamespaceServiceWithCache.findPublicNamespacesByNames(publicNamespacesWithIncorrectCase).isEmpty());
 
     // Add 1 private namespace and 1 public namespace
     when(appNamespaceRepository.findFirst500ByIdGreaterThanOrderByIdAsc(0)).thenReturn(Lists
@@ -153,30 +142,24 @@ public class AppNamespaceServiceWithCacheTest {
     assertEquals(somePrivateAppNamespace,
         appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, somePrivateNamespace));
     assertEquals(somePrivateAppNamespace,
-        appNamespaceServiceWithCache
-            .findByAppIdAndNamespace(someAppId, somePrivateNamespaceWithIncorrectCase));
+        appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, somePrivateNamespaceWithIncorrectCase));
     check(Lists.newArrayList(somePrivateAppNamespace), appNamespaceServiceWithCache
         .findByAppIdAndNamespaces(someAppId, someAppIdNamespaces));
     check(Lists.newArrayList(somePrivateAppNamespace), appNamespaceServiceWithCache
         .findByAppIdAndNamespaces(someAppId, someAppIdNamespacesWithIncorrectCase));
-    assertEquals(somePublicAppNamespace,
-        appNamespaceServiceWithCache.findByAppIdAndNamespace(somePublicAppId,
-            somePublicNamespace));
-    assertEquals(somePublicAppNamespace,
-        appNamespaceServiceWithCache.findByAppIdAndNamespace(somePublicAppId,
-            somePublicNamespaceWithIncorrectCase));
+    assertEquals(somePublicAppNamespace, appNamespaceServiceWithCache.findByAppIdAndNamespace(somePublicAppId,
+        somePublicNamespace));
+    assertEquals(somePublicAppNamespace, appNamespaceServiceWithCache.findByAppIdAndNamespace(somePublicAppId,
+        somePublicNamespaceWithIncorrectCase));
     check(Lists.newArrayList(somePublicAppNamespace), appNamespaceServiceWithCache
         .findByAppIdAndNamespaces(somePublicAppId, somePublicAppIdNamespaces));
-    assertEquals(somePublicAppNamespace,
-        appNamespaceServiceWithCache.findPublicNamespaceByName(somePublicNamespace));
+    assertEquals(somePublicAppNamespace, appNamespaceServiceWithCache.findPublicNamespaceByName(somePublicNamespace));
     assertEquals(somePublicAppNamespace, appNamespaceServiceWithCache.findPublicNamespaceByName
         (somePublicNamespaceWithIncorrectCase));
-    check(Lists.newArrayList(somePublicAppNamespace),
-        appNamespaceServiceWithCache.findPublicNamespacesByNames
-            (publicNamespaces));
-    check(Lists.newArrayList(somePublicAppNamespace),
-        appNamespaceServiceWithCache.findPublicNamespacesByNames
-            (publicNamespacesWithIncorrectCase));
+    check(Lists.newArrayList(somePublicAppNamespace), appNamespaceServiceWithCache.findPublicNamespacesByNames
+        (publicNamespaces));
+    check(Lists.newArrayList(somePublicAppNamespace), appNamespaceServiceWithCache.findPublicNamespacesByNames
+        (publicNamespacesWithIncorrectCase));
 
     // Add 2 private namespaces and 1 public namespace
     when(appNamespaceRepository.findFirst500ByIdGreaterThanOrderByIdAsc(somePublicNamespaceId))
@@ -188,26 +171,20 @@ public class AppNamespaceServiceWithCacheTest {
 
     check(Lists.newArrayList(somePrivateAppNamespace, yetAnotherPrivateAppNamespace,
         anotherPublicAppNamespace), Lists
-        .newArrayList(
-            appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, somePrivateNamespace),
-            appNamespaceServiceWithCache
-                .findByAppIdAndNamespace(someAppId, yetAnotherPrivateNamespace),
-            appNamespaceServiceWithCache
-                .findByAppIdAndNamespace(someAppId, anotherPublicNamespace)));
+        .newArrayList(appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, somePrivateNamespace),
+            appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, yetAnotherPrivateNamespace),
+            appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, anotherPublicNamespace)));
     check(Lists.newArrayList(somePrivateAppNamespace, yetAnotherPrivateAppNamespace,
         anotherPublicAppNamespace), appNamespaceServiceWithCache.findByAppIdAndNamespaces
         (someAppId, someAppIdNamespaces));
     check(Lists.newArrayList(somePublicAppNamespace, anotherPrivateAppNamespace),
-        Lists.newArrayList(appNamespaceServiceWithCache
-                .findByAppIdAndNamespace(somePublicAppId, somePublicNamespace),
-            appNamespaceServiceWithCache
-                .findByAppIdAndNamespace(somePublicAppId, anotherPrivateNamespace)));
+        Lists.newArrayList(appNamespaceServiceWithCache.findByAppIdAndNamespace(somePublicAppId, somePublicNamespace),
+            appNamespaceServiceWithCache.findByAppIdAndNamespace(somePublicAppId, anotherPrivateNamespace)));
     check(Lists.newArrayList(somePublicAppNamespace, anotherPrivateAppNamespace),
         appNamespaceServiceWithCache.findByAppIdAndNamespaces(somePublicAppId,
             somePublicAppIdNamespaces));
     check(Lists.newArrayList(somePublicAppNamespace, anotherPublicAppNamespace),
-        Lists.newArrayList(
-            appNamespaceServiceWithCache.findPublicNamespaceByName(somePublicNamespace),
+        Lists.newArrayList(appNamespaceServiceWithCache.findPublicNamespaceByName(somePublicNamespace),
             appNamespaceServiceWithCache.findPublicNamespaceByName(anotherPublicNamespace)));
     check(Lists.newArrayList(somePublicAppNamespace, anotherPublicAppNamespace),
         appNamespaceServiceWithCache.findPublicNamespacesByNames(publicNamespaces));
@@ -241,12 +218,9 @@ public class AppNamespaceServiceWithCacheTest {
 
     scanIntervalTimeUnit.sleep(sleepInterval);
 
-    assertNull(
-        appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, somePrivateNamespace));
-    assertNull(appNamespaceServiceWithCache
-        .findByAppIdAndNamespace(someAppId, yetAnotherPrivateNamespace));
-    assertNull(
-        appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, anotherPublicNamespace));
+    assertNull(appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, somePrivateNamespace));
+    assertNull(appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, yetAnotherPrivateNamespace));
+    assertNull(appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppId, anotherPublicNamespace));
     check(Collections.emptyList(), appNamespaceServiceWithCache
         .findByAppIdAndNamespaces(someAppId, someAppIdNamespaces));
     assertEquals(somePublicAppNamespaceNew,
@@ -264,8 +238,7 @@ public class AppNamespaceServiceWithCacheTest {
     check(Lists.newArrayList(somePrivateAppNamespaceNew), appNamespaceServiceWithCache
         .findByAppIdAndNamespaces(someAppId, Sets.newHashSet(somePrivateNamespaceNew)));
     assertEquals(yetAnotherPrivateAppNamespaceNew,
-        appNamespaceServiceWithCache
-            .findByAppIdAndNamespace(someAppIdNew, yetAnotherPrivateNamespace));
+        appNamespaceServiceWithCache.findByAppIdAndNamespace(someAppIdNew, yetAnotherPrivateNamespace));
     check(Lists.newArrayList(yetAnotherPrivateAppNamespaceNew), appNamespaceServiceWithCache
         .findByAppIdAndNamespaces(someAppIdNew, Sets.newHashSet(yetAnotherPrivateNamespace)));
   }

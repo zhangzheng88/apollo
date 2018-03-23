@@ -5,13 +5,15 @@ import com.ctrip.framework.apollo.biz.repository.AppRepository;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
-import java.util.List;
-import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AppService {
@@ -26,7 +28,7 @@ public class AppService {
     Objects.requireNonNull(appId, "AppId must not be null");
     return Objects.isNull(appRepository.findByAppId(appId));
   }
-
+  
   @Transactional
   public void delete(long id, String operator) {
     App app = appRepository.findOne(id);
@@ -61,10 +63,10 @@ public class AppService {
     }
     entity.setId(0);//protection
     App app = appRepository.save(entity);
-
+    
     auditService.audit(App.class.getSimpleName(), app.getId(), Audit.OP.INSERT,
         app.getDataChangeCreatedBy());
-
+    
     return app;
   }
 
@@ -85,9 +87,9 @@ public class AppService {
     managedApp.setDataChangeLastModifiedBy(app.getDataChangeLastModifiedBy());
 
     managedApp = appRepository.save(managedApp);
-
+    
     auditService.audit(App.class.getSimpleName(), managedApp.getId(), Audit.OP.UPDATE,
         managedApp.getDataChangeLastModifiedBy());
-
+    
   }
 }

@@ -1,13 +1,13 @@
 package com.ctrip.framework.apollo.demo.spring.xmlConfigDemo;
 
-import java.util.Scanner;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.util.Scanner;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class XmlApplication {
-
   public static void main(String[] args) {
     new ClassPathXmlApplicationContext("spring.xml");
     onKeyExit();

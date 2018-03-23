@@ -4,6 +4,7 @@ import com.ctrip.framework.apollo.biz.repository.AppRepository;
 import com.ctrip.framework.apollo.common.dto.AppDTO;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +75,7 @@ public class AppControllerTest extends AbstractControllerTest {
 
     try {
       restTemplate.postForEntity(getBaseAppUrl(), dto, AppDTO.class);
-    } catch (HttpClientErrorException e) {
+    }catch (HttpClientErrorException e){
       Assert.assertEquals(HttpStatus.BAD_REQUEST, e.getStatusCode());
     }
 
@@ -105,9 +106,7 @@ public class AppControllerTest extends AbstractControllerTest {
     App app = BeanUtils.transfrom(App.class, dto);
     app = appRepository.save(app);
 
-    restTemplate
-        .delete("http://localhost:{port}/apps/{appId}?operator={operator}", port, app.getAppId(),
-            "test");
+    restTemplate.delete("http://localhost:{port}/apps/{appId}?operator={operator}", port, app.getAppId(), "test");
 
     App deletedApp = appRepository.findOne(app.getId());
     Assert.assertNull(deletedApp);

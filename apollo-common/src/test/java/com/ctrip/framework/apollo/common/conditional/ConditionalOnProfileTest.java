@@ -1,18 +1,19 @@
 package com.ctrip.framework.apollo.common.conditional;
 
-import static com.ctrip.framework.apollo.common.conditional.ConditionalOnProfileTest.ANOTHER_PROFILE;
-import static com.ctrip.framework.apollo.common.conditional.ConditionalOnProfileTest.SOME_PROFILE;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import com.ctrip.framework.apollo.common.condition.ConditionalOnMissingProfile;
 import com.ctrip.framework.apollo.common.condition.ConditionalOnProfile;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static com.ctrip.framework.apollo.common.conditional.ConditionalOnProfileTest.ANOTHER_PROFILE;
+import static com.ctrip.framework.apollo.common.conditional.ConditionalOnProfileTest.SOME_PROFILE;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -21,7 +22,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(classes = ConditionalOnProfileTest.TestConfiguration.class)
 @ActiveProfiles({SOME_PROFILE, ANOTHER_PROFILE})
 public class ConditionalOnProfileTest {
-
   static final String SOME_PROFILE = "someProfile";
   static final String ANOTHER_PROFILE = "anotherProfile";
   static final String YET_ANOTHER_PROFILE = "yetAnotherProfile";
@@ -47,7 +47,6 @@ public class ConditionalOnProfileTest {
     @Configuration
     @ConditionalOnProfile(SOME_PROFILE)
     static class SomeConfiguration {
-
       {
         someConfigurationEnabled = true;
       }
@@ -56,7 +55,6 @@ public class ConditionalOnProfileTest {
     @Configuration
     @ConditionalOnMissingProfile(ANOTHER_PROFILE)
     static class AnotherConfiguration {
-
       {
         anotherConfigurationEnabled = true;
       }
@@ -66,7 +64,6 @@ public class ConditionalOnProfileTest {
     @Configuration
     @ConditionalOnMissingProfile(YET_ANOTHER_PROFILE)
     static class YetAnotherConfiguration {
-
       {
         yetAnotherConfigurationEnabled = true;
       }
@@ -76,7 +73,6 @@ public class ConditionalOnProfileTest {
     @ConditionalOnProfile({SOME_PROFILE, ANOTHER_PROFILE})
     @ConditionalOnMissingProfile(YET_ANOTHER_PROFILE)
     static class CombinedConfiguration {
-
       {
         combinedConfigurationEnabled = true;
       }
@@ -86,7 +82,6 @@ public class ConditionalOnProfileTest {
     @ConditionalOnProfile(SOME_PROFILE)
     @ConditionalOnMissingProfile({YET_ANOTHER_PROFILE, ANOTHER_PROFILE})
     static class AnotherCombinedConfiguration {
-
       {
         anotherCombinedConfigurationEnabled = true;
       }

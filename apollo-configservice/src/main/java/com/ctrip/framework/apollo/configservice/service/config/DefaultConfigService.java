@@ -4,6 +4,7 @@ import com.ctrip.framework.apollo.biz.entity.Release;
 import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
 import com.ctrip.framework.apollo.biz.service.ReleaseService;
 import com.ctrip.framework.apollo.core.dto.ApolloNotificationMessages;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -22,9 +23,8 @@ public class DefaultConfigService extends AbstractConfigService {
   }
 
   @Override
-  protected Release findLatestActiveRelease(String configAppId, String configClusterName,
-      String configNamespace,
-      ApolloNotificationMessages clientMessages) {
+  protected Release findLatestActiveRelease(String configAppId, String configClusterName, String configNamespace,
+                                            ApolloNotificationMessages clientMessages) {
     return releaseService.findLatestActiveRelease(configAppId, configClusterName,
         configNamespace);
   }

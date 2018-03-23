@@ -3,6 +3,7 @@ package com.ctrip.framework.apollo.portal.component.emailbuilder;
 
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.entity.bo.ReleaseHistoryBO;
+
 import org.springframework.stereotype.Component;
 
 

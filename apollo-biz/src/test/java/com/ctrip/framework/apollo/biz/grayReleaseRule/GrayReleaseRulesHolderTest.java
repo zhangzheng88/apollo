@@ -1,11 +1,9 @@
 package com.ctrip.framework.apollo.biz.grayReleaseRule;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.gson.Gson;
 
 import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.entity.GrayReleaseRule;
@@ -15,13 +13,7 @@ import com.ctrip.framework.apollo.biz.repository.GrayReleaseRuleRepository;
 import com.ctrip.framework.apollo.common.constants.NamespaceBranchStatus;
 import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleItemDTO;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,12 +21,22 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @RunWith(MockitoJUnitRunner.class)
 public class GrayReleaseRulesHolderTest {
-
   private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
   private GrayReleaseRulesHolder grayReleaseRulesHolder;
   @Mock
@@ -48,7 +50,7 @@ public class GrayReleaseRulesHolderTest {
   public void setUp() throws Exception {
     grayReleaseRulesHolder = spy(new GrayReleaseRulesHolder());
     ReflectionTestUtils.setField(grayReleaseRulesHolder, "bizConfig",
-        bizConfig);
+                                 bizConfig);
     ReflectionTestUtils.setField(grayReleaseRulesHolder, "grayReleaseRuleRepository",
         grayReleaseRuleRepository);
     idCounter = new AtomicLong();

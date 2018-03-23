@@ -1,5 +1,7 @@
 package com.ctrip.framework.apollo.biz.service;
 
+import com.google.common.base.Strings;
+
 import com.ctrip.framework.apollo.biz.entity.Audit;
 import com.ctrip.framework.apollo.biz.entity.Cluster;
 import com.ctrip.framework.apollo.biz.repository.ClusterRepository;
@@ -7,13 +9,14 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.google.common.base.Strings;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ClusterService {
@@ -61,7 +64,7 @@ public class ClusterService {
     Cluster savedCluster = saveWithoutInstanceOfAppNamespaces(entity);
 
     namespaceService.instanceOfAppNamespaces(savedCluster.getAppId(), savedCluster.getName(),
-        savedCluster.getDataChangeCreatedBy());
+                                             savedCluster.getDataChangeCreatedBy());
 
     return savedCluster;
   }
@@ -75,7 +78,7 @@ public class ClusterService {
     Cluster cluster = clusterRepository.save(entity);
 
     auditService.audit(Cluster.class.getSimpleName(), cluster.getId(), Audit.OP.INSERT,
-        cluster.getDataChangeCreatedBy());
+                       cluster.getDataChangeCreatedBy());
 
     return cluster;
   }
@@ -105,7 +108,7 @@ public class ClusterService {
     managedCluster = clusterRepository.save(managedCluster);
 
     auditService.audit(Cluster.class.getSimpleName(), managedCluster.getId(), Audit.OP.UPDATE,
-        managedCluster.getDataChangeLastModifiedBy());
+                       managedCluster.getDataChangeLastModifiedBy());
 
     return managedCluster;
   }

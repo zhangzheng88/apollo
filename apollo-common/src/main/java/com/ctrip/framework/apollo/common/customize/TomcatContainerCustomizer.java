@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class TomcatContainerCustomizer implements EmbeddedServletContainerCustomizer {
-
   private static final Logger logger = LoggerFactory.getLogger(TomcatContainerCustomizer.class);
   private static final String TOMCAT_ACCEPTOR_COUNT = "server.tomcat.accept-count";
   @Autowired

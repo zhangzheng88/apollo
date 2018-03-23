@@ -4,9 +4,11 @@ import com.ctrip.framework.apollo.openapi.service.ConsumerRolePermissionService;
 import com.ctrip.framework.apollo.openapi.util.ConsumerAuthUtil;
 import com.ctrip.framework.apollo.portal.constant.PermissionType;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
-import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Component
 public class ConsumerPermissionValidator {
@@ -42,8 +44,8 @@ public class ConsumerPermissionValidator {
 
   public boolean hasCreateNamespacePermission(HttpServletRequest request, String appId) {
     return permissionService.consumerHasPermission(consumerAuthUtil.retrieveConsumerId(request),
-        PermissionType.CREATE_NAMESPACE,
-        appId);
+                                                   PermissionType.CREATE_NAMESPACE,
+                                                   appId);
   }
 
 }

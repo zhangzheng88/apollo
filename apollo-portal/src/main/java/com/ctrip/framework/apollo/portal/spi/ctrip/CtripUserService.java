@@ -1,15 +1,13 @@
 package com.ctrip.framework.apollo.portal.spi.ctrip;
 
-import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
-import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
-import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
+import com.ctrip.framework.apollo.portal.spi.UserService;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -19,11 +17,15 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class CtripUserService implements UserService {
-
   private RestTemplate restTemplate;
   private List<String> searchUserMatchFields;
   private ParameterizedTypeReference<Map<String, List<UserServiceResponse>>> responseType;
@@ -124,7 +126,7 @@ public class CtripUserService implements UserService {
   }
 
   private UserServiceRequest assembleUserServiceRequest(Map<String, Object> query, int offset,
-      int limit) {
+                                                        int limit) {
     UserServiceRequest request = new UserServiceRequest();
     request.setAccess_token(portalConfig.userServiceAccessToken());
 
@@ -146,7 +148,6 @@ public class CtripUserService implements UserService {
 
 
   static class UserServiceRequest {
-
     private String access_token;
     private UserServiceRequestBody request_body;
 
@@ -169,7 +170,6 @@ public class CtripUserService implements UserService {
   }
 
   static class UserServiceRequestBody {
-
     private String indexAlias;
     private String type;
     private Map<String, Object> queryJson;
@@ -200,7 +200,6 @@ public class CtripUserService implements UserService {
   }
 
   static class UserServiceResponse {
-
     private String empaccount;
     private String displayname;
     private String email;

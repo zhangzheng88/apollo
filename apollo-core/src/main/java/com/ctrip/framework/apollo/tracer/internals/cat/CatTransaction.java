@@ -1,24 +1,25 @@
 package com.ctrip.framework.apollo.tracer.internals.cat;
 
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
+
 import java.lang.reflect.Method;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class CatTransaction implements Transaction {
-
   private static Class CAT_TRANSACTION_CLASS;
   private static Method SET_STATUS_WITH_STRING;
   private static Method SET_STATUS_WITH_THROWABLE;
   private static Method ADD_DATA_WITH_KEY_AND_VALUE;
   private static Method COMPLETE;
 
+  private Object catTransaction;
+
   static {
     try {
       CAT_TRANSACTION_CLASS = Class.forName(CatNames.CAT_TRANSACTION_CLASS);
-      SET_STATUS_WITH_STRING = CAT_TRANSACTION_CLASS
-          .getMethod(CatNames.SET_STATUS_METHOD, String.class);
+      SET_STATUS_WITH_STRING = CAT_TRANSACTION_CLASS.getMethod(CatNames.SET_STATUS_METHOD, String.class);
       SET_STATUS_WITH_THROWABLE = CAT_TRANSACTION_CLASS.getMethod(CatNames.SET_STATUS_METHOD,
           Throwable.class);
       ADD_DATA_WITH_KEY_AND_VALUE = CAT_TRANSACTION_CLASS.getMethod(CatNames.ADD_DATA_METHOD,
@@ -29,14 +30,12 @@ public class CatTransaction implements Transaction {
     }
   }
 
-  private Object catTransaction;
+  static void init() {
+    //do nothing, just to initialize the static variables
+  }
 
   public CatTransaction(Object catTransaction) {
     this.catTransaction = catTransaction;
-  }
-
-  static void init() {
-    //do nothing, just to initialize the static variables
   }
 
   @Override

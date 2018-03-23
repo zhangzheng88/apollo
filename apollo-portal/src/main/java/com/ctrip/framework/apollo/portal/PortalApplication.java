@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.portal;
 
 import com.ctrip.framework.apollo.common.ApolloCommonConfig;
 import com.ctrip.framework.apollo.openapi.PortalOpenApiConfig;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.system.ApplicationPidFileWriter;
 import org.springframework.boot.actuate.system.EmbeddedServerPortFileWriter;

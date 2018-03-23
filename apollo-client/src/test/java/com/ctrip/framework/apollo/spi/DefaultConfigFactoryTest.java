@@ -10,6 +10,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.util.Properties;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigFile;
 import com.ctrip.framework.apollo.build.MockInjector;
@@ -23,19 +29,14 @@ import com.ctrip.framework.apollo.internals.XmlConfigFile;
 import com.ctrip.framework.apollo.internals.YamlConfigFile;
 import com.ctrip.framework.apollo.internals.YmlConfigFile;
 import com.ctrip.framework.apollo.util.ConfigUtil;
-import java.util.Properties;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class DefaultConfigFactoryTest {
-
+  private DefaultConfigFactory defaultConfigFactory;
   private static String someAppId;
   private static Env someEnv;
-  private DefaultConfigFactory defaultConfigFactory;
 
   @Before
   public void setUp() throws Exception {
@@ -57,8 +58,7 @@ public class DefaultConfigFactoryTest {
     LocalFileConfigRepository someLocalConfigRepo = mock(LocalFileConfigRepository.class);
     when(someLocalConfigRepo.getConfig()).thenReturn(someProperties);
 
-    doReturn(someLocalConfigRepo).when(defaultConfigFactory)
-        .createLocalConfigRepository(someNamespace);
+    doReturn(someLocalConfigRepo).when(defaultConfigFactory).createLocalConfigRepository(someNamespace);
 
     Config result = defaultConfigFactory.create(someNamespace);
 
@@ -88,12 +88,9 @@ public class DefaultConfigFactoryTest {
     LocalFileConfigRepository someLocalConfigRepo = mock(LocalFileConfigRepository.class);
     when(someLocalConfigRepo.getConfig()).thenReturn(someProperties);
 
-    doReturn(someLocalConfigRepo).when(defaultConfigFactory)
-        .createLocalConfigRepository(someNamespace);
-    doReturn(someLocalConfigRepo).when(defaultConfigFactory)
-        .createLocalConfigRepository(anotherNamespace);
-    doReturn(someLocalConfigRepo).when(defaultConfigFactory)
-        .createLocalConfigRepository(yetAnotherNamespace);
+    doReturn(someLocalConfigRepo).when(defaultConfigFactory).createLocalConfigRepository(someNamespace);
+    doReturn(someLocalConfigRepo).when(defaultConfigFactory).createLocalConfigRepository(anotherNamespace);
+    doReturn(someLocalConfigRepo).when(defaultConfigFactory).createLocalConfigRepository(yetAnotherNamespace);
 
     ConfigFile propertyConfigFile =
         defaultConfigFactory.createConfigFile(someNamespace, ConfigFileFormat.Properties);
@@ -106,9 +103,8 @@ public class DefaultConfigFactoryTest {
     ConfigFile yamlConfigFile = defaultConfigFactory.createConfigFile(someNamespace,
         ConfigFileFormat.YAML);
 
-    assertThat("Should create PropertiesConfigFile for properties format", propertyConfigFile,
-        is(instanceOf(
-            PropertiesConfigFile.class)));
+    assertThat("Should create PropertiesConfigFile for properties format", propertyConfigFile, is(instanceOf(
+        PropertiesConfigFile.class)));
     assertEquals(someNamespace, propertyConfigFile.getNamespace());
 
     assertThat("Should create XmlConfigFile for xml format", xmlConfigFile, is(instanceOf(
@@ -130,7 +126,6 @@ public class DefaultConfigFactoryTest {
   }
 
   public static class MockConfigUtil extends ConfigUtil {
-
     @Override
     public String getAppId() {
       return someAppId;

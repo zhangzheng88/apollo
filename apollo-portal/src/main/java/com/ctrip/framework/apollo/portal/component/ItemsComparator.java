@@ -4,19 +4,20 @@ import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
+
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 @Component
 public class ItemsComparator {
 
 
-  public ItemChangeSets compareIgnoreBlankAndCommentItem(long baseNamespaceId,
-      List<ItemDTO> baseItems, List<ItemDTO> targetItems) {
+  public ItemChangeSets compareIgnoreBlankAndCommentItem(long baseNamespaceId, List<ItemDTO> baseItems, List<ItemDTO> targetItems){
     List<ItemDTO> filteredSourceItems = filterBlankAndCommentItem(baseItems);
     List<ItemDTO> filteredTargetItems = filterBlankAndCommentItem(targetItems);
 
@@ -25,15 +26,15 @@ public class ItemsComparator {
 
     ItemChangeSets changeSets = new ItemChangeSets();
 
-    for (ItemDTO item : targetItems) {
+    for (ItemDTO item: targetItems){
       String key = item.getKey();
 
       ItemDTO sourceItem = sourceItemMap.get(key);
-      if (sourceItem == null) {//add
+      if (sourceItem == null){//add
         ItemDTO copiedItem = copyItem(item);
         copiedItem.setNamespaceId(baseNamespaceId);
         changeSets.addCreateItem(copiedItem);
-      } else if (!Objects.equals(sourceItem.getValue(), item.getValue())) {//update
+      }else if (!Objects.equals(sourceItem.getValue(), item.getValue())){//update
         //only value & comment can be update
         sourceItem.setValue(item.getValue());
         sourceItem.setComment(item.getComment());
@@ -41,11 +42,11 @@ public class ItemsComparator {
       }
     }
 
-    for (ItemDTO item : baseItems) {
+    for (ItemDTO item: baseItems){
       String key = item.getKey();
 
       ItemDTO targetItem = targetItemMap.get(key);
-      if (targetItem == null) {//delete
+      if(targetItem == null){//delete
         changeSets.addDeleteItem(item);
       }
     }
@@ -53,16 +54,16 @@ public class ItemsComparator {
     return changeSets;
   }
 
-  private List<ItemDTO> filterBlankAndCommentItem(List<ItemDTO> items) {
+  private List<ItemDTO> filterBlankAndCommentItem(List<ItemDTO> items){
 
     List<ItemDTO> result = new LinkedList<>();
 
-    if (CollectionUtils.isEmpty(items)) {
+    if (CollectionUtils.isEmpty(items)){
       return result;
     }
 
-    for (ItemDTO item : items) {
-      if (!StringUtils.isEmpty(item.getKey())) {
+    for (ItemDTO item: items){
+      if (!StringUtils.isEmpty(item.getKey())){
         result.add(item);
       }
     }
@@ -70,7 +71,7 @@ public class ItemsComparator {
     return result;
   }
 
-  private ItemDTO copyItem(ItemDTO sourceItem) {
+  private ItemDTO copyItem(ItemDTO sourceItem){
     ItemDTO copiedItem = new ItemDTO();
     copiedItem.setKey(sourceItem.getKey());
     copiedItem.setValue(sourceItem.getValue());

@@ -3,6 +3,7 @@ package com.ctrip.framework.apollo.portal.service;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.po.Permission;
 import com.ctrip.framework.apollo.portal.entity.po.Role;
+
 import java.util.Set;
 
 /**
@@ -21,7 +22,7 @@ public interface RolePermissionService {
    * @return the users assigned roles
    */
   public Set<String> assignRoleToUsers(String roleName, Set<String> userIds,
-      String operatorUserId);
+                                       String operatorUserId);
 
   /**
    * Remove role from users

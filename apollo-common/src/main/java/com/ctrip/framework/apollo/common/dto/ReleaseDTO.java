@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.common.dto;
 
-public class ReleaseDTO extends BaseDTO {
-
+public class ReleaseDTO extends BaseDTO{
   private long id;
 
   private String releaseKey;
@@ -40,44 +39,44 @@ public class ReleaseDTO extends BaseDTO {
     return appId;
   }
 
-  public void setAppId(String appId) {
-    this.appId = appId;
-  }
-
   public String getClusterName() {
     return clusterName;
-  }
-
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
   }
 
   public String getComment() {
     return comment;
   }
 
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
   public String getConfigurations() {
     return configurations;
-  }
-
-  public void setConfigurations(String configurations) {
-    this.configurations = configurations;
   }
 
   public String getName() {
     return name;
   }
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
   public String getNamespaceName() {
     return namespaceName;
+  }
+
+  public void setAppId(String appId) {
+    this.appId = appId;
+  }
+
+  public void setClusterName(String clusterName) {
+    this.clusterName = clusterName;
+  }
+
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
+
+  public void setConfigurations(String configurations) {
+    this.configurations = configurations;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public void setNamespaceName(String namespaceName) {

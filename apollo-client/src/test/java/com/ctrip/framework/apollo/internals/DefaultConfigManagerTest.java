@@ -5,6 +5,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
+import java.util.Properties;
+import java.util.Set;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigFile;
 import com.ctrip.framework.apollo.build.MockInjector;
@@ -12,18 +18,13 @@ import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.spi.ConfigFactory;
 import com.ctrip.framework.apollo.spi.ConfigFactoryManager;
 import com.ctrip.framework.apollo.util.ConfigUtil;
-import java.util.Properties;
-import java.util.Set;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class DefaultConfigManagerTest {
-
-  private static String someConfigContent;
   private DefaultConfigManager defaultConfigManager;
+  private static String someConfigContent;
 
   @Before
   public void setUp() throws Exception {
@@ -106,8 +107,7 @@ public class DefaultConfigManagerTest {
         }
 
         @Override
-        public ConfigFile createConfigFile(String namespace,
-            final ConfigFileFormat configFileFormat) {
+        public ConfigFile createConfigFile(String namespace, final ConfigFileFormat configFileFormat) {
           ConfigRepository someConfigRepository = mock(ConfigRepository.class);
           return new AbstractConfigFile(namespace, someConfigRepository) {
 

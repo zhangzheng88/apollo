@@ -1,8 +1,6 @@
 package com.ctrip.framework.apollo.openapi.v1.controller;
 
 
-import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
-
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
@@ -13,7 +11,7 @@ import com.ctrip.framework.apollo.openapi.util.OpenApiBeanUtils;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
 import com.ctrip.framework.apollo.portal.service.ReleaseService;
 import com.ctrip.framework.apollo.portal.spi.UserService;
-import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +19,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
 @RestController("openapiReleaseController")
 @RequestMapping("/openapi/v1/envs/{env}")
@@ -34,10 +36,10 @@ public class ReleaseController {
   @PreAuthorize(value = "@consumerPermissionValidator.hasReleaseNamespacePermission(#request, #appId, #namespaceName)")
   @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases", method = RequestMethod.POST)
   public OpenReleaseDTO createRelease(@PathVariable String appId, @PathVariable String env,
-      @PathVariable String clusterName,
-      @PathVariable String namespaceName,
-      @RequestBody NamespaceReleaseModel model,
-      HttpServletRequest request) {
+                                      @PathVariable String clusterName,
+                                      @PathVariable String namespaceName,
+                                      @RequestBody NamespaceReleaseModel model,
+                                      HttpServletRequest request) {
 
     checkModel(model != null);
     RequestPrecondition.checkArguments(!StringUtils.isContainEmpty(model.getReleasedBy(), model
@@ -57,10 +59,9 @@ public class ReleaseController {
   }
 
   @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/latest", method = RequestMethod.GET)
-  public OpenReleaseDTO loadLatestActiveRelease(@PathVariable String appId,
-      @PathVariable String env,
-      @PathVariable String clusterName, @PathVariable
-      String namespaceName) {
+  public OpenReleaseDTO loadLatestActiveRelease(@PathVariable String appId, @PathVariable String env,
+                                                @PathVariable String clusterName, @PathVariable
+                                                    String namespaceName) {
     ReleaseDTO releaseDTO = releaseService.loadLatestRelease(appId, Env.fromString
         (env), clusterName, namespaceName);
     if (releaseDTO == null) {

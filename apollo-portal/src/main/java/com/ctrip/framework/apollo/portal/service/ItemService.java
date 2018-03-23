@@ -17,15 +17,17 @@ import com.ctrip.framework.apollo.portal.entity.vo.ItemDiffs;
 import com.ctrip.framework.apollo.portal.entity.vo.NamespaceIdentifier;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.tracer.Tracer;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ItemService {
@@ -73,18 +75,15 @@ public class ItemService {
 
     Tracer.logEvent(TracerEventType.MODIFY_NAMESPACE_BY_TEXT,
         String.format("%s+%s+%s+%s", appId, env, clusterName, namespaceName));
-    Tracer.logEvent(TracerEventType.MODIFY_NAMESPACE,
-        String.format("%s+%s+%s+%s", appId, env, clusterName, namespaceName));
+    Tracer.logEvent(TracerEventType.MODIFY_NAMESPACE, String.format("%s+%s+%s+%s", appId, env, clusterName, namespaceName));
   }
 
-  public void updateItems(String appId, Env env, String clusterName, String namespaceName,
-      ItemChangeSets changeSets) {
+  public void updateItems(String appId, Env env, String clusterName, String namespaceName, ItemChangeSets changeSets){
     itemAPI.updateItemsByChangeSet(appId, env, clusterName, namespaceName, changeSets);
   }
 
 
-  public ItemDTO createItem(String appId, Env env, String clusterName, String namespaceName,
-      ItemDTO item) {
+  public ItemDTO createItem(String appId, Env env, String clusterName, String namespaceName, ItemDTO item) {
     NamespaceDTO namespace = namespaceAPI.loadNamespace(appId, env, clusterName, namespaceName);
     if (namespace == null) {
       throw new BadRequestException(
@@ -93,13 +92,11 @@ public class ItemService {
     item.setNamespaceId(namespace.getId());
 
     ItemDTO itemDTO = itemAPI.createItem(appId, env, clusterName, namespaceName, item);
-    Tracer.logEvent(TracerEventType.MODIFY_NAMESPACE,
-        String.format("%s+%s+%s+%s", appId, env, clusterName, namespaceName));
+    Tracer.logEvent(TracerEventType.MODIFY_NAMESPACE, String.format("%s+%s+%s+%s", appId, env, clusterName, namespaceName));
     return itemDTO;
   }
 
-  public void updateItem(String appId, Env env, String clusterName, String namespaceName,
-      ItemDTO item) {
+  public void updateItem(String appId, Env env, String clusterName, String namespaceName, ItemDTO item) {
     itemAPI.updateItem(appId, env, clusterName, namespaceName, item.getId(), item);
   }
 
@@ -111,8 +108,7 @@ public class ItemService {
     return itemAPI.findItems(appId, env, clusterName, namespaceName);
   }
 
-  public ItemDTO loadItem(Env env, String appId, String clusterName, String namespaceName,
-      String key) {
+  public ItemDTO loadItem(Env env, String appId, String clusterName, String namespaceName, String key) {
     return itemAPI.loadItem(env, appId, clusterName, namespaceName, key);
   }
 
@@ -130,13 +126,11 @@ public class ItemService {
 
       itemAPI.updateItemsByChangeSet(appId, env, clusterName, namespaceName, changeSets);
 
-      Tracer.logEvent(TracerEventType.SYNC_NAMESPACE,
-          String.format("%s+%s+%s+%s", appId, env, clusterName, namespaceName));
+      Tracer.logEvent(TracerEventType.SYNC_NAMESPACE, String.format("%s+%s+%s+%s", appId, env, clusterName, namespaceName));
     }
   }
 
-  public List<ItemDiffs> compare(List<NamespaceIdentifier> comparedNamespaces,
-      List<ItemDTO> sourceItems) {
+  public List<ItemDiffs> compare(List<NamespaceIdentifier> comparedNamespaces, List<ItemDTO> sourceItems) {
 
     List<ItemDiffs> result = new LinkedList<>();
 
@@ -166,8 +160,7 @@ public class ItemService {
     } catch (HttpClientErrorException e) {
       if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
         throw new BadRequestException(String.format(
-            "namespace not exist. appId:%s, env:%s, clusterName:%s, namespaceName:%s", appId, env,
-            clusterName,
+            "namespace not exist. appId:%s, env:%s, clusterName:%s, namespaceName:%s", appId, env, clusterName,
             namespaceName));
       }
     }
@@ -223,8 +216,7 @@ public class ItemService {
     return createdItem;
   }
 
-  private boolean isModified(String sourceValue, String targetValue, String sourceComment,
-      String targetComment) {
+  private boolean isModified(String sourceValue, String targetValue, String sourceComment, String targetComment) {
 
     if (!sourceValue.equals(targetValue)) {
       return true;

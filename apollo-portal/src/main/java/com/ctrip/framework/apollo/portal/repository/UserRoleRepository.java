@@ -1,15 +1,16 @@
 package com.ctrip.framework.apollo.portal.repository;
 
 import com.ctrip.framework.apollo.portal.entity.po.UserRole;
+
+import org.springframework.data.repository.PagingAndSortingRepository;
+
 import java.util.Collection;
 import java.util.List;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public interface UserRoleRepository extends PagingAndSortingRepository<UserRole, Long> {
-
   /**
    * find user roles by userId
    */

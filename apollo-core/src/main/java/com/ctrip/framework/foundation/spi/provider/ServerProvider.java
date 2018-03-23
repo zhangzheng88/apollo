@@ -7,7 +7,6 @@ import java.io.InputStream;
  * Provider for server related properties
  */
 public interface ServerProvider extends Provider {
-
   /**
    * @return current environment or {@code null} if not set
    */
@@ -30,6 +29,8 @@ public interface ServerProvider extends Provider {
 
   /**
    * Initialize server provider with the specified input stream
+   *
+   * @throws IOException
    */
   public void initialize(InputStream in) throws IOException;
 }

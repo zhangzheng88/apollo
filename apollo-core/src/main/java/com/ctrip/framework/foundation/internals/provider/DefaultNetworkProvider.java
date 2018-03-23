@@ -5,7 +5,6 @@ import com.ctrip.framework.foundation.spi.provider.NetworkProvider;
 import com.ctrip.framework.foundation.spi.provider.Provider;
 
 public class DefaultNetworkProvider implements NetworkProvider {
-
   @Override
   public String getProperty(String name, String defaultValue) {
     if ("host.address".equalsIgnoreCase(name)) {
@@ -41,7 +40,6 @@ public class DefaultNetworkProvider implements NetworkProvider {
 
   @Override
   public String toString() {
-    return "hostName [" + getHostName() + "] hostIP [" + getHostAddress()
-        + "] (DefaultNetworkProvider)";
+    return "hostName [" + getHostName() + "] hostIP [" + getHostAddress() + "] (DefaultNetworkProvider)";
   }
 }

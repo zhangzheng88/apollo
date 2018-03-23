@@ -9,6 +9,7 @@ import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,14 +29,13 @@ public class ItemSetService {
   private ItemService itemService;
 
   @Transactional
-  public ItemChangeSets updateSet(Namespace namespace, ItemChangeSets changeSets) {
-    return updateSet(namespace.getAppId(), namespace.getClusterName(), namespace.getNamespaceName(),
-        changeSets);
+  public ItemChangeSets updateSet(Namespace namespace, ItemChangeSets changeSets){
+    return updateSet(namespace.getAppId(), namespace.getClusterName(), namespace.getNamespaceName(), changeSets);
   }
 
   @Transactional
   public ItemChangeSets updateSet(String appId, String clusterName,
-      String namespaceName, ItemChangeSets changeSet) {
+                                  String namespaceName, ItemChangeSets changeSet) {
     String operator = changeSet.getDataChangeLastModifiedBy();
     ConfigChangeContentBuilder configChangeContentBuilder = new ConfigChangeContentBuilder();
 
@@ -81,18 +81,17 @@ public class ItemSetService {
       auditService.audit("ItemSet", 0L, Audit.OP.DELETE, operator);
     }
 
-    if (configChangeContentBuilder.hasContent()) {
+    if (configChangeContentBuilder.hasContent()){
       createCommit(appId, clusterName, namespaceName, configChangeContentBuilder.build(),
-          changeSet.getDataChangeLastModifiedBy());
+                   changeSet.getDataChangeLastModifiedBy());
     }
 
     return changeSet;
 
   }
 
-  private void createCommit(String appId, String clusterName, String namespaceName,
-      String configChangeContent,
-      String operator) {
+  private void createCommit(String appId, String clusterName, String namespaceName, String configChangeContent,
+                            String operator) {
 
     Commit commit = new Commit();
     commit.setAppId(appId);

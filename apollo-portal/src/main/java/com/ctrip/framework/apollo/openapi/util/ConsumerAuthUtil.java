@@ -1,16 +1,17 @@
 package com.ctrip.framework.apollo.openapi.util;
 
 import com.ctrip.framework.apollo.openapi.service.ConsumerService;
-import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @Service
 public class ConsumerAuthUtil {
-
   static final String CONSUMER_ID = "ApolloConsumerId";
   @Autowired
   private ConsumerService consumerService;

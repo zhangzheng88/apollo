@@ -4,16 +4,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.ctrip.framework.foundation.internals.provider.DefaultApplicationProvider;
 import java.io.File;
 import java.io.FileInputStream;
+
 import org.junit.Before;
 import org.junit.Test;
 
-public class DefaultApplicationProviderTest {
+import com.ctrip.framework.foundation.internals.provider.DefaultApplicationProvider;
 
-  String PREDEFINED_APP_ID = "SampleApp";
+public class DefaultApplicationProviderTest {
   private DefaultApplicationProvider defaultApplicationProvider;
+  String PREDEFINED_APP_ID = "SampleApp";
 
   @Before
   public void setUp() throws Exception {

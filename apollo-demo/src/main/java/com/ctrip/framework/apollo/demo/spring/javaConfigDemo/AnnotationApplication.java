@@ -1,13 +1,13 @@
 package com.ctrip.framework.apollo.demo.spring.javaConfigDemo;
 
-import java.util.Scanner;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.util.Scanner;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class AnnotationApplication {
-
   public static void main(String[] args) {
     new AnnotationConfigApplicationContext("com.ctrip.framework.apollo.demo.spring.common",
         "com.ctrip.framework.apollo.demo.spring.javaConfigDemo");

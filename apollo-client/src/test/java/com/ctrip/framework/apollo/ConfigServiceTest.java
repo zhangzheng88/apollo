@@ -2,6 +2,11 @@ package com.ctrip.framework.apollo;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Set;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
@@ -9,15 +14,11 @@ import com.ctrip.framework.apollo.internals.AbstractConfig;
 import com.ctrip.framework.apollo.internals.DefaultInjector;
 import com.ctrip.framework.apollo.spi.ConfigFactory;
 import com.ctrip.framework.apollo.util.ConfigUtil;
-import java.util.Set;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ConfigServiceTest {
-
   private static String someAppId;
 
   @Before
@@ -77,12 +78,10 @@ public class ConfigServiceTest {
     ConfigFile configFile = ConfigService.getConfigFile(someNamespace, someConfigFileFormat);
 
     assertEquals(someNamespaceFileName, configFile.getNamespace());
-    assertEquals(someNamespaceFileName + ":" + someConfigFileFormat.getValue(),
-        configFile.getContent());
+    assertEquals(someNamespaceFileName + ":" + someConfigFileFormat.getValue(), configFile.getContent());
   }
 
   private static class MockConfig extends AbstractConfig {
-
     private final String m_namespace;
 
     public MockConfig(String namespace) {
@@ -105,12 +104,11 @@ public class ConfigServiceTest {
   }
 
   private static class MockConfigFile implements ConfigFile {
-
     private ConfigFileFormat m_configFileFormat;
     private String m_namespace;
 
     public MockConfigFile(String namespace,
-        ConfigFileFormat configFileFormat) {
+                          ConfigFileFormat configFileFormat) {
       m_namespace = namespace;
       m_configFileFormat = configFileFormat;
     }
@@ -142,7 +140,6 @@ public class ConfigServiceTest {
   }
 
   public static class MockConfigFactory implements ConfigFactory {
-
     @Override
     public Config create(String namespace) {
       return new MockConfig(namespace);
@@ -155,7 +152,6 @@ public class ConfigServiceTest {
   }
 
   public static class MockConfigUtil extends ConfigUtil {
-
     @Override
     public String getAppId() {
       return someAppId;

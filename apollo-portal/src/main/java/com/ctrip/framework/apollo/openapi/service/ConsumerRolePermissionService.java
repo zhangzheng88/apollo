@@ -1,24 +1,26 @@
 package com.ctrip.framework.apollo.openapi.service;
 
+import com.google.common.collect.FluentIterable;
+
 import com.ctrip.framework.apollo.openapi.entity.ConsumerRole;
 import com.ctrip.framework.apollo.openapi.repository.ConsumerRoleRepository;
 import com.ctrip.framework.apollo.portal.entity.po.Permission;
 import com.ctrip.framework.apollo.portal.entity.po.RolePermission;
 import com.ctrip.framework.apollo.portal.repository.PermissionRepository;
 import com.ctrip.framework.apollo.portal.repository.RolePermissionRepository;
-import com.google.common.collect.FluentIterable;
-import java.util.List;
-import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @Service
 public class ConsumerRolePermissionService {
-
   @Autowired
   private PermissionRepository permissionRepository;
   @Autowired

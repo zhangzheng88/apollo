@@ -1,25 +1,26 @@
 package com.ctrip.framework.apollo.internals;
 
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.utils.PropertiesUtil;
 import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.util.ExceptionUtil;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class PropertiesConfigFile extends AbstractConfigFile {
-
   private static final Logger logger = LoggerFactory.getLogger(PropertiesConfigFile.class);
   protected AtomicReference<String> m_contentCache;
 
   public PropertiesConfigFile(String namespace,
-      ConfigRepository configRepository) {
+                              ConfigRepository configRepository) {
     super(namespace, configRepository);
     m_contentCache = new AtomicReference<>();
   }

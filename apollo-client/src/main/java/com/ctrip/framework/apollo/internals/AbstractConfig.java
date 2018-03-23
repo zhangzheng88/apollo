@@ -1,5 +1,18 @@
 package com.ctrip.framework.apollo.internals;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.build.ApolloInjector;
@@ -20,31 +33,14 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicLong;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public abstract class AbstractConfig implements Config {
-
   private static final Logger logger = LoggerFactory.getLogger(AbstractConfig.class);
 
   private static ExecutorService m_executorService;
-
-  static {
-    m_executorService = Executors.newCachedThreadPool(ApolloThreadFactory
-        .create("Config", true));
-  }
 
   private List<ConfigChangeListener> m_listeners = Lists.newCopyOnWriteArrayList();
   private ConfigUtil m_configUtil;
@@ -61,11 +57,16 @@ public abstract class AbstractConfig implements Config {
   private List<Cache> allCaches;
   private AtomicLong m_configVersion; //indicate config version
 
+  static {
+    m_executorService = Executors.newCachedThreadPool(ApolloThreadFactory
+        .create("Config", true));
+  }
+
   public AbstractConfig() {
-    m_configUtil = ApolloInjector.getInstance(ConfigUtil.class);
-    m_configVersion = new AtomicLong();
-    m_arrayCache = Maps.newConcurrentMap();
-    allCaches = Lists.newArrayList();
+      m_configUtil = ApolloInjector.getInstance(ConfigUtil.class);
+      m_configVersion = new AtomicLong();
+      m_arrayCache = Maps.newConcurrentMap();
+      allCaches = Lists.newArrayList();
   }
 
   @Override
@@ -339,8 +340,7 @@ public abstract class AbstractConfig implements Config {
     return defaultValue;
   }
 
-  private <T> T getValueFromCache(String key, Function<String, T> parser, Cache<String, T> cache,
-      T defaultValue) {
+  private <T> T getValueFromCache(String key, Function<String, T> parser, Cache<String, T> cache, T defaultValue) {
     T result = cache.getIfPresent(key);
 
     if (result != null) {
@@ -350,8 +350,7 @@ public abstract class AbstractConfig implements Config {
     return getValueAndStoreToCache(key, parser, cache, defaultValue);
   }
 
-  private <T> T getValueAndStoreToCache(String key, Function<String, T> parser,
-      Cache<String, T> cache, T defaultValue) {
+  private <T> T getValueAndStoreToCache(String key, Function<String, T> parser, Cache<String, T> cache, T defaultValue) {
     long currentConfigVersion = m_configVersion.get();
     String value = getProperty(key, null);
 
@@ -374,8 +373,7 @@ public abstract class AbstractConfig implements Config {
   private <T> Cache<String, T> newCache() {
     Cache<String, T> cache = CacheBuilder.newBuilder()
         .maximumSize(m_configUtil.getMaxConfigCacheSize())
-        .expireAfterAccess(m_configUtil.getConfigCacheExpireTime(),
-            m_configUtil.getConfigCacheExpireTimeUnit())
+        .expireAfterAccess(m_configUtil.getConfigCacheExpireTime(), m_configUtil.getConfigCacheExpireTimeUnit())
         .build();
     allCaches.add(cache);
     return cache;
@@ -401,8 +399,7 @@ public abstract class AbstractConfig implements Config {
         @Override
         public void run() {
           String listenerName = listener.getClass().getName();
-          Transaction transaction = Tracer
-              .newTransaction("Apollo.ConfigChangeListener", listenerName);
+          Transaction transaction = Tracer.newTransaction("Apollo.ConfigChangeListener", listenerName);
           try {
             listener.onChange(changeEvent);
             transaction.setStatus(Transaction.SUCCESS);
@@ -419,7 +416,7 @@ public abstract class AbstractConfig implements Config {
   }
 
   List<ConfigChange> calcPropertyChanges(String namespace, Properties previous,
-      Properties current) {
+                                         Properties current) {
     if (previous == null) {
       previous = new Properties();
     }

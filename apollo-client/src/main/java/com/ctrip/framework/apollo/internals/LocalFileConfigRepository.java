@@ -1,15 +1,5 @@
 package com.ctrip.framework.apollo.internals;
 
-import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.core.utils.ClassLoaderUtil;
-import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.apollo.tracer.spi.Transaction;
-import com.ctrip.framework.apollo.util.ConfigUtil;
-import com.ctrip.framework.apollo.util.ExceptionUtil;
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,20 +10,31 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.ctrip.framework.apollo.build.ApolloInjector;
+import com.ctrip.framework.apollo.core.ConfigConsts;
+import com.ctrip.framework.apollo.core.utils.ClassLoaderUtil;
+import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
+import com.ctrip.framework.apollo.tracer.Tracer;
+import com.ctrip.framework.apollo.tracer.spi.Transaction;
+import com.ctrip.framework.apollo.util.ConfigUtil;
+import com.ctrip.framework.apollo.util.ExceptionUtil;
+import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class LocalFileConfigRepository extends AbstractConfigRepository
     implements RepositoryChangeListener {
-
   private static final Logger logger = LoggerFactory.getLogger(LocalFileConfigRepository.class);
   private static final String CONFIG_DIR = "/data";
   private final String m_namespace;
-  private final ConfigUtil m_configUtil;
   private File m_baseDir;
+  private final ConfigUtil m_configUtil;
   private volatile Properties m_fileProperties;
   private volatile ConfigRepository m_upstream;
 
@@ -213,8 +214,7 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
 
     OutputStream out = null;
 
-    Transaction transaction = Tracer
-        .newTransaction("Apollo.ConfigService", "persistLocalConfigFile");
+    Transaction transaction = Tracer.newTransaction("Apollo.ConfigService", "persistLocalConfigFile");
     transaction.addData("LocalConfigFile", file.getAbsolutePath());
     try {
       out = new FileOutputStream(file);

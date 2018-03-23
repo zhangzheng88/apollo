@@ -1,30 +1,34 @@
 package com.ctrip.framework.apollo.portal.component.config;
 
 
-import com.ctrip.framework.apollo.common.config.RefreshableConfig;
-import com.ctrip.framework.apollo.common.config.RefreshablePropertySource;
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.portal.entity.vo.Organization;
-import com.ctrip.framework.apollo.portal.service.PortalDBPropertySource;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import com.ctrip.framework.apollo.common.config.RefreshableConfig;
+import com.ctrip.framework.apollo.common.config.RefreshablePropertySource;
+import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.portal.entity.vo.Organization;
+import com.ctrip.framework.apollo.portal.service.PortalDBPropertySource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component
 public class PortalConfig extends RefreshableConfig {
 
+  private Gson gson = new Gson();
   private static final Type ORGANIZATION = new TypeToken<List<Organization>>() {
   }.getType();
-  private Gson gson = new Gson();
+
   @Autowired
   private PortalDBPropertySource portalDBPropertySource;
 
@@ -37,8 +41,7 @@ public class PortalConfig extends RefreshableConfig {
    * Level: important
    **/
   public List<Env> portalSupportedEnvs() {
-    String[] configurations = getArrayProperty("apollo.portal.envs",
-        new String[]{"DAILY", "QA", "PROD"});
+    String[] configurations = getArrayProperty("apollo.portal.envs", new String[]{"DAILY", "QA", "PROD"});
     List<Env> envs = Lists.newLinkedList();
 
     for (String env : configurations) {
@@ -85,8 +88,7 @@ public class PortalConfig extends RefreshableConfig {
   public List<Organization> organizations() {
 
     String organizations = getValue("organizations");
-    return organizations == null ? Collections.emptyList()
-        : gson.fromJson(organizations, ORGANIZATION);
+    return organizations == null ? Collections.emptyList() : gson.fromJson(organizations, ORGANIZATION);
   }
 
   public String portalAddress() {
@@ -96,8 +98,7 @@ public class PortalConfig extends RefreshableConfig {
   public boolean isEmergencyPublishAllowed(Env env) {
     String targetEnv = env.name();
 
-    String[] emergencyPublishSupportedEnvs = getArrayProperty("emergencyPublish.supported.envs",
-        new String[0]);
+    String[] emergencyPublishSupportedEnvs = getArrayProperty("emergencyPublish.supported.envs", new String[0]);
 
     for (String supportedEnv : emergencyPublishSupportedEnvs) {
       if (Objects.equals(targetEnv, supportedEnv.toUpperCase().trim())) {

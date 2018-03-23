@@ -3,16 +3,19 @@ package com.ctrip.framework.apollo.portal.service;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
+import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.repository.AppNamespaceRepository;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-import java.util.List;
-import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AppNamespaceService {
@@ -44,8 +47,7 @@ public class AppNamespaceService {
   @Transactional
   public void createDefaultAppNamespace(String appId) {
     if (!isAppNamespaceNameUnique(appId, ConfigConsts.NAMESPACE_APPLICATION)) {
-      throw new BadRequestException(
-          String.format("App already has application namespace. AppId = %s", appId));
+      throw new BadRequestException(String.format("App already has application namespace. AppId = %s", appId));
     }
 
     AppNamespace appNs = new AppNamespace();
@@ -81,8 +83,7 @@ public class AppNamespaceService {
     appNamespaceName
         .append(appNamespace.isPublic() ? app.getAppId() + "." : "")
         .append(appNamespace.getName())
-        .append(appNamespace.formatAsEnum() == ConfigFileFormat.Properties ? ""
-            : "." + appNamespace.getFormat());
+        .append(appNamespace.formatAsEnum() == ConfigFileFormat.Properties ? "" : "." + appNamespace.getFormat());
     appNamespace.setName(appNamespaceName.toString());
 
     if (appNamespace.getComment() == null) {
@@ -90,8 +91,7 @@ public class AppNamespaceService {
     }
 
     if (!ConfigFileFormat.isValidFormat(appNamespace.getFormat())) {
-      throw new BadRequestException(
-          "Invalid namespace format. format must be properties、json、yaml、yml、xml");
+     throw new BadRequestException("Invalid namespace format. format must be properties、json、yaml、yml、xml");
     }
 
     String operator = appNamespace.getDataChangeCreatedBy();
@@ -108,15 +108,13 @@ public class AppNamespaceService {
     }
 
     if (!appNamespace.isPublic() &&
-        appNamespaceRepository.findByAppIdAndName(appNamespace.getAppId(), appNamespace.getName())
-            != null) {
+        appNamespaceRepository.findByAppIdAndName(appNamespace.getAppId(), appNamespace.getName()) != null) {
       throw new BadRequestException(appNamespace.getName() + "已存在");
     }
 
     AppNamespace createdAppNamespace = appNamespaceRepository.save(appNamespace);
 
-    roleInitializationService
-        .initNamespaceRoles(appNamespace.getAppId(), appNamespace.getName(), operator);
+    roleInitializationService.initNamespaceRoles(appNamespace.getAppId(), appNamespace.getName(), operator);
 
     return createdAppNamespace;
   }

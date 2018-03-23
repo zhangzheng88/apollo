@@ -14,6 +14,10 @@ public enum ConfigFileFormat {
     this.value = value;
   }
 
+  public String getValue() {
+    return value;
+  }
+
   public static ConfigFileFormat fromString(String value) {
     if (StringUtils.isEmpty(value)) {
       throw new IllegalArgumentException("value can not be empty");
@@ -40,9 +44,5 @@ public enum ConfigFileFormat {
     } catch (IllegalArgumentException e) {
       return false;
     }
-  }
-
-  public String getValue() {
-    return value;
   }
 }
