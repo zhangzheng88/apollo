@@ -33,5 +33,4 @@ fi
 
 #JAVA_OPTS=" $JAVA_OPTS -Dspring.profiles.active=$ACTIVE_PROFILE"
 
-JAVA_OPTS=" $JAVA_OPTS -DLOG_PATH=${APP_LOGS_DIR}/"
 export CATALINA_OPTS=" $JAVA_OPTS "
