@@ -9,29 +9,34 @@ import org.junit.Test;
 public class FoundationTest {
 
   private static final String someEnv = "dev";
+  private static final String someApp = "SampleApp";
 
   @BeforeClass
   public static void before() {
-    System.setProperty("env", someEnv);
+    System.setProperty("application.name", someApp);
+    System.setProperty("apollo.env", someEnv);
   }
 
   @AfterClass
   public static void afterClass() {
-    System.clearProperty("env");
+    System.clearProperty("apollo.env");
+    System.clearProperty("application.name");
   }
 
   @Test
   public void testApp() {
     // 获取AppId
     String appId = Foundation.app().getAppId();
-    Assert.assertEquals("SampleApp", appId);
+    Assert.assertEquals(someApp, appId);
   }
 
   @Test
   public void testServer() {
     // 获取当前环境
     String envType = Foundation.server().getEnvType();
-    Assert.assertEquals(someEnv, envType);
+    String cluster = Foundation.server().getDataCenter();
+    Assert.assertEquals("daily", envType);
+    Assert.assertEquals("dev", cluster);
   }
 
   @Test

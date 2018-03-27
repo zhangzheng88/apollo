@@ -1,4 +1,4 @@
-package com.ctrip.framework.foundation.internals.provider;
+package com.ctrip.framework.foundation.youzan.provider;
 
 import static org.junit.Assert.*;
 
@@ -17,6 +17,7 @@ public class YouzanConfigProviderTest {
     assertEquals("prod", YouzanConfigProvider.getEnv());
     assertEquals("account", YouzanConfigProvider.getAppId());
     assertEquals("bc", YouzanConfigProvider.getDc());
+    assertEquals("prj111", YouzanConfigProvider.getServiceChain());
   }
 
 }

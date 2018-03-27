@@ -1,10 +1,8 @@
-package com.ctrip.framework.foundation.internals.provider;
+package com.ctrip.framework.foundation.youzan.provider;
 
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.google.common.base.Preconditions;
+import com.ctrip.framework.foundation.internals.Utils;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,6 +22,7 @@ public class YouzanConfigProvider {
   private static final String APPLICATION_NAME_KEY = "APPLICATION_NAME";
   private static final String ENV_KEY = "APPLICATION_STANDARD_ENV";
   private static final String DC_KEY = "APPLICATION_IDC";
+  private static final String SERVICE_CHAIN = "APPLICATION_SERVICE_CHAIN";
 
   private static Boolean isIntialized = false;
   private static Properties configProperties = new Properties();
@@ -38,9 +37,12 @@ public class YouzanConfigProvider {
       isIntialized=true;
     }
 
-
-
   }
+  // for test
+  protected static void clear(){
+    configProperties.clear();
+  }
+
   private static void initialize(){
     try {
       File file = new File(CONFIGFILENAME);
@@ -86,5 +88,17 @@ public class YouzanConfigProvider {
       dc.trim();
     }
     return dc;
+  }
+  //返回sc标示，如果sc!=env, 则为真正的sc
+  public static String getServiceChain(){
+    if(!isIntialized){
+      initialize();
+    }
+    String sc = configProperties.getProperty(SERVICE_CHAIN);
+    if(!Utils.isBlank(sc) && sc.contains("_")){
+      return sc.split("_")[0];
+    }else{
+      return null;
+    }
   }
 }
