@@ -30,7 +30,7 @@ public class OpenSDKTest {
     assertEquals(someClustername, instance.clusterName);
     assertEquals(someNamespaceName, instance.namespaceName);
     assertEquals(someToken, instance.token);
-    assertEquals("QA", instance.env.name());
+    assertEquals("DAILY", instance.env.name());
     assertEquals(dataChangedBy, instance.dataChangedBy);
   }
 
