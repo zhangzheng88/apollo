@@ -41,7 +41,7 @@ public class LocalFileConfigRepositoryTest {
 
   @Before
   public void setUp() throws Exception {
-    someBaseDir = new File("src/test/resources/config-cache");
+    someBaseDir = new File("src/test/resources/data");
     someBaseDir.mkdir();
 
     someNamespace = "someName";

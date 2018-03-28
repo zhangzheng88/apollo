@@ -39,7 +39,7 @@ public abstract class Foundation {
     }
   }
 
-  public static String getProperty(String name, String defaultValue) {
+  private static String getProperty(String name, String defaultValue) {
     try {
       return getManager().getProperty(name, defaultValue);
     } catch (Throwable ex) {

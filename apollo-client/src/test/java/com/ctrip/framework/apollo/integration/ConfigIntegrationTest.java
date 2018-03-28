@@ -61,7 +61,7 @@ public class ConfigIntegrationTest extends BaseIntegrationTest {
     defaultNamespace = ConfigConsts.NAMESPACE_APPLICATION;
     someOtherNamespace = "someOtherNamespace";
     someReleaseKey = "1";
-    configDir = new File(ClassLoaderUtil.getClassPath() + "config-cache");
+    configDir = new File(ClassLoaderUtil.getClassPath() + "data");
     if (configDir.exists()) {
       configDir.delete();
     }
