@@ -3,7 +3,8 @@ spring:
     name: apollo-portal
   profiles:
     active: ${apollo_profile},youzan
-    include:
+  resources:
+    cache-period: 3600
 
 server:
   port: 7001

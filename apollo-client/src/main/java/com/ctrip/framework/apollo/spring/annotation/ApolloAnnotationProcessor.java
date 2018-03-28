@@ -1,30 +1,14 @@
 package com.ctrip.framework.apollo.spring.annotation;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.ctrip.framework.apollo.spring.auto.SpringValue;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.core.Ordered;
-import org.springframework.core.PriorityOrdered;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.ReflectionUtils;
-
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.google.common.base.Preconditions;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * Apollo Annotation Processor for Spring Application
@@ -33,11 +17,8 @@ import com.google.common.base.Preconditions;
  */
 public class ApolloAnnotationProcessor extends ApolloProcessor {
 
-  private Logger logger = LoggerFactory.getLogger(ApolloAnnotationProcessor.class);
-
-
   @Override
-  protected void processField(Object bean, Field field) {
+  protected void processField(Object bean, String beanName, Field field) {
     ApolloConfig annotation = AnnotationUtils.getAnnotation(field, ApolloConfig.class);
     if (annotation == null) {
       return;
@@ -51,34 +32,36 @@ public class ApolloAnnotationProcessor extends ApolloProcessor {
 
     ReflectionUtils.makeAccessible(field);
     ReflectionUtils.setField(field, bean, config);
-
   }
+
   @Override
-  protected void processMethod(final Object bean, final Method method) {
+  protected void processMethod(final Object bean, String beanName, final Method method) {
+    ApolloConfigChangeListener annotation = AnnotationUtils
+        .findAnnotation(method, ApolloConfigChangeListener.class);
+    if (annotation == null) {
+      return;
+    }
+    Class<?>[] parameterTypes = method.getParameterTypes();
+    Preconditions.checkArgument(parameterTypes.length == 1,
+        "Invalid number of parameters: %s for method: %s, should be 1", parameterTypes.length,
+        method);
+    Preconditions.checkArgument(ConfigChangeEvent.class.isAssignableFrom(parameterTypes[0]),
+        "Invalid parameter type: %s for method: %s, should be ConfigChangeEvent", parameterTypes[0],
+        method);
 
-      ApolloConfigChangeListener annotation = AnnotationUtils.findAnnotation(method, ApolloConfigChangeListener.class);
-      if (annotation == null) {
-        return;
+    ReflectionUtils.makeAccessible(method);
+    String[] namespaces = annotation.value();
+    ConfigChangeListener configChangeListener = new ConfigChangeListener() {
+      @Override
+      public void onChange(ConfigChangeEvent changeEvent) {
+        ReflectionUtils.invokeMethod(method, bean, changeEvent);
       }
-      Class<?>[] parameterTypes = method.getParameterTypes();
-      Preconditions.checkArgument(parameterTypes.length == 1,
-          "Invalid number of parameters: %s for method: %s, should be 1", parameterTypes.length, method);
-      Preconditions.checkArgument(ConfigChangeEvent.class.isAssignableFrom(parameterTypes[0]),
-          "Invalid parameter type: %s for method: %s, should be ConfigChangeEvent", parameterTypes[0], method);
+    };
 
-      ReflectionUtils.makeAccessible(method);
-      String[] namespaces = annotation.value();
-      for (String namespace : namespaces) {
-        Config config = ConfigService.getConfig(namespace);
+    for (String namespace : namespaces) {
+      Config config = ConfigService.getConfig(namespace);
 
-        config.addChangeListener(new ConfigChangeListener() {
-          @Override
-          public void onChange(ConfigChangeEvent changeEvent) {
-            ReflectionUtils.invokeMethod(method, bean, changeEvent);
-          }
-        });
-
+      config.addChangeListener(configChangeListener);
     }
   }
-
 }

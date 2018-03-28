@@ -1,74 +1,151 @@
 package com.ctrip.framework.apollo.spring.annotation;
 
-import com.ctrip.framework.apollo.spring.auto.SpringValue;
-import com.google.common.base.Preconditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.AnnotationUtils;
-
+import com.ctrip.framework.apollo.build.ApolloInjector;
+import com.ctrip.framework.apollo.spring.property.AutoUpdateConfigChangeListener;
+import com.ctrip.framework.apollo.spring.property.PlaceholderHelper;
+import com.ctrip.framework.apollo.spring.property.SpringValue;
+import com.ctrip.framework.apollo.spring.property.SpringValueDefinition;
+import com.ctrip.framework.apollo.spring.property.SpringValueDefinitionProcessor;
+import com.ctrip.framework.apollo.spring.property.SpringValueRegistry;
+import com.ctrip.framework.apollo.spring.util.SpringInjector;
+import com.ctrip.framework.apollo.util.ConfigUtil;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Multimap;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Collection;
+import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.annotation.Bean;
 
 /**
- * Create by zhangzheng on 2018/2/7
- * 该类用来实现@Value注入的apollo配置信息的自动注入
+ * Spring value processor of field or method which has @Value and xml config placeholders.
+ *
+ * @author github.com/zhegexiaohuozi  seimimaster@gmail.com
+ * @since 2017/12/20.
  */
-public class SpringValueProcessor extends ApolloProcessor{
+public class SpringValueProcessor extends ApolloProcessor implements BeanFactoryPostProcessor {
 
-    private Pattern pattern = Pattern.compile("\\$\\{(.*?)(:(.*?))?}");
-    private Logger logger = LoggerFactory.getLogger(SpringValueProcessor.class);
+  private static final Logger logger = LoggerFactory.getLogger(SpringValueProcessor.class);
 
-    private static Boolean isAutoUpdate = true;//自动更新开关
+  private final ConfigUtil configUtil;
+  private final PlaceholderHelper placeholderHelper;
+  private final SpringValueRegistry springValueRegistry;
 
-    @Override
-    protected void processField(Object bean, Field field) {
-        if(!isAutoUpdate){
-            return;
-        }
-        Value value = AnnotationUtils.getAnnotation(field, Value.class);
-        if(value==null){
-            return;
-        }
-        Matcher matcher = pattern.matcher(value.value());
-        Preconditions.checkArgument(matcher.matches(),String.format("the apollo value annotation for field:%s is not correct," +
-                "please use ${somekey} or ${someKey:someDefaultValue} pattern",field.getType()));
-        String key = matcher.group(1);
+  private static Multimap<String, SpringValueDefinition> beanName2SpringValueDefinitions =
+      LinkedListMultimap.create();
 
-        ApolloValueProcessor.monitor().put(key, SpringValue.create(bean, field));
-        logger.info("Listening apollo key = {}", key);
+  public SpringValueProcessor() {
+    configUtil = ApolloInjector.getInstance(ConfigUtil.class);
+    placeholderHelper = SpringInjector.getInstance(PlaceholderHelper.class);
+    springValueRegistry = SpringInjector.getInstance(SpringValueRegistry.class);
+  }
 
-        super.processField(bean, field);
+  @Override
+  public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
+      throws BeansException {
+    if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled()) {
+      beanName2SpringValueDefinitions = SpringValueDefinitionProcessor
+          .getBeanName2SpringValueDefinitions();
+    }
+  }
+
+  @Override
+  public Object postProcessBeforeInitialization(Object bean, String beanName)
+      throws BeansException {
+    if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled()) {
+      super.postProcessBeforeInitialization(bean, beanName);
+      processBeanPropertyValues(bean, beanName);
+    }
+    return bean;
+  }
+
+
+  @Override
+  protected void processField(Object bean, String beanName, Field field) {
+    // register @Value on field
+    Value value = field.getAnnotation(Value.class);
+    if (value == null) {
+      return;
+    }
+    Set<String> keys = placeholderHelper.extractPlaceholderKeys(value.value());
+
+    if (keys.isEmpty()) {
+      return;
     }
 
-    @Override
-    protected void processMethod(Object bean, Method method) {
-        if(!isAutoUpdate){
-            return;
-        }
-        Value value = AnnotationUtils.getAnnotation(method, Value.class);
-        if(value==null){
-            return;
-        }
-        Matcher matcher = pattern.matcher(value.value());
-        Preconditions.checkArgument(matcher.matches(),String.format("the apollo value annotation for field:%s is not correct," +
-                "please use ${somekey} or ${someKey:someDefaultValue} pattern",method.getName()));
-        String key = matcher.group(1);
+    for (String key : keys) {
+      SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, field, false);
+      springValueRegistry.register(key, springValue);
+      logger.debug("Monitoring {}", springValue);
+    }
+  }
 
-        ApolloValueProcessor.monitor().put(key, SpringValue.create(bean, method));
-        logger.info("Listening apollo key = {}", key);
-
-
-        super.processMethod(bean, method);
+  @Override
+  protected void processMethod(Object bean, String beanName, Method method) {
+    //register @Value on method
+    Value value = method.getAnnotation(Value.class);
+    if (value == null) {
+      return;
+    }
+    //skip Configuration bean methods
+    if (method.getAnnotation(Bean.class) != null) {
+      return;
+    }
+    if (method.getParameterTypes().length != 1) {
+      logger.error("Ignore @Value setter {}.{}, expecting 1 parameter, actual {} parameters",
+          bean.getClass().getName(), method.getName(), method.getParameterTypes().length);
+      return;
     }
 
+    Set<String> keys = placeholderHelper.extractPlaceholderKeys(value.value());
 
-
-    public static void setAutoUpdate(Boolean autoUpdate) {
-        isAutoUpdate = autoUpdate;
+    if (keys.isEmpty()) {
+      return;
     }
+
+    for (String key : keys) {
+      SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, method, false);
+      springValueRegistry.register(key, springValue);
+      logger.debug("Monitoring {}", springValue);
+    }
+  }
+
+
+  private void processBeanPropertyValues(Object bean, String beanName) {
+    Collection<SpringValueDefinition> propertySpringValues = beanName2SpringValueDefinitions
+        .get(beanName);
+    if (propertySpringValues == null || propertySpringValues.isEmpty()) {
+      return;
+    }
+
+    for (SpringValueDefinition definition : propertySpringValues) {
+      try {
+        PropertyDescriptor pd = BeanUtils
+            .getPropertyDescriptor(bean.getClass(), definition.getPropertyName());
+        Method method = pd.getWriteMethod();
+        if (method == null) {
+          continue;
+        }
+        SpringValue springValue = new SpringValue(definition.getKey(), definition.getPlaceholder(),
+            bean, beanName, method, false);
+        springValueRegistry.register(definition.getKey(), springValue);
+        logger.debug("Monitoring {}", springValue);
+      } catch (Throwable ex) {
+        logger.error("Failed to enable auto update feature for {}.{}", bean.getClass(),
+            definition.getPropertyName());
+      }
+    }
+
+    // clear
+    beanName2SpringValueDefinitions.removeAll(beanName);
+  }
+
 }
