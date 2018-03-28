@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.spring.annotation.ApolloJsonValue;
+import com.ctrip.framework.apollo.spring.annotation.ApolloJSONValue;
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import java.util.List;
 import org.junit.Test;
@@ -499,12 +499,12 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
 
   static class TestJsonPropertyBean {
 
-    @ApolloJsonValue("${jsonProperty}")
+    @ApolloJSONValue("${jsonProperty}")
     private List<JsonBean> jsonBeanList;
 
     private List<JsonBean> otherJsonBeanList;
 
-    @ApolloJsonValue("${${a}}")
+    @ApolloJSONValue("${${a}}")
     private List<JsonBean> embeddedJsonBeanList;
 
 
@@ -512,7 +512,7 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
       return jsonBeanList;
     }
 
-    @ApolloJsonValue("${otherJsonProperty}")
+    @ApolloJSONValue("${otherJsonProperty}")
     public void setOtherJsonBeanList(List<JsonBean> otherJsonBeanList) {
       this.otherJsonBeanList = otherJsonBeanList;
     }

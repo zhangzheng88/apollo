@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.spring.annotation;
 
 import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.spring.property.AutoUpdateConfigChangeListener;
 import com.ctrip.framework.apollo.spring.property.PlaceholderHelper;
 import com.ctrip.framework.apollo.spring.property.SpringValue;
 import com.ctrip.framework.apollo.spring.property.SpringValueRegistry;
@@ -9,7 +8,6 @@ import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -44,15 +42,15 @@ public class ApolloJsonValueProcessor extends ApolloProcessor implements BeanFac
 
   @Override
   protected void processField(Object bean, String beanName, Field field) {
-    ApolloJsonValue apolloJsonValue = AnnotationUtils.getAnnotation(field, ApolloJsonValue.class);
-    if (apolloJsonValue == null) {
+    ApolloJSONValue apolloJSONValue = AnnotationUtils.getAnnotation(field, ApolloJSONValue.class);
+    if (apolloJSONValue == null) {
       return;
     }
-    String placeholder = apolloJsonValue.value();
+    String placeholder = apolloJSONValue.value();
     Object propertyValue = placeholderHelper
         .resolvePropertyValue(beanFactory, beanName, placeholder);
 
-    // propertyValue will never be null, as @ApolloJsonValue will not allow that
+    // propertyValue will never be null, as @ApolloJSONValue will not allow that
     if (!(propertyValue instanceof String)) {
       return;
     }
@@ -75,16 +73,16 @@ public class ApolloJsonValueProcessor extends ApolloProcessor implements BeanFac
 
   @Override
   protected void processMethod(Object bean, String beanName, Method method) {
-    ApolloJsonValue apolloJsonValue = AnnotationUtils.getAnnotation(method, ApolloJsonValue.class);
-    if (apolloJsonValue == null) {
+    ApolloJSONValue apolloJSONValue = AnnotationUtils.getAnnotation(method, ApolloJSONValue.class);
+    if (apolloJSONValue == null) {
       return;
     }
-    String placeHolder = apolloJsonValue.value();
+    String placeHolder = apolloJSONValue.value();
 
     Object propertyValue = placeholderHelper
         .resolvePropertyValue(beanFactory, beanName, placeHolder);
 
-    // propertyValue will never be null, as @ApolloJsonValue will not allow that
+    // propertyValue will never be null, as @ApolloJSONValue will not allow that
     if (!(propertyValue instanceof String)) {
       return;
     }
@@ -102,7 +100,7 @@ public class ApolloJsonValueProcessor extends ApolloProcessor implements BeanFac
     if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled()) {
       Set<String> keys = placeholderHelper.extractPlaceholderKeys(placeHolder);
       for (String key : keys) {
-        SpringValue springValue = new SpringValue(key, apolloJsonValue.value(), bean, beanName,
+        SpringValue springValue = new SpringValue(key, apolloJSONValue.value(), bean, beanName,
             method, true);
         springValueRegistry.register(key, springValue);
         logger.debug("Monitoring {}", springValue);

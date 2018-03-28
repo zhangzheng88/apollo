@@ -1,6 +1,6 @@
 package com.ctrip.framework.apollo.demo.spring.common.bean;
 
-import com.ctrip.framework.apollo.spring.annotation.ApolloJsonValue;
+import com.ctrip.framework.apollo.spring.annotation.ApolloJSONValue;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +19,11 @@ public class AnnotatedBean {
   private List<JsonBean> jsonBeans;
 
   /**
-   * ApolloJsonValue annotated on fields example, the default value is specified as empty list - []
+   * ApolloJSONValue annotated on fields example, the default value is specified as empty list - []
    * <br />
    * jsonBeanProperty=[{"someString":"hello","someInt":100},{"someString":"world!","someInt":200}]
    */
-  @ApolloJsonValue("${jsonBeanProperty:[]}")
+  @ApolloJSONValue("${jsonBeanProperty:[]}")
   private List<JsonBean> anotherJsonBeans;
 
   @Value("${batch:100}")
@@ -39,11 +39,11 @@ public class AnnotatedBean {
   }
 
   /**
-   * ApolloJsonValue annotated on methods example, the default value is specified as empty list - []
+   * ApolloJSONValue annotated on methods example, the default value is specified as empty list - []
    * <br />
    * jsonBeanProperty=[{"someString":"hello","someInt":100},{"someString":"world!","someInt":200}]
    */
-  @ApolloJsonValue("${jsonBeanProperty:[]}")
+  @ApolloJSONValue("${jsonBeanProperty:[]}")
   public void setJsonBeans(List<JsonBean> jsonBeans) {
     logger.info("updating json beans, old value: {}, new value: {}", this.jsonBeans, jsonBeans);
     this.jsonBeans = jsonBeans;

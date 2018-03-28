@@ -9,7 +9,7 @@ import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.internals.SimpleConfig;
 import com.ctrip.framework.apollo.spring.JavaConfigPlaceholderTest.JsonBean;
 import com.ctrip.framework.apollo.spring.XmlConfigPlaceholderTest.TestXmlBean;
-import com.ctrip.framework.apollo.spring.annotation.ApolloJsonValue;
+import com.ctrip.framework.apollo.spring.annotation.ApolloJSONValue;
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.primitives.Ints;
@@ -1108,7 +1108,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
     @Value("#{new java.text.SimpleDateFormat('${dateFormat}').parse('${dateProperty}')}")
     private Date dateProperty;
 
-    @ApolloJsonValue("${jsonProperty}")
+    @ApolloJSONValue("${jsonProperty}")
     private List<JsonBean> jsonBeanList;
 
     public int getIntProperty() {
@@ -1158,7 +1158,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
   static class TestApolloJsonValue {
 
-    @ApolloJsonValue("${jsonProperty}")
+    @ApolloJSONValue("${jsonProperty}")
     private JsonBean jsonBean;
 
     public JsonBean getJsonBean() {
@@ -1168,7 +1168,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
   static class TestApolloJsonValueWithDefaultValue {
 
-    @ApolloJsonValue("${jsonProperty:{\"a\":\"defaultString\", \"b\":1}}")
+    @ApolloJSONValue("${jsonProperty:{\"a\":\"defaultString\", \"b\":1}}")
     private JsonBean jsonBean;
 
     public JsonBean getJsonBean() {

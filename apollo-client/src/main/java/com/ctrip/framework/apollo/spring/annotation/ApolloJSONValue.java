@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  * // Inject the json property value for type SomeObject.
  * // Suppose SomeObject has 2 properties, someString and someInt, then the possible config
  * // in Apollo is someJsonPropertyKey={"someString":"someValue", "someInt":10}.
- * &#064;ApolloJsonValue("${someJsonPropertyKey:someDefaultValue}")
+ * &#064;ApolloJSONValue("${someJsonPropertyKey:someDefaultValue}")
  * private SomeObject someObject;
  * </pre>
  *
@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Documented
-public @interface ApolloJsonValue {
+public @interface ApolloJSONValue {
 
   /**
    * The actual value expression: e.g. "${someJsonPropertyKey:someDefaultValue}".
