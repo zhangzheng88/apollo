@@ -66,7 +66,7 @@ public class YouzanServerProvider implements ServerProvider{
 
     // 4. Set environment to default daily.
     zan_env = "dev";
-    logger.warn("zan environment is set to [{}]",m_env);
+    logger.warn("zan environment is set to [{}]",zan_env);
   }
 
   private String m_dc;
