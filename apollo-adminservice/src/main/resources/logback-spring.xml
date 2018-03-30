@@ -42,6 +42,9 @@
         <encoder>
             <pattern>${FW_OUTPUT_PATTERN}</pattern>
         </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
     </appender>
 
     <!--全输出(不过滤级别)-->
@@ -60,6 +63,9 @@
         <encoder>
             <pattern>${FW_OUTPUT_PATTERN}</pattern>
         </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
     </appender>
 
     <!--错误日志输出-->
@@ -85,7 +91,10 @@
 
     <logger name="com.ctrip.framework.apollo.adminservice" additivity="false">
         <level value="DEBUG"/>
-        <appender-ref ref="DEBUG"/>
+        <appender-ref ref="ROOT"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="COMMON_ERROR"/>
+        <appender-ref ref="DEBUG" />
     </logger>
 
 
