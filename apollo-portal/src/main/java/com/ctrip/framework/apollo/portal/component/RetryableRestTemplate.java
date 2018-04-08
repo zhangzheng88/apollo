@@ -8,6 +8,7 @@ import com.ctrip.framework.apollo.portal.constant.TracerEventType;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
 
+import com.google.gson.Gson;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.Logger;
@@ -39,6 +40,8 @@ public class RetryableRestTemplate {
   private UriTemplateHandler uriTemplateHandler = new DefaultUriTemplateHandler();
 
   private RestTemplate restTemplate;
+
+  private Gson gson = new Gson();
 
   @Autowired
   private RestTemplateFactory restTemplateFactory;
@@ -98,7 +101,7 @@ public class RetryableRestTemplate {
         ct.complete();
         return result;
       } catch (Throwable t) {
-        logger.error("Http request failed, uri: {}, method: {}", uri, method, t);
+        logger.error("Http request failed, uri: {}, method: {}, body:{}", parseHost(serviceDTO)+uri, method, gson.toJson(request), t);
         Tracer.logError(t);
         if (canRetry(t, method)) {
           Tracer.logEvent(TracerEventType.API_RETRY, uri);
