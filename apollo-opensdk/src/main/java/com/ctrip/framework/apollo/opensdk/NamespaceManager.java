@@ -33,7 +33,7 @@ public class NamespaceManager {
 
   private static OkHttpClient client;
   private static Gson gson = new Gson();
-  private static final String PORTAL_URL = "apollo-portal.prod.qima-inc.com";
+  private static final String PORTAL_URL = "apollo.qima-inc.com";
 
   private static Logger logger = LoggerFactory.getLogger("okhttp3");
   static {
@@ -61,7 +61,7 @@ public class NamespaceManager {
   public OpenApiResult<OpenNamespaceDTO> info(){
     Map<String,String> uriVariables = ImmutableMap.of("appId",appId,"clusterName",clusterName,"namespaceName", namespaceName,
         "portal_address", PORTAL_URL, "env",env.name());
-    String url = "http://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}";
+    String url = "https://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}";
 
     OpenApiResult<OpenNamespaceDTO> result = new OpenApiResult();
     try {
@@ -88,7 +88,7 @@ public class NamespaceManager {
   public OpenApiResult<OpenItemDTO> createItem(String key,String value,String comment){
     Map<String,String> uriVariables = ImmutableMap.of("appId",appId,"clusterName",clusterName,"namespaceName", namespaceName,
         "portal_address", PORTAL_URL, "env",env.name());
-    String url = "http://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items";
+    String url = "https://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items";
 
     OpenItemDTO itemDTO = new OpenItemDTO();
     itemDTO.setKey(key);
@@ -120,7 +120,7 @@ public class NamespaceManager {
    */
   public OpenApiResult updateItem(String key, String newValue, String comment){
 
-    String url = "http://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key}";
+    String url = "https://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key}";
     Map<String,String> uriVariables = ImmutableMap.<String,String>builder().put("appId", appId).put("clusterName",clusterName)
         .put("namespaceName", namespaceName).put("portal_address", PORTAL_URL).put("env",env.name()).put("key", key).build();
 
@@ -150,7 +150,7 @@ public class NamespaceManager {
    * @param key
    */
   public OpenApiResult deleteItem(String key){
-    String url = "http://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key}?operator={operator}";
+    String url = "https://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key}?operator={operator}";
     Map<String,String> uriVariables = ImmutableMap.<String,String>builder().put("appId", appId).put("clusterName",clusterName)
         .put("namespaceName", namespaceName).put("portal_address", PORTAL_URL).put("env",env.name()).put("key", key)
         .put("operator",dataChangedBy).build();
@@ -180,7 +180,7 @@ public class NamespaceManager {
   public OpenApiResult<OpenReleaseDTO> release(String releaseTitle){
     Map<String,String> uriVariables = ImmutableMap.of("appId",appId,"clusterName",clusterName,"namespaceName", namespaceName,
         "portal_address", PORTAL_URL, "env",env.name());
-    String url = "http://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases";
+    String url = "https://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases";
 
     Map body = ImmutableMap.of("releaseTitle",releaseTitle, "releaseComment",releaseTitle, "releasedBy", dataChangedBy);
     OpenApiResult<OpenReleaseDTO> result = new OpenApiResult();
