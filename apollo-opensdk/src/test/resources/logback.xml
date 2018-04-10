@@ -1,0 +1,24 @@
+<configuration scan="true" scanPeriod=" 5 seconds" debug="false">
+    <jmxConfigurator/>
+
+    <include resource="org/springframework/boot/logging/logback/default.xml"/>
+    <property name="FW_OUTPUT_PATTERN"
+      value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{56} - %msg%n"/>
+
+
+    <!--控制台输出-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${FW_OUTPUT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="okhttp3">
+        <level value="DEBUG"/>
+        <append-ref ref="STDOUT" />
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

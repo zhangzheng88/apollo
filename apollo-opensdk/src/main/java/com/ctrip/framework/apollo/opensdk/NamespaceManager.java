@@ -14,6 +14,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
+import okhttp3.logging.HttpLoggingInterceptor.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Create by zhangzheng on 2018/3/10
@@ -27,9 +31,22 @@ public class NamespaceManager {
   protected String token;
   protected String dataChangedBy;
 
-  private static OkHttpClient client = new OkHttpClient.Builder().build();
+  private static OkHttpClient client;
   private static Gson gson = new Gson();
   private static final String PORTAL_URL = "apollo-portal.prod.qima-inc.com";
+
+  private static Logger logger = LoggerFactory.getLogger("okhttp3");
+  static {
+    HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(
+        new HttpLoggingInterceptor.Logger() {
+          @Override
+          public void log(String s) {
+            logger.debug(s);
+          }
+        });
+    httpLoggingInterceptor.setLevel(Level.BODY);
+    client = new OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor).build();
+  }
 
   private NamespaceManager(){}
 
