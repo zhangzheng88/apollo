@@ -84,7 +84,7 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
     for (String key : keys) {
       SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, field, false);
       springValueRegistry.register(key, springValue);
-      logger.debug("Monitoring {}", springValue);
+      logger.info("Monitoring {}", springValue);
     }
   }
 
