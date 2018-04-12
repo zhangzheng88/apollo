@@ -1,12 +1,17 @@
 package com.ctrip.framework.apollo.opensdk;
 
 import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.opensdk.dto.OpenEnvClusterDTO;
 import com.ctrip.framework.apollo.opensdk.dto.OpenItemDTO;
 import com.ctrip.framework.apollo.opensdk.dto.OpenNamespaceDTO;
 import com.ctrip.framework.apollo.opensdk.dto.OpenReleaseDTO;
 import com.ctrip.framework.foundation.Foundation;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 import okhttp3.Headers;
 import okhttp3.MediaType;
@@ -33,7 +38,7 @@ public class NamespaceManager {
 
   private static OkHttpClient client;
   private static Gson gson = new Gson();
-  private static final String PORTAL_URL = "apollo.qima-inc.com";
+  private static final String PORTAL_URL = ConfigReader.portalUrl();
 
   private static Logger logger = LoggerFactory.getLogger("okhttp3");
   static {
@@ -59,9 +64,10 @@ public class NamespaceManager {
   }
 
   public OpenApiResult<OpenNamespaceDTO> info(){
+    changeClusterIfNotExist();
     Map<String,String> uriVariables = ImmutableMap.of("appId",appId,"clusterName",clusterName,"namespaceName", namespaceName,
         "portal_address", PORTAL_URL, "env",env.name());
-    String url = "https://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}";
+    String url = "{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}";
 
     OpenApiResult<OpenNamespaceDTO> result = new OpenApiResult();
     try {
@@ -86,9 +92,10 @@ public class NamespaceManager {
    * @return
    */
   public OpenApiResult<OpenItemDTO> createItem(String key,String value,String comment){
+    changeClusterIfNotExist();
     Map<String,String> uriVariables = ImmutableMap.of("appId",appId,"clusterName",clusterName,"namespaceName", namespaceName,
         "portal_address", PORTAL_URL, "env",env.name());
-    String url = "https://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items";
+    String url = "{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items";
 
     OpenItemDTO itemDTO = new OpenItemDTO();
     itemDTO.setKey(key);
@@ -119,8 +126,8 @@ public class NamespaceManager {
    * @return
    */
   public OpenApiResult updateItem(String key, String newValue, String comment){
-
-    String url = "https://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key}";
+    changeClusterIfNotExist();
+    String url = "{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key}";
     Map<String,String> uriVariables = ImmutableMap.<String,String>builder().put("appId", appId).put("clusterName",clusterName)
         .put("namespaceName", namespaceName).put("portal_address", PORTAL_URL).put("env",env.name()).put("key", key).build();
 
@@ -150,7 +157,8 @@ public class NamespaceManager {
    * @param key
    */
   public OpenApiResult deleteItem(String key){
-    String url = "https://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key}?operator={operator}";
+    changeClusterIfNotExist();
+    String url = "{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key}?operator={operator}";
     Map<String,String> uriVariables = ImmutableMap.<String,String>builder().put("appId", appId).put("clusterName",clusterName)
         .put("namespaceName", namespaceName).put("portal_address", PORTAL_URL).put("env",env.name()).put("key", key)
         .put("operator",dataChangedBy).build();
@@ -178,14 +186,14 @@ public class NamespaceManager {
    * @return
    */
   public OpenApiResult<OpenReleaseDTO> release(String releaseTitle){
+    changeClusterIfNotExist();
     Map<String,String> uriVariables = ImmutableMap.of("appId",appId,"clusterName",clusterName,"namespaceName", namespaceName,
         "portal_address", PORTAL_URL, "env",env.name());
-    String url = "https://{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases";
+    String url = "{portal_address}/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases";
 
-    Map body = ImmutableMap.of("releaseTitle",releaseTitle, "releaseComment",releaseTitle, "releasedBy", dataChangedBy);
+    Map body = ImmutableMap.of("releaseTitle",releaseTitle, "releaseComment",releaseTitle, "releasedBy", dataChangedBy, "isEmergencyPublish",true);
     OpenApiResult<OpenReleaseDTO> result = new OpenApiResult();
     try {
-
       Request request = new Request.Builder().post(jsonBody(body)).headers(headers()).url(HttpUtil.parseUrlTemplate(url, uriVariables)).build();
       Response response = client.newCall(request).execute();
       if(response.isSuccessful()){
@@ -200,6 +208,34 @@ public class NamespaceManager {
       result.errmsg = e.getMessage();
     }
     return result;
+  }
+
+  /**
+   * 如果sdk操作的集群不存在，那么就去操作default集群的配置
+   */
+  private void changeClusterIfNotExist(){
+    Map<String,String> uriVariables = ImmutableMap.of("appId",appId, "portal_address", PORTAL_URL);
+    String url = "{portal_address}/openapi/v1/apps/{appId}/envclusters";
+
+    Request request = new Request.Builder().get().url(HttpUtil.parseUrlTemplate(url, uriVariables)).headers(headers()).build();
+    try {
+      Response response = client.newCall(request).execute();
+      if(response.isSuccessful()){
+        Type type = new TypeToken<List<OpenEnvClusterDTO>>(){}.getType();
+        List<OpenEnvClusterDTO> openEnvClusterDTOS = gson.fromJson(response.body().string(), type);
+        for(OpenEnvClusterDTO openEnvClusterDTO:openEnvClusterDTOS){
+          if(openEnvClusterDTO.getEnv().toUpperCase().equals(env.name().toUpperCase())){
+            if(!openEnvClusterDTO.getClusters().contains(clusterName)){
+              logger.info("the cluster {} not exist, so the opensdk will operate the default cluster", clusterName);
+              clusterName = "default";
+            }
+          }
+        }
+      }
+    } catch (IOException e) {
+      logger.error("open sdk can't load env and cluster info", e);
+    }
+
   }
 
 
@@ -217,11 +253,6 @@ public class NamespaceManager {
       return this;
     }
 
-    public Builder cluster(String cluster){
-      namespaceManager.clusterName = cluster;
-      return this;
-    }
-
     public Builder namespace(String namespace){
       namespaceManager.namespaceName = namespace;
       return this;
@@ -231,14 +262,12 @@ public class NamespaceManager {
       return this;
     }
 
-    public Builder dataChangedBy(String username){
-      namespaceManager.dataChangedBy = username;
-      return this;
-    }
 
     public NamespaceManager build(){
       Env env = Env.fromString(Foundation.server().getEnvType());//read env from application context
       namespaceManager.env = env;
+      namespaceManager.clusterName = Foundation.server().getDataCenter();
+      namespaceManager.dataChangedBy = "opensdk";
       return namespaceManager;
     }
 
