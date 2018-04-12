@@ -46,10 +46,6 @@ public class ReleaseController {
             .getReleaseTitle()),
         "Params(releaseTitle and releasedBy) can not be empty");
 
-    if (userService.findByUserId(model.getReleasedBy()) == null) {
-      throw new BadRequestException("user(releaseBy) not exists");
-    }
-
     model.setAppId(appId);
     model.setEnv(Env.fromString(env).toString());
     model.setClusterName(clusterName);

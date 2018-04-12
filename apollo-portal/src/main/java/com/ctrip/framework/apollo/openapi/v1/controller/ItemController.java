@@ -42,10 +42,6 @@ public class ItemController {
         !StringUtils.isContainEmpty(item.getKey(), item.getValue(), item.getDataChangeCreatedBy()),
         "key,value,dataChangeCreatedBy 字段不能为空");
 
-    if (userService.findByUserId(item.getDataChangeCreatedBy()) == null) {
-      throw new BadRequestException("用户不存在.");
-    }
-
     ItemDTO toCreate = OpenApiBeanUtils.transformToItemDTO(item);
 
     //protect
@@ -74,9 +70,6 @@ public class ItemController {
 
     RequestPrecondition.checkArguments(item.getKey().equals(key), "Key in path and payload is not consistent");
 
-    if (userService.findByUserId(item.getDataChangeLastModifiedBy()) == null) {
-      throw new BadRequestException("user(dataChangeLastModifiedBy) not exists");
-    }
 
     ItemDTO toUpdateItem = itemService.loadItem(Env.fromString(env), appId, clusterName, namespaceName, item.getKey());
     if (toUpdateItem == null) {
@@ -98,9 +91,6 @@ public class ItemController {
                          @PathVariable String key, @RequestParam String operator,
                          HttpServletRequest request) {
 
-    if (userService.findByUserId(operator) == null) {
-      throw new BadRequestException("user(operator) not exists");
-    }
 
     ItemDTO toDeleteItem = itemService.loadItem(Env.fromString(env), appId, clusterName, namespaceName, key);
     if (toDeleteItem == null){

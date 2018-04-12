@@ -71,11 +71,6 @@ public class NamespaceController {
       throw new BadRequestException(String.format("Invalid namespace format. format = %s", appNamespaceDTO.getFormat()));
     }
 
-    String operator = appNamespaceDTO.getDataChangeCreatedBy();
-    if (userService.findByUserId(operator) == null) {
-      throw new BadRequestException(String.format("Illegal user. user = %s", operator));
-    }
-
     AppNamespace appNamespace = OpenApiBeanUtils.transformToAppNamespace(appNamespaceDTO);
     AppNamespace createdAppNamespace = appNamespaceService.createAppNamespaceInLocal(appNamespace);
 
